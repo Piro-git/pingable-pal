@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      checks: {
+        Row: {
+          created_at: string
+          grace_period_minutes: number | null
+          heartbeat_uuid: string
+          id: string
+          interval_minutes: number
+          last_pinged_at: string | null
+          name: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          grace_period_minutes?: number | null
+          heartbeat_uuid?: string
+          id?: string
+          interval_minutes: number
+          last_pinged_at?: string | null
+          name: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          grace_period_minutes?: number | null
+          heartbeat_uuid?: string
+          id?: string
+          interval_minutes?: number
+          last_pinged_at?: string | null
+          name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
