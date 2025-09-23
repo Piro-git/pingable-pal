@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, Plus, Copy } from 'lucide-react';
+import { LogOut, Plus, Copy, RefreshCw } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { useState, useEffect } from 'react';
@@ -24,6 +24,8 @@ export default function Dashboard() {
   const [checks, setChecks] = useState<Check[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<Date | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchChecks = async () => {
     if (!user) return;
@@ -36,6 +38,7 @@ export default function Dashboard() {
 
       if (error) throw error;
       setChecks(data || []);
+      setLastCheckedTimestamp(new Date());
     } catch (error: any) {
       toast({
         title: "Error",
@@ -44,7 +47,13 @@ export default function Dashboard() {
       });
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
+  };
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchChecks();
   };
 
   useEffect(() => {
@@ -123,7 +132,25 @@ export default function Dashboard() {
         <div className="glass rounded-2xl p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
+              <div className="flex items-center gap-4 mb-2">
+                <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
+                <div className="flex items-center gap-2">
+                  {lastCheckedTimestamp && (
+                    <p className="text-white/60 text-sm">
+                      Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
+                    </p>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="glass-button p-2 h-8 w-8"
+                    onClick={handleManualRefresh}
+                    disabled={isRefreshing}
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  </Button>
+                </div>
+              </div>
               <p className="text-white/70">Manage your service health checks</p>
             </div>
             <Button 
