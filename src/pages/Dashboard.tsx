@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, Plus } from 'lucide-react';
+import { LogOut, Plus, Copy } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { useState, useEffect } from 'react';
@@ -58,6 +58,24 @@ export default function Dashboard() {
       title: "Signed out",
       description: "You have been signed out successfully.",
     });
+  };
+
+  const copyPingUrl = async (heartbeatUuid: string) => {
+    const pingUrl = `https://mrtovhqequmhdgccwffs.supabase.co/functions/v1/ping-handler?uuid=${heartbeatUuid}`;
+    
+    try {
+      await navigator.clipboard.writeText(pingUrl);
+      toast({
+        title: "URL Copied",
+        description: "Ping URL has been copied to your clipboard.",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Failed to copy URL to clipboard.",
+        variant: "destructive",
+      });
+    }
   };
 
   const totalChecks = checks.length;
@@ -167,13 +185,24 @@ export default function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-white/70 text-sm">
-                        {check.last_pinged_at 
-                          ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
-                          : 'Never pinged'
-                        }
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-white/70 text-sm">
+                          {check.last_pinged_at 
+                            ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
+                            : 'Never pinged'
+                          }
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="glass-button"
+                        onClick={() => copyPingUrl(check.heartbeat_uuid)}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy URL
+                      </Button>
                     </div>
                   </div>
                 </div>

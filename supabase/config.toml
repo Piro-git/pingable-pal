@@ -1,1 +1,4 @@
 project_id = "mrtovhqequmhdgccwffs"
+
+[functions.ping-handler]
+verify_jwt = false
