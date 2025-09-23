@@ -130,39 +130,41 @@ export default function Dashboard() {
       <div className="ml-72 p-4">
         {/* Header */}
         <div className="glass rounded-2xl p-6 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             {/* Left: Title */}
             <div>
               <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
               <p className="text-white/70">Manage your service health checks</p>
             </div>
             
-            {/* Center: Last Updated Indicator */}
-            <div className="flex items-center gap-2">
-              {lastCheckedTimestamp && (
-                <p className="text-white/60 text-sm">
-                  Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
-                </p>
-              )}
-              <Button
-                size="sm"
-                variant="ghost"
-                className="glass-button p-2 h-8 w-8"
-                onClick={handleManualRefresh}
-                disabled={isRefreshing}
+            {/* Right: Create Button and Last Updated */}
+            <div className="flex flex-col items-center gap-3">
+              <Button 
+                className="glass-button"
+                onClick={() => setCreateModalOpen(true)}
               >
-                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Check
               </Button>
+              
+              {/* Last Updated Indicator Below Button */}
+              <div className="flex items-center gap-2">
+                {lastCheckedTimestamp && (
+                  <p className="text-white/60 text-sm">
+                    Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
+                  </p>
+                )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="glass-button p-2 h-8 w-8"
+                  onClick={handleManualRefresh}
+                  disabled={isRefreshing}
+                >
+                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
             </div>
-            
-            {/* Right: Create Button */}
-            <Button 
-              className="glass-button"
-              onClick={() => setCreateModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Check
-            </Button>
           </div>
         </div>
 
