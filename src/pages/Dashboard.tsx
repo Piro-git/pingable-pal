@@ -131,28 +131,31 @@ export default function Dashboard() {
         {/* Header */}
         <div className="glass rounded-2xl p-6 mb-6">
           <div className="flex items-center justify-between">
+            {/* Left: Title */}
             <div>
-              <div className="flex items-center gap-4 mb-2">
-                <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
-                <div className="flex items-center gap-2">
-                  {lastCheckedTimestamp && (
-                    <p className="text-white/60 text-sm">
-                      Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
-                    </p>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="glass-button p-2 h-8 w-8"
-                    onClick={handleManualRefresh}
-                    disabled={isRefreshing}
-                  >
-                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  </Button>
-                </div>
-              </div>
+              <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
               <p className="text-white/70">Manage your service health checks</p>
             </div>
+            
+            {/* Center: Last Updated Indicator */}
+            <div className="flex items-center gap-2">
+              {lastCheckedTimestamp && (
+                <p className="text-white/60 text-sm">
+                  Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
+                </p>
+              )}
+              <Button
+                size="sm"
+                variant="ghost"
+                className="glass-button p-2 h-8 w-8"
+                onClick={handleManualRefresh}
+                disabled={isRefreshing}
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+            
+            {/* Right: Create Button */}
             <Button 
               className="glass-button"
               onClick={() => setCreateModalOpen(true)}
