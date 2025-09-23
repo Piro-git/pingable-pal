@@ -20,8 +20,14 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const { check_id, check_name, user_email }: FailureEmailRequest = await req.json();
+    
+    // DIAGNOSTIC: Log function invocation
+    console.log(`DIAGNOSTIC: 'send-failure-email' invoked for user ${user_email} and check ${check_name}`);
+
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
+      console.error("DIAGNOSTIC ERROR: Failed to retrieve Resend API Key. It might not be set.");
       console.error("RESEND_API_KEY not found in environment variables");
       return new Response(
         JSON.stringify({ error: "Resend API key not configured" }),
@@ -32,9 +38,10 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const resend = new Resend(resendApiKey);
+    // DIAGNOSTIC: Log successful API key retrieval
+    console.log("DIAGNOSTIC: Successfully retrieved Resend API Key.");
 
-    const { check_id, check_name, user_email }: FailureEmailRequest = await req.json();
+    const resend = new Resend(resendApiKey);
 
     console.log(`Sending failure notification for check ${check_name} to ${user_email}`);
 
@@ -52,6 +59,8 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
+    // DIAGNOSTIC: Log successful email sending
+    console.log(`DIAGNOSTIC SUCCESS: Email sent. Resend response ID: ${emailResponse.data?.id || 'No ID returned'}`);
     console.log("Email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify({ success: true, emailResponse }), {
@@ -62,6 +71,8 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
+    // DIAGNOSTIC: Log error details
+    console.error(`DIAGNOSTIC ERROR: Resend API call failed. Reason: ${error.message}`);
     console.error("Error in send-failure-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
