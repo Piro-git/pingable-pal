@@ -3,23 +3,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/components/ui/use-toast';
 
 interface CreateCheckModalProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onCheckCreated?: () => void;
+  onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function CreateCheckModal({ open, onOpenChange, onCheckCreated }: CreateCheckModalProps) {
+export function CreateCheckModal({ open, onClose, onSuccess }: CreateCheckModalProps) {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    intervalMinutes: 60,
-  });
+  const [name, setName] = useState('');
+  const [interval, setInterval] = useState('5');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,24 +32,34 @@ export function CreateCheckModal({ open, onOpenChange, onCheckCreated }: CreateC
       return;
     }
 
-    if (!formData.name.trim()) {
+    if (!name.trim()) {
       toast({
-        title: "Error", 
-        description: "Check name is required.",
+        title: "Error",
+        description: "Please enter a check name.",
         variant: "destructive",
       });
       return;
     }
 
-    setIsLoading(true);
+    const intervalNum = parseInt(interval);
+    if (isNaN(intervalNum) || intervalNum < 1) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid interval in minutes.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const { error } = await supabase
         .from('checks')
         .insert({
           user_id: user.id,
-          name: formData.name.trim(),
-          interval_minutes: formData.intervalMinutes,
+          name: name.trim(),
+          interval_minutes: intervalNum,
         });
 
       if (error) {
@@ -62,73 +71,95 @@ export function CreateCheckModal({ open, onOpenChange, onCheckCreated }: CreateC
         description: "Check created successfully!",
       });
 
-      // Reset form and close modal
-      setFormData({ name: '', intervalMinutes: 60 });
-      onOpenChange(false);
-      onCheckCreated?.();
-    } catch (error) {
-      console.error('Error creating check:', error);
+      // Reset form
+      setName('');
+      setInterval('5');
+      onClose();
+      onSuccess?.();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create check. Please try again.",
+        description: error.message || "Failed to create check.",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setName('');
+    setInterval('5');
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass border border-white/25 text-white">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-white">Create New Check</DialogTitle>
-        </DialogHeader>
-        
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="glass rounded-2xl border border-white/25 max-w-md">
+        <div className="flex items-center justify-between mb-4">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-white">
+              Create New Check
+            </DialogTitle>
+          </DialogHeader>
+          <Button
+            onClick={handleClose}
+            variant="ghost"
+            size="icon"
+            className="text-white/70 hover:text-white hover:bg-white/10"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-white/80">Check Name</Label>
+            <Label htmlFor="check-name" className="text-white/90 text-sm font-medium">
+              Check Name
+            </Label>
             <Input
-              id="name"
+              id="check-name"
               type="text"
-              placeholder="My API Service"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="glass border-white/25 text-white placeholder:text-white/50"
-              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="My Website"
+              className="glass-input"
+              disabled={loading}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="interval" className="text-white/80">Interval (minutes)</Label>
+            <Label htmlFor="interval" className="text-white/90 text-sm font-medium">
+              Interval (minutes)
+            </Label>
             <Input
               id="interval"
               type="number"
               min="1"
-              max="1440"
-              value={formData.intervalMinutes}
-              onChange={(e) => setFormData(prev => ({ ...prev, intervalMinutes: parseInt(e.target.value) || 60 }))}
-              className="glass border-white/25 text-white placeholder:text-white/50"
-              required
+              value={interval}
+              onChange={(e) => setInterval(e.target.value)}
+              placeholder="5"
+              className="glass-input"
+              disabled={loading}
             />
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
+              onClick={handleClose}
               variant="outline"
-              className="flex-1 glass-button border-white/25"
-              onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              className="flex-1 glass-button-secondary"
+              disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="flex-1 glass-button"
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? 'Creating...' : 'Create Check'}
+              {loading ? "Creating..." : "Create Check"}
             </Button>
           </div>
         </form>

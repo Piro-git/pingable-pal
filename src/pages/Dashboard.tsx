@@ -3,16 +3,27 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+
+interface Check {
+  id: string;
+  name: string;
+  status: string;
+  interval_minutes: number;
+  grace_period_minutes: number;
+  heartbeat_uuid: string;
+  last_pinged_at: string | null;
+  created_at: string;
+}
 
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [checks, setChecks] = useState<any[]>([]);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [checks, setChecks] = useState<Check[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const fetchChecks = async () => {
     if (!user) return;
@@ -21,23 +32,18 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('checks')
         .select('*')
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       setChecks(data || []);
-    } catch (error) {
-      console.error('Error fetching checks:', error);
+    } catch (error: any) {
       toast({
         title: "Error",
         description: "Failed to fetch checks.",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -54,19 +60,10 @@ export default function Dashboard() {
     });
   };
 
-  const handleCreateCheck = () => {
-    setIsCreateModalOpen(true);
-  };
-
-  const handleCheckCreated = () => {
-    fetchChecks(); // Refresh the checks list
-  };
-
-  // Calculate stats
   const totalChecks = checks.length;
   const checksUp = checks.filter(check => check.status === 'up').length;
   const checksDown = checks.filter(check => check.status === 'down').length;
-  const uptimePercent = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
+  const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
 
   return (
     <div className="min-h-screen">
@@ -111,7 +108,10 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
               <p className="text-white/70">Manage your service health checks</p>
             </div>
-            <Button onClick={handleCreateCheck} className="glass-button">
+            <Button 
+              className="glass-button"
+              onClick={() => setCreateModalOpen(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Create New Check
             </Button>
@@ -124,7 +124,7 @@ export default function Dashboard() {
             { label: 'Total Checks', value: totalChecks.toString() },
             { label: 'Checks Up', value: checksUp.toString() },
             { label: 'Checks Down', value: checksDown.toString() },
-            { label: 'Uptime %', value: `${uptimePercent}%` },
+            { label: 'Uptime %', value: `${uptimePercentage}%` },
           ].map((stat, index) => (
             <div key={index} className="glass rounded-xl p-4">
               <p className="text-white/70 text-sm">{stat.label}</p>
@@ -136,35 +136,44 @@ export default function Dashboard() {
         {/* Checks List */}
         <div className="glass rounded-2xl p-6">
           <h3 className="text-xl font-semibold text-white mb-4">Health Checks</h3>
-          {isLoading ? (
+          {loading ? (
             <div className="text-center py-12">
               <p className="text-white/70">Loading checks...</p>
             </div>
           ) : checks.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-white/70 mb-4">No health checks configured yet</p>
-              <Button onClick={handleCreateCheck} className="glass-button">
+              <Button 
+                className="glass-button"
+                onClick={() => setCreateModalOpen(true)}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Your First Check
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {checks.map((check) => (
-                <div key={check.id} className="glass rounded-lg p-4">
+                <div key={check.id} className="glass rounded-xl p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${check.status === 'up' ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
+                      }`} />
                       <div>
                         <h4 className="text-white font-medium">{check.name}</h4>
-                        <p className="text-white/70 text-sm capitalize">Status: {check.status}</p>
+                        <p className="text-white/70 text-sm">
+                          Status: {check.status} • Every {check.interval_minutes}min
+                        </p>
                       </div>
                     </div>
-                    <div className="text-right text-white/70 text-sm">
-                      <p>Every {check.interval_minutes} min</p>
-                      {check.last_pinged_at && (
-                        <p>Last seen: {new Date(check.last_pinged_at).toLocaleString()}</p>
-                      )}
+                    <div className="text-right">
+                      <p className="text-white/70 text-sm">
+                        {check.last_pinged_at 
+                          ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
+                          : 'Never pinged'
+                        }
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -174,11 +183,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Create Check Modal */}
-      <CreateCheckModal 
-        open={isCreateModalOpen} 
-        onOpenChange={setIsCreateModalOpen}
-        onCheckCreated={handleCheckCreated}
+      <CreateCheckModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSuccess={fetchChecks}
       />
     </div>
   );
