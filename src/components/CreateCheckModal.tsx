@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ interface CreateCheckModalProps {
   onSuccess?: () => void;
 }
 
-export function CreateCheckModal({ open, onClose, onSuccess }: CreateCheckModalProps) {
+const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSuccess }) => {
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [interval, setInterval] = useState('5');
@@ -166,4 +166,6 @@ export function CreateCheckModal({ open, onClose, onSuccess }: CreateCheckModalP
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export { CreateCheckModal };
