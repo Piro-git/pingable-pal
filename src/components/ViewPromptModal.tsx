@@ -2,7 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, X } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Prompt {
@@ -50,17 +50,7 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             <DialogTitle className="text-xl font-semibold text-white">
               {prompt.title}
             </DialogTitle>
-            <div className="flex items-center gap-2">
-              <span className="text-white/60 text-sm">v{prompt.version}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="glass-button-secondary p-2"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
+            <span className="text-white/60 text-sm">v{prompt.version}</span>
           </div>
         </DialogHeader>
         
