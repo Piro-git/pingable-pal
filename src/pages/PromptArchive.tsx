@@ -7,6 +7,7 @@ import { toast } from '@/components/ui/use-toast';
 import { CreateCategoryModal } from '@/components/CreateCategoryModal';
 import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
+import { useNavigate } from 'react-router-dom';
 
 interface PromptCategory {
   id: string;
@@ -28,6 +29,7 @@ interface Prompt {
 
 export default function PromptArchive() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<PromptCategory[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -123,15 +125,17 @@ export default function PromptArchive() {
 
         <nav className="space-y-3">
           <div 
-            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
-            onClick={() => window.location.href = '/dashboard'}
+            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center"
+            onClick={() => navigate('/dashboard')}
           >
+            <Archive className="w-4 h-4 mr-2" />
             Dashboard
           </div>
           <div className="glass-button rounded-lg px-4 py-2 text-white">
             Prompt Archive
           </div>
-          <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
+          <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center">
+            <Archive className="w-4 h-4 mr-2" />
             Settings
           </div>
         </nav>
@@ -164,10 +168,10 @@ export default function PromptArchive() {
               <h3 className="text-xl font-semibold text-white">Categories</h3>
               <Button
                 size="sm"
-                className="glass-button px-2 py-1 text-xs"
+                className="glass-button px-1.5 py-0.5 text-xs ml-4"
                 onClick={() => setCreateCategoryModalOpen(true)}
               >
-                <Plus className="w-3 h-3 mr-1" />
+                <Plus className="w-3 h-3 mr-0.5" />
                 New
               </Button>
             </div>
@@ -192,7 +196,7 @@ export default function PromptArchive() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className={`glass rounded-xl p-3 cursor-pointer transition-all duration-200 min-w-[200px] ${
+                    className={`glass rounded-xl p-3 cursor-pointer transition-all duration-200 max-w-[220px] min-h-[60px] flex flex-col justify-center ${
                       selectedCategoryId === category.id 
                         ? 'glass-button transform scale-105' 
                         : 'hover:glass-button hover:brightness-110 hover:shadow-lg'
@@ -200,8 +204,8 @@ export default function PromptArchive() {
                     style={getBubbleStyle(category.color)}
                     onClick={() => setSelectedCategoryId(category.id)}
                   >
-                    <p className="text-white font-medium">{category.name}</p>
-                    <p className="text-white/70 text-sm">
+                    <p className="text-white font-medium text-sm leading-tight break-words">{category.name}</p>
+                    <p className="text-white/70 text-xs mt-1">
                       {prompts.filter(p => p.category_id === category.id).length} prompts
                     </p>
                   </div>
