@@ -125,17 +125,15 @@ export default function PromptArchive() {
 
         <nav className="space-y-3">
           <div 
-            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center"
+            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
             onClick={() => navigate('/dashboard')}
           >
-            <Archive className="w-4 h-4 mr-2" />
             Dashboard
           </div>
           <div className="glass-button rounded-lg px-4 py-2 text-white">
             Prompt Archive
           </div>
-          <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center">
-            <Archive className="w-4 h-4 mr-2" />
+          <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
             Settings
           </div>
         </nav>
@@ -168,7 +166,7 @@ export default function PromptArchive() {
               <h3 className="text-xl font-semibold text-white">Categories</h3>
               <Button
                 size="sm"
-                className="glass-button px-1.5 py-0.5 text-xs ml-4"
+                className="glass-button px-1.5 py-0.5 text-xs"
                 onClick={() => setCreateCategoryModalOpen(true)}
               >
                 <Plus className="w-3 h-3 mr-0.5" />
