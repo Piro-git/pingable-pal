@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { CreateCategoryModal } from '@/components/CreateCategoryModal';
 import { CreatePromptModal } from '@/components/CreatePromptModal';
+import { ViewPromptModal } from '@/components/ViewPromptModal';
 
 interface PromptCategory {
   id: string;
@@ -33,6 +34,8 @@ export default function PromptArchive() {
   const [loading, setLoading] = useState(true);
   const [createCategoryModalOpen, setCreateCategoryModalOpen] = useState(false);
   const [createPromptModalOpen, setCreatePromptModalOpen] = useState(false);
+  const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
+  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
 
   const fetchCategories = async () => {
     if (!user) return;
@@ -102,6 +105,11 @@ export default function PromptArchive() {
       };
     }
     return {};
+  };
+
+  const handleViewPrompt = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setViewPromptModalOpen(true);
   };
 
   return (
@@ -243,12 +251,24 @@ export default function PromptArchive() {
             ) : (
               <div className="space-y-4">
                 {filteredPrompts.map((prompt) => (
-                  <div key={prompt.id} className="glass rounded-xl p-4">
+                  <div 
+                    key={prompt.id} 
+                    className="glass rounded-xl p-4 cursor-pointer hover:glass-button transition-all"
+                    onClick={() => handleViewPrompt(prompt)}
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="text-white font-semibold text-lg">{prompt.title}</h4>
                       <div className="flex items-center gap-2">
                         <span className="text-white/60 text-sm">v{prompt.version}</span>
-                        <Button size="sm" variant="ghost" className="glass-button-secondary p-2">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="glass-button-secondary p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Edit functionality can be added later
+                          }}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                       </div>
@@ -282,6 +302,12 @@ export default function PromptArchive() {
         onSuccess={fetchPrompts}
         categories={categories}
         selectedCategoryId={selectedCategoryId}
+      />
+
+      <ViewPromptModal
+        open={viewPromptModalOpen}
+        onClose={() => setViewPromptModalOpen(false)}
+        prompt={selectedPrompt}
       />
     </div>
   );
