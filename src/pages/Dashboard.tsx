@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, Plus, Copy, RefreshCw } from 'lucide-react';
+import { LogOut, Plus, Copy, RefreshCw, Archive } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { useState, useEffect } from 'react';
@@ -104,6 +104,13 @@ export default function Dashboard() {
         <nav className="space-y-3">
           <div className="glass-button rounded-lg px-4 py-2 text-white">
             Dashboard
+          </div>
+          <div 
+            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center"
+            onClick={() => navigate('/prompts')}
+          >
+            <Archive className="w-4 h-4 mr-2" />
+            Prompt Archive
           </div>
           <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
             Settings
