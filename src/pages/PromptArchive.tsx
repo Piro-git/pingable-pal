@@ -129,7 +129,6 @@ export default function PromptArchive() {
             Dashboard
           </div>
           <div className="glass-button rounded-lg px-4 py-2 text-white">
-            <Archive className="w-4 h-4 mr-2 inline" />
             Prompt Archive
           </div>
           <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
@@ -165,10 +164,10 @@ export default function PromptArchive() {
               <h3 className="text-xl font-semibold text-white">Categories</h3>
               <Button
                 size="sm"
-                className="glass-button"
+                className="glass-button px-2 py-1 text-xs"
                 onClick={() => setCreateCategoryModalOpen(true)}
               >
-                <Plus className="w-4 h-4 mr-1" />
+                <Plus className="w-3 h-3 mr-1" />
                 New
               </Button>
             </div>
@@ -193,10 +192,10 @@ export default function PromptArchive() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className={`glass rounded-xl p-3 cursor-pointer transition-all ${
+                    className={`glass rounded-xl p-3 cursor-pointer transition-all duration-200 min-w-[200px] ${
                       selectedCategoryId === category.id 
                         ? 'glass-button transform scale-105' 
-                        : 'hover:glass-button'
+                        : 'hover:glass-button hover:brightness-110 hover:shadow-lg'
                     }`}
                     style={getBubbleStyle(category.color)}
                     onClick={() => setSelectedCategoryId(category.id)}
