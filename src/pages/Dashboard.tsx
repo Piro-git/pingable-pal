@@ -106,10 +106,9 @@ export default function Dashboard() {
             Dashboard
           </div>
           <div 
-            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center"
+            className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
             onClick={() => navigate('/prompts')}
           >
-            <Archive className="w-4 h-4 mr-2" />
             Prompt Archive
           </div>
           <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
