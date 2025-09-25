@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Archive, Edit, Search, Play } from 'lucide-react';
+import { Plus, Archive, Edit, Search, Play, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
@@ -28,6 +28,13 @@ interface Tag {
   created_at: string;
 }
 
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  role: 'admin' | 'editor' | 'viewer';
+}
+
 interface PromptVersion {
   id: string;
   title: string;
@@ -36,6 +43,8 @@ interface PromptVersion {
   variables: string[];
   created_at: string;
   tags?: Tag[];
+  averageRating?: number;
+  totalReviews?: number;
 }
 
 interface Prompt {
@@ -49,7 +58,7 @@ interface Prompt {
 }
 
 export default function PromptArchive() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -280,6 +289,15 @@ export default function PromptArchive() {
             <div className="glass-button rounded-lg px-4 py-2 text-white">
               Prompt Archive
             </div>
+            {profile?.role === 'admin' && (
+              <div 
+                className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+                onClick={() => navigate('/team')}
+              >
+                <Users className="w-4 h-4" />
+                Team Management
+              </div>
+            )}
             <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
               Settings
             </div>
@@ -297,14 +315,16 @@ export default function PromptArchive() {
         <div id="categories-pane" className="glass rounded-2xl p-6 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">Folders</h3>
-            <Button
-              size="sm"
-              className="glass-button px-1.5 py-0.5 text-xs"
-              onClick={() => setCreateFolderModalOpen(true)}
-            >
-              <Plus className="w-3 h-3 mr-0.5" />
-              New
-            </Button>
+            {(profile?.role === 'admin' || profile?.role === 'editor') && (
+              <Button
+                size="sm"
+                className="glass-button px-1.5 py-0.5 text-xs"
+                onClick={() => setCreateFolderModalOpen(true)}
+              >
+                <Plus className="w-3 h-3 mr-0.5" />
+                New
+              </Button>
+            )}
           </div>
 
           {loading ? (
@@ -363,13 +383,15 @@ export default function PromptArchive() {
             <h3 className="text-xl font-semibold text-white">
               {selectedFolder ? `${selectedFolder.name}` : searchTerm ? 'Search Results' : 'All Prompts'}
             </h3>
-            <Button
-              className="glass-button"
-              onClick={() => setCreatePromptModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Prompt
-            </Button>
+            {(profile?.role === 'admin' || profile?.role === 'editor') && (
+              <Button
+                className="glass-button"
+                onClick={() => setCreatePromptModalOpen(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Prompt
+              </Button>
+            )}
           </div>
 
           {/* Tag Filter Bar */}
@@ -402,27 +424,29 @@ export default function PromptArchive() {
             </div>
           )}
 
-          {loading ? (
-            <div className="text-center py-16">
-              <p className="text-white/70">Loading prompts...</p>
-            </div>
-          ) : filteredPrompts.length === 0 && searchTerm ? (
-            <div className="text-center py-16">
-              <Search className="w-16 h-16 text-white/30 mx-auto mb-4" />
-              <p className="text-white/70 text-lg mb-2">No prompts found</p>
-              <p className="text-white/50 text-sm">Try adjusting your search terms or filters</p>
-            </div>
-          ) : filteredPrompts.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-white/70 mb-4">No prompts yet</p>
-              <Button 
-                className="glass-button"
-                onClick={() => setCreatePromptModalOpen(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create First Prompt
-              </Button>
-            </div>
+            {loading ? (
+              <div className="text-center py-16">
+                <p className="text-white/70">Loading prompts...</p>
+              </div>
+            ) : filteredPrompts.length === 0 && searchTerm ? (
+              <div className="text-center py-16">
+                <Search className="w-16 h-16 text-white/30 mx-auto mb-4" />
+                <p className="text-white/70 text-lg mb-2">No prompts found</p>
+                <p className="text-white/50 text-sm">Try adjusting your search terms or filters</p>
+              </div>
+            ) : filteredPrompts.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-white/70 mb-4">No prompts yet</p>
+                {(profile?.role === 'admin' || profile?.role === 'editor') && (
+                  <Button 
+                    className="glass-button"
+                    onClick={() => setCreatePromptModalOpen(true)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create First Prompt
+                  </Button>
+                )}
+              </div>
           ) : (
             <div className="space-y-4">
               {filteredPrompts.map((prompt) => {
@@ -459,17 +483,19 @@ export default function PromptArchive() {
                         >
                           <Play className="w-4 h-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="glass-button-secondary p-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Edit functionality can be added later
-                          }}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                        {(profile?.role === 'admin' || profile?.role === 'editor') && (
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="glass-button-secondary p-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Edit functionality can be added later
+                            }}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                     
@@ -528,6 +554,7 @@ export default function PromptArchive() {
           folder_id: selectedPrompt.folder_id,
           user_id: selectedPrompt.user_id
         } : null}
+        promptId={selectedPrompt?.id}
       />
 
       <UseTemplateModal

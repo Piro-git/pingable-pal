@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Copy } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { FeedbackSection } from './FeedbackSection';
 
 interface Tag {
   id: string;
@@ -18,7 +19,6 @@ interface Prompt {
   content: string;
   version: number;
   folder_id: string | null;
-  category_id?: string | null; // For backward compatibility
   user_id: string;
   created_at: string;
   tags?: Tag[];
@@ -28,9 +28,10 @@ interface ViewPromptModalProps {
   open: boolean;
   onClose: () => void;
   prompt: Prompt | null;
+  promptId?: string;
 }
 
-const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt }) => {
+const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt, promptId }) => {
   const handleCopyPrompt = async () => {
     if (!prompt) return;
     
@@ -114,6 +115,13 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             </Button>
           </div>
         </div>
+        
+        {/* Feedback Section */}
+        {promptId && (
+          <div className="border-t border-white/20 pt-6 mt-6">
+            <FeedbackSection promptId={promptId} />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

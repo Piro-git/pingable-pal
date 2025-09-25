@@ -319,6 +319,14 @@ export type Database = {
         Args: { data: string }
         Returns: string
       }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: string
+      }
+      has_role_access: {
+        Args: { _required_roles: string[]; _user_id: string }
+        Returns: boolean
+      }
       http: {
         Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
