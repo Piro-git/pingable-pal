@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           grace_period_minutes: number | null
+          group_id: string | null
           heartbeat_uuid: string
           id: string
           interval_minutes: number
@@ -30,6 +31,7 @@ export type Database = {
         Insert: {
           created_at?: string
           grace_period_minutes?: number | null
+          group_id?: string | null
           heartbeat_uuid?: string
           id?: string
           interval_minutes: number
@@ -42,6 +44,7 @@ export type Database = {
         Update: {
           created_at?: string
           grace_period_minutes?: number | null
+          group_id?: string | null
           heartbeat_uuid?: string
           id?: string
           interval_minutes?: number
@@ -74,6 +77,63 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      groups: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          status: string
+          team_id: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role: string
+          status?: string
+          team_id: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          status?: string
+          team_id?: string
+          token?: string
+          updated_at?: string
         }
         Relationships: []
       }

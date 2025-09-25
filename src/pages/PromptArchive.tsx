@@ -256,7 +256,7 @@ export default function PromptArchive() {
   };
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="glass rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between">
@@ -276,48 +276,10 @@ export default function PromptArchive() {
         </div>
       </div>
 
-      {/* Resizable Three Column Layout */}
+      {/* Resizable Two Column Layout */}
       <div className="h-[calc(100vh-200px)] flex">
-        {/* Sidebar */}
-        <div id="sidebar" className="glass rounded-2xl p-6 overflow-y-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">StatusPing</h1>
-            <p className="text-white/70 text-sm mt-1">Monitoring Dashboard</p>
-          </div>
-
-          <nav className="space-y-3">
-            <div 
-              className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
-              onClick={() => navigate('/dashboard')}
-            >
-              Dashboard
-            </div>
-            <div className="glass-button rounded-lg px-4 py-2 text-white">
-              Prompt Archive
-            </div>
-            {profile?.role === 'admin' && (
-              <div 
-                className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
-                onClick={() => navigate('/team')}
-              >
-                Team Management
-              </div>
-            )}
-            <div className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors">
-              Settings
-            </div>
-          </nav>
-
-          <div className="mt-auto pt-6">
-            <div className="glass rounded-lg p-3 mb-3">
-              <p className="text-white/70 text-sm">Signed in as:</p>
-              <p className="text-white text-sm font-medium truncate">{user?.email}</p>
-            </div>
-          </div>
-        </div>
-
         {/* Folders Column */}
-        <div id="categories-pane" className="glass rounded-2xl p-6 overflow-y-auto">
+        <div id="categories-pane" className="w-1/3 glass rounded-2xl p-6 overflow-y-auto mr-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">Folders</h3>
             {(profile?.role === 'admin' || profile?.role === 'editor') && (
@@ -383,7 +345,7 @@ export default function PromptArchive() {
         </div>
 
         {/* Prompts Column */}
-        <div id="prompts-pane" className="glass rounded-2xl p-6 overflow-y-auto">
+        <div className="flex-1 glass rounded-2xl p-6 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {selectedFolder ? `${selectedFolder.name}` : searchTerm ? 'Search Results' : 'All Prompts'}
