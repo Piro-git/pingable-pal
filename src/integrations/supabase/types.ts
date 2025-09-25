@@ -53,6 +53,30 @@ export type Database = {
         }
         Relationships: []
       }
+      folders: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       prompt_categories: {
         Row: {
           color: string | null
@@ -80,11 +104,27 @@ export type Database = {
         }
         Relationships: []
       }
+      prompt_tags: {
+        Row: {
+          prompt_id: string
+          tag_id: string
+        }
+        Insert: {
+          prompt_id: string
+          tag_id: string
+        }
+        Update: {
+          prompt_id?: string
+          tag_id?: string
+        }
+        Relationships: []
+      }
       prompts: {
         Row: {
           category_id: string
           content: string
           created_at: string
+          folder_id: string | null
           id: string
           title: string
           updated_at: string
@@ -95,6 +135,7 @@ export type Database = {
           category_id: string
           content: string
           created_at?: string
+          folder_id?: string | null
           id?: string
           title: string
           updated_at?: string
@@ -105,6 +146,7 @@ export type Database = {
           category_id?: string
           content?: string
           created_at?: string
+          folder_id?: string | null
           id?: string
           title?: string
           updated_at?: string
@@ -119,7 +161,41 @@ export type Database = {
             referencedRelation: "prompt_categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "prompts_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

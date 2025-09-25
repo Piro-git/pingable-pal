@@ -5,13 +5,21 @@ import { Plus, Archive, Edit, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-import { CreateCategoryModal } from '@/components/CreateCategoryModal';
+import { CreateFolderModal } from '@/components/CreateFolderModal';
 import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
 import { useNavigate } from 'react-router-dom';
 import Split from 'split.js';
+import { Badge } from '@/components/ui/badge';
 
-interface PromptCategory {
+interface Folder {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
+}
+
+interface Tag {
   id: string;
   name: string;
   color: string | null;
@@ -24,44 +32,67 @@ interface Prompt {
   title: string;
   content: string;
   version: number;
-  category_id: string;
+  folder_id: string | null;
   user_id: string;
   created_at: string;
+  tags?: Tag[];
 }
 
 export default function PromptArchive() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<PromptCategory[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [createCategoryModalOpen, setCreateCategoryModalOpen] = useState(false);
+  const [createFolderModalOpen, setCreateFolderModalOpen] = useState(false);
   const [createPromptModalOpen, setCreatePromptModalOpen] = useState(false);
   const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchCategories = async () => {
+  const fetchFolders = async () => {
     if (!user) return;
     
     try {
       const { data, error } = await supabase
-        .from('prompt_categories')
+        .from('folders')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCategories(data || []);
+      setFolders(data || []);
       
-      // Auto-select first category if none selected
-      if (data && data.length > 0 && !selectedCategoryId) {
-        setSelectedCategoryId(data[0].id);
+      // Auto-select first folder if none selected
+      if (data && data.length > 0 && !selectedFolderId) {
+        setSelectedFolderId(data[0].id);
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to fetch categories.",
+        description: "Failed to fetch folders.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchTags = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('tags')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setTags(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch tags.",
         variant: "destructive",
       });
     }
@@ -71,13 +102,31 @@ export default function PromptArchive() {
     if (!user) return;
     
     try {
-      const { data, error } = await supabase
+      // Fetch prompts with their tags
+      const { data: promptsData, error: promptsError } = await supabase
         .from('prompts')
-        .select('*')
+        .select(`
+          *,
+          prompt_tags (
+            tag_id,
+            tags (
+              id,
+              name,
+              color
+            )
+          )
+        `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setPrompts(data || []);
+      if (promptsError) throw promptsError;
+
+      // Transform the data to include tags directly on prompts
+      const promptsWithTags = promptsData?.map(prompt => ({
+        ...prompt,
+        tags: prompt.prompt_tags?.map((pt: any) => pt.tags).filter(Boolean) || []
+      })) || [];
+
+      setPrompts(promptsWithTags);
     } catch (error: any) {
       toast({
         title: "Error", 
@@ -91,7 +140,7 @@ export default function PromptArchive() {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchCategories(), fetchPrompts()]);
+      await Promise.all([fetchFolders(), fetchPrompts(), fetchTags()]);
     };
     loadData();
   }, [user]);
@@ -111,32 +160,46 @@ export default function PromptArchive() {
     };
   }, []);
 
-  // Apply search filtering across all categories when searching, otherwise filter by selected category
-  const searchFilteredPrompts = searchTerm
-    ? prompts.filter(prompt => {
-        const category = categories.find(cat => cat.id === prompt.category_id);
-        const searchLower = searchTerm.toLowerCase();
-        
-        return (
-          prompt.title.toLowerCase().includes(searchLower) ||
-          prompt.content.toLowerCase().includes(searchLower) ||
-          (category && category.name.toLowerCase().includes(searchLower))
-        );
-      })
-    : selectedCategoryId 
-      ? prompts.filter(prompt => prompt.category_id === selectedCategoryId)
-      : [];
-
-  const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
-
-  const getBubbleStyle = (color: string | null) => {
-    if (color) {
-      return {
-        background: `linear-gradient(135deg, ${color}40, ${color}20)`,
-        borderColor: `${color}60`,
-      };
+  // Apply filtering based on search, folder, and tags
+  const filteredPrompts = prompts.filter(prompt => {
+    // Search filter
+    if (searchTerm) {
+      const folder = folders.find(f => f.id === prompt.folder_id);
+      const searchLower = searchTerm.toLowerCase();
+      
+      const matchesSearch = (
+        prompt.title.toLowerCase().includes(searchLower) ||
+        prompt.content.toLowerCase().includes(searchLower) ||
+        (folder && folder.name.toLowerCase().includes(searchLower)) ||
+        (prompt.tags && prompt.tags.some(tag => tag.name.toLowerCase().includes(searchLower)))
+      );
+      
+      if (!matchesSearch) return false;
     }
-    return {};
+    
+    // Folder filter
+    if (!searchTerm && selectedFolderId && prompt.folder_id !== selectedFolderId) {
+      return false;
+    }
+    
+    // Tag filter
+    if (selectedTagIds.length > 0) {
+      const promptTagIds = prompt.tags?.map(tag => tag.id) || [];
+      const hasSelectedTag = selectedTagIds.some(tagId => promptTagIds.includes(tagId));
+      if (!hasSelectedTag) return false;
+    }
+    
+    return true;
+  });
+
+  const selectedFolder = folders.find(f => f.id === selectedFolderId);
+
+  const handleTagFilter = (tagId: string) => {
+    setSelectedTagIds(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    );
   };
 
   const handleViewPrompt = (prompt: Prompt) => {
@@ -197,14 +260,14 @@ export default function PromptArchive() {
           </div>
         </div>
 
-        {/* Categories Column */}
+        {/* Folders Column */}
         <div id="categories-pane" className="glass rounded-2xl p-6 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-white">Categories</h3>
+            <h3 className="text-xl font-semibold text-white">Folders</h3>
             <Button
               size="sm"
               className="glass-button px-1.5 py-0.5 text-xs"
-              onClick={() => setCreateCategoryModalOpen(true)}
+              onClick={() => setCreateFolderModalOpen(true)}
             >
               <Plus className="w-3 h-3 mr-0.5" />
               New
@@ -213,35 +276,47 @@ export default function PromptArchive() {
 
           {loading ? (
             <div className="text-center py-8">
-              <p className="text-white/70">Loading categories...</p>
+              <p className="text-white/70">Loading folders...</p>
             </div>
-          ) : categories.length === 0 ? (
+          ) : folders.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-white/70 mb-4">No categories yet</p>
+              <p className="text-white/70 mb-4">No folders yet</p>
               <Button 
                 className="glass-button"
-                onClick={() => setCreateCategoryModalOpen(true)}
+                onClick={() => setCreateFolderModalOpen(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create First Category
+                Create First Folder
               </Button>
             </div>
           ) : (
             <div className="space-y-3">
-              {categories.map((category) => (
+              <div
+                className={`glass rounded-xl p-3 cursor-pointer transition-all duration-200 max-w-[220px] min-h-[60px] flex flex-col justify-center ${
+                  !selectedFolderId 
+                    ? 'glass-button transform scale-105' 
+                    : 'hover:glass-button hover:brightness-110 hover:shadow-lg'
+                }`}
+                onClick={() => setSelectedFolderId(null)}
+              >
+                <p className="text-white font-medium text-sm leading-tight break-words">All Prompts</p>
+                <p className="text-white/70 text-xs mt-1">
+                  {prompts.length} prompts
+                </p>
+              </div>
+              {folders.map((folder) => (
                 <div
-                  key={category.id}
+                  key={folder.id}
                   className={`glass rounded-xl p-3 cursor-pointer transition-all duration-200 max-w-[220px] min-h-[60px] flex flex-col justify-center ${
-                    selectedCategoryId === category.id 
+                    selectedFolderId === folder.id 
                       ? 'glass-button transform scale-105' 
                       : 'hover:glass-button hover:brightness-110 hover:shadow-lg'
                   }`}
-                  style={getBubbleStyle(category.color)}
-                  onClick={() => setSelectedCategoryId(category.id)}
+                  onClick={() => setSelectedFolderId(folder.id)}
                 >
-                  <p className="text-white font-medium text-sm leading-tight break-words">{category.name}</p>
+                  <p className="text-white font-medium text-sm leading-tight break-words">{folder.name}</p>
                   <p className="text-white/70 text-xs mt-1">
-                    {prompts.filter(p => p.category_id === category.id).length} prompts
+                    {prompts.filter(p => p.folder_id === folder.id).length} prompts
                   </p>
                 </div>
               ))}
@@ -253,37 +328,60 @@ export default function PromptArchive() {
         <div id="prompts-pane" className="glass rounded-2xl p-6 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
-              {selectedCategory ? `${selectedCategory.name} Prompts` : 'Select a Category'}
+              {selectedFolder ? `${selectedFolder.name}` : searchTerm ? 'Search Results' : 'All Prompts'}
             </h3>
-            {selectedCategory && (
-              <Button
-                className="glass-button"
-                onClick={() => setCreatePromptModalOpen(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Prompt
-              </Button>
-            )}
+            <Button
+              className="glass-button"
+              onClick={() => setCreatePromptModalOpen(true)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Prompt
+            </Button>
           </div>
 
-          {!selectedCategory ? (
-            <div className="text-center py-16">
-              <Archive className="w-16 h-16 text-white/30 mx-auto mb-4" />
-              <p className="text-white/70 text-lg">Select a category to view prompts</p>
+          {/* Tag Filter Bar */}
+          {tags.length > 0 && (
+            <div className="mb-4">
+              <p className="text-white/70 text-sm mb-2">Filter by tags:</p>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Badge
+                    key={tag.id}
+                    variant={selectedTagIds.includes(tag.id) ? "default" : "secondary"}
+                    className={`cursor-pointer transition-all ${
+                      selectedTagIds.includes(tag.id)
+                        ? 'glass-button text-white border-white/30'
+                        : 'glass text-white/70 border-white/20 hover:glass-button hover:text-white'
+                    }`}
+                    style={{ 
+                      backgroundColor: selectedTagIds.includes(tag.id) 
+                        ? `${tag.color}60` 
+                        : tag.color 
+                          ? `${tag.color}20` 
+                          : undefined 
+                    }}
+                    onClick={() => handleTagFilter(tag.id)}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          ) : loading ? (
+          )}
+
+          {loading ? (
             <div className="text-center py-16">
               <p className="text-white/70">Loading prompts...</p>
             </div>
-          ) : searchFilteredPrompts.length === 0 && searchTerm ? (
+          ) : filteredPrompts.length === 0 && searchTerm ? (
             <div className="text-center py-16">
               <Search className="w-16 h-16 text-white/30 mx-auto mb-4" />
               <p className="text-white/70 text-lg mb-2">No prompts found</p>
-              <p className="text-white/50 text-sm">Try adjusting your search terms</p>
+              <p className="text-white/50 text-sm">Try adjusting your search terms or filters</p>
             </div>
-          ) : searchFilteredPrompts.length === 0 ? (
+          ) : filteredPrompts.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-white/70 mb-4">No prompts in this category yet</p>
+              <p className="text-white/70 mb-4">No prompts yet</p>
               <Button 
                 className="glass-button"
                 onClick={() => setCreatePromptModalOpen(true)}
@@ -294,7 +392,7 @@ export default function PromptArchive() {
             </div>
           ) : (
             <div className="space-y-4">
-              {searchFilteredPrompts.map((prompt) => (
+              {filteredPrompts.map((prompt) => (
                 <div 
                   key={prompt.id} 
                   className="glass rounded-xl p-4 cursor-pointer hover:glass-button transition-all"
@@ -317,6 +415,23 @@ export default function PromptArchive() {
                       </Button>
                     </div>
                   </div>
+                  
+                  {/* Tags */}
+                  {prompt.tags && prompt.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {prompt.tags.map((tag) => (
+                        <Badge
+                          key={tag.id}
+                          variant="secondary"
+                          className="glass text-white border-white/20 text-xs"
+                          style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
+                        >
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  
                   <div className="text-white/80 text-sm mb-3">
                     {prompt.content.length > 200 
                       ? `${prompt.content.substring(0, 200)}...` 
@@ -333,18 +448,18 @@ export default function PromptArchive() {
         </div>
       </div>
 
-      <CreateCategoryModal
-        open={createCategoryModalOpen}
-        onClose={() => setCreateCategoryModalOpen(false)}
-        onSuccess={fetchCategories}
+      <CreateFolderModal
+        open={createFolderModalOpen}
+        onClose={() => setCreateFolderModalOpen(false)}
+        onSuccess={fetchFolders}
       />
 
       <CreatePromptModal
         open={createPromptModalOpen}
         onClose={() => setCreatePromptModalOpen(false)}
         onSuccess={fetchPrompts}
-        categories={categories}
-        selectedCategoryId={selectedCategoryId}
+        folders={folders}
+        selectedFolderId={selectedFolderId}
       />
 
       <ViewPromptModal
