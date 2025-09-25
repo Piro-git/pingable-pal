@@ -75,7 +75,8 @@ export default function TeamManagement() {
       if (invitesError) throw invitesError;
       setInvitations((invites || []).map(invite => ({
         ...invite,
-        role: invite.role as 'editor' | 'viewer'
+        role: invite.role as 'editor' | 'viewer',
+        status: invite.status as 'pending' | 'accepted'
       })));
     } catch (error: any) {
       console.error('Error fetching team data:', error);

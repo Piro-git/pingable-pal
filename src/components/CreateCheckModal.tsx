@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/components/ui/use-toast';
@@ -12,12 +13,14 @@ interface CreateCheckModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  groups?: Array<{ id: string; name: string; created_at: string }>;
 }
 
-const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSuccess }) => {
+const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSuccess, groups = [] }) => {
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [interval, setInterval] = useState('5');
+  const [groupId, setGroupId] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,6 +63,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           user_id: user.id,
           name: name.trim(),
           interval_minutes: intervalNum,
+          group_id: groupId || null,
         });
 
       if (error) {
@@ -74,6 +78,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       // Reset form
       setName('');
       setInterval('5');
+      setGroupId('');
       onClose();
       onSuccess?.();
     } catch (error: any) {
@@ -90,6 +95,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const handleClose = () => {
     setName('');
     setInterval('5');
+    setGroupId('');
     onClose();
   };
 
@@ -146,6 +152,27 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
               disabled={loading}
             />
           </div>
+
+          {groups.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="group" className="text-white/90 text-sm font-medium">
+                Group (optional)
+              </Label>
+              <Select value={groupId} onValueChange={setGroupId}>
+                <SelectTrigger className="glass border-white/20 text-white">
+                  <SelectValue placeholder="Select a group..." />
+                </SelectTrigger>
+                <SelectContent className="glass border-white/20">
+                  <SelectItem value="" className="text-white">No group</SelectItem>
+                  {groups.map((group) => (
+                    <SelectItem key={group.id} value={group.id} className="text-white">
+                      {group.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <Button
