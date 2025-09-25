@@ -96,7 +96,14 @@ export function CreatePromptModal({
 
       if (updateError) throw updateError;
 
-      // Add tags if any are selected
+      // Handle tags - first remove existing ones
+      const { error: deleteTagsError } = await supabase
+        .from('prompt_tags')
+        .delete()
+        .eq('prompt_id', promptData.id);
+
+      if (deleteTagsError) throw deleteTagsError;
+      // Add new tags if any are selected
       if (selectedTags.length > 0) {
         const tagInserts = selectedTags.map(tag => ({
           prompt_id: promptData.id,

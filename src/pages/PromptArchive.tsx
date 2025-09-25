@@ -71,6 +71,7 @@ export default function PromptArchive() {
       const { data, error } = await supabase
         .from('folders')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -81,6 +82,7 @@ export default function PromptArchive() {
         setSelectedFolderId(data[0].id);
       }
     } catch (error: any) {
+      console.error('Fetch folders error:', error);
       toast({
         title: "Error",
         description: "Failed to fetch folders.",
@@ -96,11 +98,13 @@ export default function PromptArchive() {
       const { data, error } = await supabase
         .from('tags')
         .select('*')
+        .eq('user_id', user.id)
         .order('name');
 
       if (error) throw error;
       setTags(data || []);
     } catch (error: any) {
+      console.error('Fetch tags error:', error);
       toast({
         title: "Error",
         description: "Failed to fetch tags.",
@@ -117,8 +121,13 @@ export default function PromptArchive() {
       const { data, error } = await supabase
         .from('prompts')
         .select(`
-          *,
-          current_version:prompt_versions!current_version_id(
+          id,
+          user_id,
+          folder_id,
+          current_version_id,
+          created_at,
+          updated_at,
+          prompt_versions!current_version_id(
             id,
             title,
             content,
@@ -134,15 +143,16 @@ export default function PromptArchive() {
 
       const processedPrompts = data?.map(prompt => ({
         ...prompt,
-        current_version: {
-          ...prompt.current_version,
-          variables: (prompt.current_version?.variables as string[]) || [],
+        current_version: prompt.prompt_versions ? {
+          ...prompt.prompt_versions,
+          variables: (prompt.prompt_versions.variables as string[]) || [],
           tags: []
-        }
-      })) || [];
+        } : null
+      })).filter(prompt => prompt.current_version) || [];
 
       setPrompts(processedPrompts);
     } catch (error: any) {
+      console.error('Fetch prompts error:', error);
       toast({
         title: "Error",
         description: "Failed to load prompts.",
