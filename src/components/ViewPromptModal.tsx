@@ -3,16 +3,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/use-toast';
+import { Badge } from '@/components/ui/badge';
+
+interface Tag {
+  id: string;
+  name: string;
+  color: string | null;
+}
 
 interface Prompt {
   id: string;
   title: string;
   content: string;
   version: number;
-  category_id: string;
+  folder_id: string | null;
+  category_id?: string | null; // For backward compatibility
   user_id: string;
   created_at: string;
+  tags?: Tag[];
 }
 
 interface ViewPromptModalProps {
@@ -58,6 +67,25 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
           <div className="text-white/70 text-sm">
             Created {new Date(prompt.created_at).toLocaleDateString()}
           </div>
+          
+          {/* Tags */}
+          {prompt.tags && prompt.tags.length > 0 && (
+            <div>
+              <label className="text-white font-medium text-sm">Tags:</label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {prompt.tags.map((tag) => (
+                  <Badge
+                    key={tag.id}
+                    variant="secondary"
+                    className="glass text-white border-white/20"
+                    style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
           
           <div className="space-y-3">
             <label className="text-white font-medium">Prompt Content:</label>

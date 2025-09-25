@@ -33,6 +33,7 @@ interface Prompt {
   content: string;
   version: number;
   folder_id: string | null;
+  category_id?: string | null; // For backward compatibility
   user_id: string;
   created_at: string;
   tags?: Tag[];
@@ -102,29 +103,19 @@ export default function PromptArchive() {
     if (!user) return;
     
     try {
-      // Fetch prompts with their tags
+      // First fetch prompts
       const { data: promptsData, error: promptsError } = await supabase
         .from('prompts')
-        .select(`
-          *,
-          prompt_tags (
-            tag_id,
-            tags (
-              id,
-              name,
-              color
-            )
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (promptsError) throw promptsError;
 
-      // Transform the data to include tags directly on prompts
-      const promptsWithTags = promptsData?.map(prompt => ({
+      // Initialize prompts with empty tags array
+      const promptsWithTags = (promptsData || []).map(prompt => ({
         ...prompt,
-        tags: prompt.prompt_tags?.map((pt: any) => pt.tags).filter(Boolean) || []
-      })) || [];
+        tags: [] as Tag[]
+      }));
 
       setPrompts(promptsWithTags);
     } catch (error: any) {

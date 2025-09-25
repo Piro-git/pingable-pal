@@ -58,6 +58,7 @@ export function CreatePromptModal({
           title: title.trim(),
           content: content.trim(),
           folder_id: folderId || null,
+          category_id: null, // For backward compatibility during transition
           user_id: user.id,
           version: 1
         })

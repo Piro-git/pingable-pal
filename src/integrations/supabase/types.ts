@@ -121,7 +121,7 @@ export type Database = {
       }
       prompts: {
         Row: {
-          category_id: string
+          category_id: string | null
           content: string
           created_at: string
           folder_id: string | null
@@ -132,7 +132,7 @@ export type Database = {
           version: number
         }
         Insert: {
-          category_id: string
+          category_id?: string | null
           content: string
           created_at?: string
           folder_id?: string | null
@@ -143,7 +143,7 @@ export type Database = {
           version?: number
         }
         Update: {
-          category_id?: string
+          category_id?: string | null
           content?: string
           created_at?: string
           folder_id?: string | null
