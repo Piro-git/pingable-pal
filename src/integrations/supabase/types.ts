@@ -129,6 +129,7 @@ export type Database = {
           title: string
           updated_at: string
           user_id: string
+          variables: Json | null
           version: number
         }
         Insert: {
@@ -140,6 +141,7 @@ export type Database = {
           title: string
           updated_at?: string
           user_id: string
+          variables?: Json | null
           version?: number
         }
         Update: {
@@ -151,6 +153,7 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+          variables?: Json | null
           version?: number
         }
         Relationships: [

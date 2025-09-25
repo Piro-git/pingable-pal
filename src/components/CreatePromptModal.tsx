@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/components/ui/use-toast';
 import { TagInput } from './TagInput';
+import { extractVariables } from '@/utils/templateUtils';
 
 interface Folder {
   id: string;
@@ -44,6 +46,13 @@ export function CreatePromptModal({
   const [folderId, setFolderId] = useState(selectedFolderId || 'none');
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(false);
+  const [detectedVariables, setDetectedVariables] = useState<string[]>([]);
+
+  // Real-time variable detection
+  useEffect(() => {
+    const variables = extractVariables(content);
+    setDetectedVariables(variables);
+  }, [content]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +69,8 @@ export function CreatePromptModal({
           folder_id: folderId === 'none' ? null : folderId,
           category_id: null, // For backward compatibility during transition
           user_id: user.id,
-          version: 1
+          version: 1,
+          variables: detectedVariables
         })
         .select()
         .single();
@@ -104,6 +114,7 @@ export function CreatePromptModal({
     setContent('');
     setFolderId(selectedFolderId || 'none');
     setSelectedTags([]);
+    setDetectedVariables([]);
     onClose();
   };
 
@@ -166,6 +177,29 @@ export function CreatePromptModal({
               onTagsChange={setSelectedTags}
             />
           </div>
+
+          {/* Detected Variables Section */}
+          {detectedVariables.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-white">
+                Detected Variables ({detectedVariables.length})
+              </Label>
+              <div className="flex flex-wrap gap-2 p-3 glass rounded-lg">
+                {detectedVariables.map((variable) => (
+                  <Badge
+                    key={variable}
+                    variant="secondary"
+                    className="glass-button text-white border-white/30 bg-blue-500/20"
+                  >
+                    {"{{" + variable + "}}"}
+                  </Badge>
+                ))}
+              </div>
+              <p className="text-white/60 text-xs">
+                These variables can be filled in when using this template.
+              </p>
+            </div>
+          )}
 
           <div>
             <Label htmlFor="prompt-content" className="text-white">

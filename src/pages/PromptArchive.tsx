@@ -1,13 +1,14 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Archive, Edit, Search } from 'lucide-react';
+import { Plus, Archive, Edit, Search, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { CreateFolderModal } from '@/components/CreateFolderModal';
 import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
+import { UseTemplateModal } from '@/components/UseTemplateModal';
 import { useNavigate } from 'react-router-dom';
 import Split from 'split.js';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +37,7 @@ interface Prompt {
   category_id?: string | null; // For backward compatibility
   user_id: string;
   created_at: string;
+  variables?: string[];
   tags?: Tag[];
 }
 
@@ -51,6 +53,7 @@ export default function PromptArchive() {
   const [createFolderModalOpen, setCreateFolderModalOpen] = useState(false);
   const [createPromptModalOpen, setCreatePromptModalOpen] = useState(false);
   const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
+  const [useTemplateModalOpen, setUseTemplateModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -111,10 +114,11 @@ export default function PromptArchive() {
 
       if (promptsError) throw promptsError;
 
-      // Initialize prompts with empty tags array
+      // Initialize prompts with empty tags array and proper variables type
       const promptsWithTags = (promptsData || []).map(prompt => ({
         ...prompt,
-        tags: [] as Tag[]
+        tags: [] as Tag[],
+        variables: Array.isArray(prompt.variables) ? prompt.variables as string[] : []
       }));
 
       setPrompts(promptsWithTags);
@@ -196,6 +200,11 @@ export default function PromptArchive() {
   const handleViewPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
     setViewPromptModalOpen(true);
+  };
+
+  const handleUseTemplate = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setUseTemplateModalOpen(true);
   };
 
   return (
@@ -392,7 +401,27 @@ export default function PromptArchive() {
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="text-white font-semibold text-lg">{prompt.title}</h4>
                     <div className="flex items-center gap-2">
+                      {prompt.variables && prompt.variables.length > 0 && (
+                        <Badge
+                          variant="secondary"
+                          className="glass text-white border-white/20 text-xs bg-blue-500/20"
+                        >
+                          {prompt.variables.length} var{prompt.variables.length === 1 ? '' : 's'}
+                        </Badge>
+                      )}
                       <span className="text-white/60 text-sm">v{prompt.version}</span>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="glass-button-secondary p-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUseTemplate(prompt);
+                        }}
+                        title="Use Template"
+                      >
+                        <Play className="w-4 h-4" />
+                      </Button>
                       <Button 
                         size="sm" 
                         variant="ghost" 
@@ -456,6 +485,12 @@ export default function PromptArchive() {
       <ViewPromptModal
         open={viewPromptModalOpen}
         onClose={() => setViewPromptModalOpen(false)}
+        prompt={selectedPrompt}
+      />
+
+      <UseTemplateModal
+        open={useTemplateModalOpen}
+        onClose={() => setUseTemplateModalOpen(false)}
         prompt={selectedPrompt}
       />
     </div>
