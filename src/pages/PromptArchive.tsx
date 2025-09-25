@@ -28,17 +28,24 @@ interface Tag {
   created_at: string;
 }
 
-interface Prompt {
+interface PromptVersion {
   id: string;
   title: string;
   content: string;
   version: number;
-  folder_id: string | null;
-  category_id?: string | null; // For backward compatibility
-  user_id: string;
+  variables: string[];
   created_at: string;
-  variables?: string[];
   tags?: Tag[];
+}
+
+interface Prompt {
+  id: string;
+  user_id: string;
+  folder_id: string | null;
+  current_version_id: string;
+  created_at: string;
+  updated_at: string;
+  current_version?: PromptVersion;
 }
 
 export default function PromptArchive() {
@@ -105,27 +112,40 @@ export default function PromptArchive() {
   const fetchPrompts = async () => {
     if (!user) return;
     
+    setLoading(true);
     try {
-      // First fetch prompts
-      const { data: promptsData, error: promptsError } = await supabase
+      const { data, error } = await supabase
         .from('prompts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          current_version:prompt_versions!current_version_id(
+            id,
+            title,
+            content,
+            version,
+            variables,
+            created_at
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
 
-      if (promptsError) throw promptsError;
+      if (error) throw error;
 
-      // Initialize prompts with empty tags array and proper variables type
-      const promptsWithTags = (promptsData || []).map(prompt => ({
+      const processedPrompts = data?.map(prompt => ({
         ...prompt,
-        tags: [] as Tag[],
-        variables: Array.isArray(prompt.variables) ? prompt.variables as string[] : []
-      }));
+        current_version: {
+          ...prompt.current_version,
+          variables: (prompt.current_version?.variables as string[]) || [],
+          tags: []
+        }
+      })) || [];
 
-      setPrompts(promptsWithTags);
+      setPrompts(processedPrompts);
     } catch (error: any) {
       toast({
-        title: "Error", 
-        description: "Failed to fetch prompts.",
+        title: "Error",
+        description: "Failed to load prompts.",
         variant: "destructive",
       });
     } finally {
@@ -157,16 +177,19 @@ export default function PromptArchive() {
 
   // Apply filtering based on search, folder, and tags
   const filteredPrompts = prompts.filter(prompt => {
+    const currentVersion = prompt.current_version;
+    if (!currentVersion) return false;
+    
     // Search filter
     if (searchTerm) {
       const folder = folders.find(f => f.id === prompt.folder_id);
       const searchLower = searchTerm.toLowerCase();
       
       const matchesSearch = (
-        prompt.title.toLowerCase().includes(searchLower) ||
-        prompt.content.toLowerCase().includes(searchLower) ||
+        currentVersion.title.toLowerCase().includes(searchLower) ||
+        currentVersion.content.toLowerCase().includes(searchLower) ||
         (folder && folder.name.toLowerCase().includes(searchLower)) ||
-        (prompt.tags && prompt.tags.some(tag => tag.name.toLowerCase().includes(searchLower)))
+        (currentVersion.tags && currentVersion.tags.some(tag => tag.name.toLowerCase().includes(searchLower)))
       );
       
       if (!matchesSearch) return false;
@@ -179,7 +202,7 @@ export default function PromptArchive() {
     
     // Tag filter
     if (selectedTagIds.length > 0) {
-      const promptTagIds = prompt.tags?.map(tag => tag.id) || [];
+      const promptTagIds = currentVersion.tags?.map(tag => tag.id) || [];
       const hasSelectedTag = selectedTagIds.some(tagId => promptTagIds.includes(tagId));
       if (!hasSelectedTag) return false;
     }
@@ -392,77 +415,82 @@ export default function PromptArchive() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredPrompts.map((prompt) => (
-                <div 
-                  key={prompt.id} 
-                  className="glass rounded-xl p-4 cursor-pointer hover:glass-button transition-all"
-                  onClick={() => handleViewPrompt(prompt)}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-white font-semibold text-lg">{prompt.title}</h4>
-                    <div className="flex items-center gap-2">
-                      {prompt.variables && prompt.variables.length > 0 && (
-                        <Badge
-                          variant="secondary"
-                          className="glass text-white border-white/20 text-xs bg-blue-500/20"
+              {filteredPrompts.map((prompt) => {
+                const currentVersion = prompt.current_version;
+                if (!currentVersion) return null;
+                
+                return (
+                  <div 
+                    key={prompt.id} 
+                    className="glass rounded-xl p-4 cursor-pointer hover:glass-button transition-all"
+                    onClick={() => handleViewPrompt(prompt)}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="text-white font-semibold text-lg">{currentVersion.title}</h4>
+                      <div className="flex items-center gap-2">
+                        {currentVersion.variables && currentVersion.variables.length > 0 && (
+                          <Badge
+                            variant="secondary"
+                            className="glass text-white border-white/20 text-xs bg-blue-500/20"
+                          >
+                            {currentVersion.variables.length} var{currentVersion.variables.length === 1 ? '' : 's'}
+                          </Badge>
+                        )}
+                        <span className="text-white/60 text-sm">v{currentVersion.version}</span>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="glass-button-secondary p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUseTemplate(prompt);
+                          }}
+                          title="Use Template"
                         >
-                          {prompt.variables.length} var{prompt.variables.length === 1 ? '' : 's'}
-                        </Badge>
-                      )}
-                      <span className="text-white/60 text-sm">v{prompt.version}</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="glass-button-secondary p-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleUseTemplate(prompt);
-                        }}
-                        title="Use Template"
-                      >
-                        <Play className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="glass-button-secondary p-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Edit functionality can be added later
-                        }}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
+                          <Play className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="glass-button-secondary p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Edit functionality can be added later
+                          }}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Tags */}
+                    {currentVersion.tags && currentVersion.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {currentVersion.tags.map((tag) => (
+                          <Badge
+                            key={tag.id}
+                            variant="secondary"
+                            className="glass text-white border-white/20 text-xs"
+                            style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
+                          >
+                            {tag.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <div className="text-white/80 text-sm mb-3">
+                      {currentVersion.content.length > 200 
+                        ? `${currentVersion.content.substring(0, 200)}...` 
+                        : currentVersion.content
+                      }
+                    </div>
+                    <div className="text-white/50 text-xs">
+                      Created {new Date(currentVersion.created_at).toLocaleDateString()}
                     </div>
                   </div>
-                  
-                  {/* Tags */}
-                  {prompt.tags && prompt.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {prompt.tags.map((tag) => (
-                        <Badge
-                          key={tag.id}
-                          variant="secondary"
-                          className="glass text-white border-white/20 text-xs"
-                          style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
-                        >
-                          {tag.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                  
-                  <div className="text-white/80 text-sm mb-3">
-                    {prompt.content.length > 200 
-                      ? `${prompt.content.substring(0, 200)}...` 
-                      : prompt.content
-                    }
-                  </div>
-                  <div className="text-white/50 text-xs">
-                    Created {new Date(prompt.created_at).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -485,13 +513,21 @@ export default function PromptArchive() {
       <ViewPromptModal
         open={viewPromptModalOpen}
         onClose={() => setViewPromptModalOpen(false)}
-        prompt={selectedPrompt}
+        prompt={selectedPrompt?.current_version ? {
+          ...selectedPrompt.current_version,
+          folder_id: selectedPrompt.folder_id,
+          user_id: selectedPrompt.user_id
+        } : null}
       />
 
       <UseTemplateModal
         open={useTemplateModalOpen}
         onClose={() => setUseTemplateModalOpen(false)}
-        prompt={selectedPrompt}
+        prompt={selectedPrompt?.current_version ? {
+          ...selectedPrompt.current_version,
+          folder_id: selectedPrompt.folder_id,
+          user_id: selectedPrompt.user_id
+        } : null}
       />
     </div>
   );

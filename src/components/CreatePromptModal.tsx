@@ -60,22 +60,41 @@ export function CreatePromptModal({
 
     setLoading(true);
     try {
-      // Create the prompt
+      // Create the main prompt record first
       const { data: promptData, error: promptError } = await supabase
         .from('prompts')
         .insert({
-          title: title.trim(),
-          content: content.trim(),
-          folder_id: folderId === 'none' ? null : folderId,
-          category_id: null, // For backward compatibility during transition
           user_id: user.id,
-          version: 1,
-          variables: detectedVariables
+          folder_id: folderId === 'none' ? null : folderId
         })
         .select()
         .single();
 
       if (promptError) throw promptError;
+
+      // Create the first version
+      const { data: versionData, error: versionError } = await supabase
+        .from('prompt_versions')
+        .insert({
+          prompt_id: promptData.id,
+          title: title.trim(),
+          content: content.trim(),
+          version: 1,
+          variables: detectedVariables,
+          user_id: user.id
+        })
+        .select()
+        .single();
+
+      if (versionError) throw versionError;
+
+      // Update the prompt with the current version ID
+      const { error: updateError } = await supabase
+        .from('prompts')
+        .update({ current_version_id: versionData.id })
+        .eq('id', promptData.id);
+
+      if (updateError) throw updateError;
 
       // Add tags if any are selected
       if (selectedTags.length > 0) {

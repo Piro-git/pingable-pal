@@ -119,13 +119,14 @@ export type Database = {
         }
         Relationships: []
       }
-      prompts: {
+      prompt_versions: {
         Row: {
           category_id: string | null
           content: string
           created_at: string
           folder_id: string | null
           id: string
+          prompt_id: string
           title: string
           updated_at: string
           user_id: string
@@ -138,6 +139,7 @@ export type Database = {
           created_at?: string
           folder_id?: string | null
           id?: string
+          prompt_id: string
           title: string
           updated_at?: string
           user_id: string
@@ -150,6 +152,7 @@ export type Database = {
           created_at?: string
           folder_id?: string | null
           id?: string
+          prompt_id?: string
           title?: string
           updated_at?: string
           user_id?: string
@@ -157,6 +160,13 @@ export type Database = {
           version?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_prompt_versions_prompt_id"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prompts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "prompts_category_id_fkey"
             columns: ["category_id"]
@@ -169,6 +179,41 @@ export type Database = {
             columns: ["folder_id"]
             isOneToOne: false
             referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompts: {
+        Row: {
+          created_at: string
+          current_version_id: string | null
+          folder_id: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_version_id?: string | null
+          folder_id?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_version_id?: string | null
+          folder_id?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_prompts_current_version_id"
+            columns: ["current_version_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_versions"
             referencedColumns: ["id"]
           },
         ]
