@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -100,9 +100,14 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
       <DialogContent className="glass border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold text-white">
-              Use Template: {prompt.title}
-            </DialogTitle>
+            <div>
+              <DialogTitle className="text-xl font-semibold text-white">
+                Use Template: {prompt.title}
+              </DialogTitle>
+              <DialogDescription className="text-white/70">
+                Fill in the variables to use this prompt template.
+              </DialogDescription>
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-white/60 text-sm">v{prompt.version}</span>
               {prompt.tags && prompt.tags.length > 0 && (

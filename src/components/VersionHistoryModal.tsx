@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { History, RotateCcw } from 'lucide-react';
@@ -186,6 +186,9 @@ export function VersionHistoryModal({
             <History className="w-5 h-5" />
             Version History
           </DialogTitle>
+          <DialogDescription className="text-white/70">
+            View and manage different versions of this prompt.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="flex gap-6 h-[70vh]">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -223,7 +223,12 @@ export function EditPromptModal({
         <DialogContent className="glass border-white/20 max-w-2xl">
           <DialogHeader>
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-white">Edit Prompt</DialogTitle>
+              <div>
+                <DialogTitle className="text-white">Edit Prompt</DialogTitle>
+                <DialogDescription className="text-white/70">
+                  Make changes to your prompt template.
+                </DialogDescription>
+              </div>
               <Button
                 type="button"
                 variant="outline"

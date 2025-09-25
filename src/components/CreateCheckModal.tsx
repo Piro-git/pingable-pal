@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -101,6 +101,9 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
             <DialogTitle className="text-xl font-semibold text-white">
               Create New Check
             </DialogTitle>
+            <DialogDescription className="text-white/70">
+              Set up a new service monitoring check.
+            </DialogDescription>
           </DialogHeader>
           <Button
             onClick={handleClose}

@@ -59,6 +59,12 @@ interface Prompt {
 
 export default function PromptArchive() {
   const { user, profile } = useAuth();
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('PromptArchive - User:', user?.id);
+    console.log('PromptArchive - Profile:', profile);
+  }, [user, profile]);
   const navigate = useNavigate();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);

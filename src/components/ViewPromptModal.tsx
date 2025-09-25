@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy } from 'lucide-react';
@@ -57,9 +57,14 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
       <DialogContent className="glass max-w-4xl max-h-[80vh] overflow-hidden">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold text-white">
-              {prompt.title}
-            </DialogTitle>
+            <div>
+              <DialogTitle className="text-xl font-semibold text-white">
+                {prompt.title}
+              </DialogTitle>
+              <DialogDescription className="text-white/70">
+                View prompt details and feedback.
+              </DialogDescription>
+            </div>
             <span className="text-white/60 text-sm">v{prompt.version}</span>
           </div>
         </DialogHeader>
