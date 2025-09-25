@@ -297,10 +297,9 @@ export default function PromptArchive() {
             </div>
             {profile?.role === 'admin' && (
               <div 
-                className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+                className="text-white/70 px-4 py-2 hover:text-white cursor-pointer transition-colors"
                 onClick={() => navigate('/team')}
               >
-                <Users className="w-4 h-4" />
                 Team Management
               </div>
             )}
