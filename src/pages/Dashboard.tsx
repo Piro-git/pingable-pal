@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Plus, Copy, RefreshCw } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
 import { useState, useEffect } from 'react';

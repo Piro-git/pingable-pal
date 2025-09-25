@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { History } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { TagInput } from './TagInput';
 import { VersionHistoryModal } from './VersionHistoryModal';
 import { extractVariables } from '@/utils/templateUtils';
