@@ -41,7 +41,7 @@ export function CreatePromptModal({
   const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [folderId, setFolderId] = useState(selectedFolderId || '');
+  const [folderId, setFolderId] = useState(selectedFolderId || 'none');
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -57,7 +57,7 @@ export function CreatePromptModal({
         .insert({
           title: title.trim(),
           content: content.trim(),
-          folder_id: folderId || null,
+          folder_id: folderId === 'none' ? null : folderId,
           category_id: null, // For backward compatibility during transition
           user_id: user.id,
           version: 1
@@ -102,7 +102,7 @@ export function CreatePromptModal({
   const handleClose = () => {
     setTitle('');
     setContent('');
-    setFolderId(selectedFolderId || '');
+    setFolderId(selectedFolderId || 'none');
     setSelectedTags([]);
     onClose();
   };
@@ -139,7 +139,7 @@ export function CreatePromptModal({
               </SelectTrigger>
               <SelectContent className="glass border-white/20">
                 <SelectItem 
-                  value=""
+                  value="none"
                   className="text-white hover:bg-white/10 focus:bg-white/10"
                 >
                   No folder
