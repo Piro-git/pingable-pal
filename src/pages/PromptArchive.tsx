@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Plus, Archive, Edit } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Plus, Archive, Edit, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
@@ -39,6 +40,7 @@ export default function PromptArchive() {
   const [createPromptModalOpen, setCreatePromptModalOpen] = useState(false);
   const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchCategories = async () => {
     if (!user) return;
@@ -113,6 +115,20 @@ export default function PromptArchive() {
     ? prompts.filter(prompt => prompt.category_id === selectedCategoryId)
     : [];
 
+  // Apply search filtering
+  const searchFilteredPrompts = searchTerm
+    ? filteredPrompts.filter(prompt => {
+        const category = categories.find(cat => cat.id === prompt.category_id);
+        const searchLower = searchTerm.toLowerCase();
+        
+        return (
+          prompt.title.toLowerCase().includes(searchLower) ||
+          prompt.content.toLowerCase().includes(searchLower) ||
+          (category && category.name.toLowerCase().includes(searchLower))
+        );
+      })
+    : filteredPrompts;
+
   const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
 
   const getBubbleStyle = (color: string | null) => {
@@ -138,6 +154,15 @@ export default function PromptArchive() {
           <div>
             <h2 className="text-2xl font-bold text-white">Prompt Archive</h2>
             <p className="text-white/70">Organize and manage your AI prompts</p>
+          </div>
+          <div className="relative w-80">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
+            <Input
+              placeholder="Search prompts, categories, or content..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+            />
           </div>
         </div>
       </div>
@@ -252,7 +277,13 @@ export default function PromptArchive() {
             <div className="text-center py-16">
               <p className="text-white/70">Loading prompts...</p>
             </div>
-          ) : filteredPrompts.length === 0 ? (
+          ) : searchFilteredPrompts.length === 0 && searchTerm ? (
+            <div className="text-center py-16">
+              <Search className="w-16 h-16 text-white/30 mx-auto mb-4" />
+              <p className="text-white/70 text-lg mb-2">No prompts found</p>
+              <p className="text-white/50 text-sm">Try adjusting your search terms</p>
+            </div>
+          ) : searchFilteredPrompts.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-white/70 mb-4">No prompts in this category yet</p>
               <Button 
@@ -265,7 +296,7 @@ export default function PromptArchive() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredPrompts.map((prompt) => (
+              {searchFilteredPrompts.map((prompt) => (
                 <div 
                   key={prompt.id} 
                   className="glass rounded-xl p-4 cursor-pointer hover:glass-button transition-all"
