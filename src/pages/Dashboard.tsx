@@ -162,119 +162,112 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Main Content Area */}
-        <div className="grid grid-cols-12 gap-6">
-          {/* Groups Sidebar */}
-          <div className="col-span-3">
-            <div className="glass rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Groups</h3>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="glass-button p-2"
-                  onClick={() => setCreateGroupModalOpen(true)}
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <button
-                  onClick={() => setSelectedGroup(null)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                    selectedGroup === null 
-                      ? 'glass-button text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Ungrouped ({checks.filter(c => !c.group_id).length})
-                </button>
-                
-                {groups.map((group) => (
-                  <button
-                    key={group.id}
-                    onClick={() => setSelectedGroup(group.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedGroup === group.id 
-                        ? 'glass-button text-white' 
-                        : 'text-white/70 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {group.name} ({checks.filter(c => c.group_id === group.id).length})
-                  </button>
-                ))}
-              </div>
-            </div>
+        {/* Groups Filter Bar */}
+        <div className="glass rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white">Filter by Group</h3>
+            <Button
+              size="sm"
+              className="glass-button"
+              onClick={() => setCreateGroupModalOpen(true)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Group
+            </Button>
           </div>
 
-          {/* Checks List */}
-          <div className="col-span-9">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                {selectedGroup 
-                  ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
-                  : 'Ungrouped Checks'
-                }
-              </h3>
-              
-              {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-white/70">Loading checks...</p>
-                </div>
-              ) : filteredChecks.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-white/70 mb-4">No health checks in this group yet</p>
-                  <Button 
-                    className="glass-button"
-                    onClick={() => setCreateModalOpen(true)}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Check
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredChecks.map((check) => (
-                    <div key={check.id} className="glass rounded-xl p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${
-                            check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
-                          }`} />
-                          <div>
-                            <h4 className="text-white font-medium">{check.name}</h4>
-                            <p className="text-white/70 text-sm">
-                              Status: {check.status} • Every {check.interval_minutes}min
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            <p className="text-white/70 text-sm">
-                              {check.last_pinged_at 
-                                ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
-                                : 'Never pinged'
-                              }
-                            </p>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="glass-button"
-                            onClick={() => copyPingUrl(check.heartbeat_uuid)}
-                          >
-                            <Copy className="w-4 h-4 mr-2" />
-                            Copy URL
-                          </Button>
-                        </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setSelectedGroup(null)}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                selectedGroup === null 
+                  ? 'glass-button text-white' 
+                  : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+              }`}
+            >
+              Ungrouped ({checks.filter(c => !c.group_id).length})
+            </button>
+            
+            {groups.map((group) => (
+              <button
+                key={group.id}
+                onClick={() => setSelectedGroup(group.id)}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  selectedGroup === group.id 
+                    ? 'glass-button text-white' 
+                    : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                }`}
+              >
+                {group.name} ({checks.filter(c => c.group_id === group.id).length})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Checks List */}
+        <div className="glass rounded-2xl p-6">
+          <h3 className="text-xl font-semibold text-white mb-4">
+            {selectedGroup 
+              ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
+              : 'Ungrouped Checks'
+            }
+          </h3>
+          
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-white/70">Loading checks...</p>
+            </div>
+          ) : filteredChecks.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-white/70 mb-4">No health checks in this group yet</p>
+              <Button 
+                className="glass-button"
+                onClick={() => setCreateModalOpen(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Check
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredChecks.map((check) => (
+                <div key={check.id} className="glass rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
+                      }`} />
+                      <div>
+                        <h4 className="text-white font-medium">{check.name}</h4>
+                        <p className="text-white/70 text-sm">
+                          Status: {check.status} • Every {check.interval_minutes}min
+                        </p>
                       </div>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-white/70 text-sm">
+                          {check.last_pinged_at 
+                            ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
+                            : 'Never pinged'
+                          }
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="glass-button"
+                        onClick={() => copyPingUrl(check.heartbeat_uuid)}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy URL
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
+          )}
         </div>
       </div>
 
