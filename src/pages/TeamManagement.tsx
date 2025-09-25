@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserPlus, Mail, Shield, Trash2, RefreshCw, Crown, Edit, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { AppLayout } from '@/components/AppLayout';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -223,29 +224,32 @@ export default function TeamManagement() {
 
   if (profile?.role !== 'admin') {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-          <p className="text-white/70">Only administrators can access team management.</p>
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+            <p className="text-white/70">Only administrators can access team management.</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <div className="glass rounded-2xl p-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Team Management</h2>
-            <p className="text-white/70">Manage your team members and invitations</p>
+    <AppLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="glass rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Team Management</h2>
+              <p className="text-white/70">Manage your team members and invitations</p>
+            </div>
+            <Badge variant="secondary" className="glass text-white border-white/20">
+              {teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}
+            </Badge>
           </div>
-          <Badge variant="secondary" className="glass text-white border-white/20">
-            {teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}
-          </Badge>
         </div>
-      </div>
 
       <Tabs defaultValue="members" className="space-y-6">
         <TabsList className="glass border-white/20">
@@ -550,6 +554,7 @@ export default function TeamManagement() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
