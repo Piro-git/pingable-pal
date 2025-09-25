@@ -111,13 +111,9 @@ export default function PromptArchive() {
     };
   }, []);
 
-  const filteredPrompts = selectedCategoryId 
-    ? prompts.filter(prompt => prompt.category_id === selectedCategoryId)
-    : [];
-
-  // Apply search filtering
+  // Apply search filtering across all categories when searching, otherwise filter by selected category
   const searchFilteredPrompts = searchTerm
-    ? filteredPrompts.filter(prompt => {
+    ? prompts.filter(prompt => {
         const category = categories.find(cat => cat.id === prompt.category_id);
         const searchLower = searchTerm.toLowerCase();
         
@@ -127,7 +123,9 @@ export default function PromptArchive() {
           (category && category.name.toLowerCase().includes(searchLower))
         );
       })
-    : filteredPrompts;
+    : selectedCategoryId 
+      ? prompts.filter(prompt => prompt.category_id === selectedCategoryId)
+      : [];
 
   const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
 
