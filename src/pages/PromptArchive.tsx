@@ -10,7 +10,7 @@ import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
 import { UseTemplateModal } from '@/components/UseTemplateModal';
 import { useNavigate } from 'react-router-dom';
-import { AppLayout } from '@/components/AppLayout';
+
 import { Badge } from '@/components/ui/badge';
 
 interface Folder {
@@ -205,7 +205,7 @@ export default function PromptArchive() {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="glass rounded-2xl p-6">
@@ -495,6 +495,6 @@ export default function PromptArchive() {
           tags: []
         } : null}
       />
-    </AppLayout>
+    </>
   );
 }
