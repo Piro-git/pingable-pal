@@ -163,23 +163,23 @@ export default function Dashboard() {
       </div>
 
       {/* Groups Filter Bar */}
-      <div className="glass rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Filter by Group</h3>
+      <div className="glass rounded-2xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-semibold text-white">Filter by Group</h3>
           <Button
             size="sm"
-            className="glass-button"
+            className="glass-button h-8"
             onClick={() => setCreateGroupModalOpen(true)}
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-3 h-3 mr-1" />
             New Group
           </Button>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedGroup(null)}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
               selectedGroup === null 
                 ? 'glass-button text-white' 
                 : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
@@ -192,7 +192,7 @@ export default function Dashboard() {
             <button
               key={group.id}
               onClick={() => setSelectedGroup(group.id)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
                 selectedGroup === group.id 
                   ? 'glass-button text-white' 
                   : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
@@ -205,7 +205,7 @@ export default function Dashboard() {
       </div>
 
       {/* Checks List */}
-      <div className="glass rounded-2xl p-6 h-[calc(100vh-32rem)]">
+      <div className="glass rounded-2xl p-6 h-[calc(100vh-28rem)]">
         <h3 className="text-xl font-semibold text-white mb-4">
           {selectedGroup 
             ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
