@@ -149,73 +149,71 @@ export default function Dashboard() {
       </div>
 
       {/* Resizable Panels */}
-      <ResizablePanelGroup direction="vertical" className="flex-1 min-h-0 gap-3">
-        <ResizablePanel defaultSize={30} minSize={15} maxSize={50}>
-          <div className="space-y-3 h-full flex flex-col">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-4 gap-3 flex-shrink-0">
-              {[
-                { label: 'Total Checks', value: totalChecks.toString() },
-                { label: 'Checks Up', value: checksUp.toString() },
-                { label: 'Checks Down', value: checksDown.toString() },
-                { label: 'Uptime %', value: `${uptimePercentage}%` },
-              ].map((stat, index) => (
-                <div key={index} className="glass rounded-xl p-3">
-                  <p className="text-white/70 text-xs">{stat.label}</p>
-                  <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
-                </div>
-              ))}
+      <ResizablePanelGroup direction="vertical" className="flex-1 min-h-0">
+        <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-4 gap-3 mb-3">
+            {[
+              { label: 'Total Checks', value: totalChecks.toString() },
+              { label: 'Checks Up', value: checksUp.toString() },
+              { label: 'Checks Down', value: checksDown.toString() },
+              { label: 'Uptime %', value: `${uptimePercentage}%` },
+            ].map((stat, index) => (
+              <div key={index} className="glass rounded-xl p-3">
+                <p className="text-white/70 text-xs">{stat.label}</p>
+                <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Groups Filter Bar */}
+          <div className="glass rounded-2xl p-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-white">Filter by Group</h3>
+              <Button
+                size="sm"
+                className="glass-button h-8"
+                onClick={() => setCreateGroupModalOpen(true)}
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                New Group
+              </Button>
             </div>
 
-            {/* Groups Filter Bar */}
-            <div className="glass rounded-2xl p-3 flex-shrink-0">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-white">Filter by Group</h3>
-                <Button
-                  size="sm"
-                  className="glass-button h-8"
-                  onClick={() => setCreateGroupModalOpen(true)}
-                >
-                  <Plus className="w-3 h-3 mr-1" />
-                  New Group
-                </Button>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedGroup(null)}
+                className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  selectedGroup === null 
+                    ? 'glass-button text-white' 
+                    : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                }`}
+              >
+                Ungrouped ({checks.filter(c => !c.group_id).length})
+              </button>
+              
+              {groups.map((group) => (
                 <button
-                  onClick={() => setSelectedGroup(null)}
+                  key={group.id}
+                  onClick={() => setSelectedGroup(group.id)}
                   className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                    selectedGroup === null 
+                    selectedGroup === group.id 
                       ? 'glass-button text-white' 
                       : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                   }`}
                 >
-                  Ungrouped ({checks.filter(c => !c.group_id).length})
+                  {group.name} ({checks.filter(c => c.group_id === group.id).length})
                 </button>
-                
-                {groups.map((group) => (
-                  <button
-                    key={group.id}
-                    onClick={() => setSelectedGroup(group.id)}
-                    className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                      selectedGroup === group.id 
-                        ? 'glass-button text-white' 
-                        : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
-                    }`}
-                  >
-                    {group.name} ({checks.filter(c => c.group_id === group.id).length})
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </ResizablePanel>
 
         <ResizableHandle withHandle />
 
-        <ResizablePanel defaultSize={70} minSize={50}>
+        <ResizablePanel defaultSize={75} minSize={60}>
           {/* Checks List */}
-          <div className="glass rounded-2xl p-6 h-full flex flex-col">
+          <div className="glass rounded-2xl p-6 h-full flex flex-col mt-3">
             <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
               {selectedGroup 
                 ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
