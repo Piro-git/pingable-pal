@@ -111,16 +111,16 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="glass rounded-2xl p-6">
+      <div className="glass rounded-2xl p-4">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white">Monitoring Dashboard</h2>
-            <p className="text-white/70">Manage your service health checks</p>
+            <h2 className="text-xl font-bold text-white">Monitoring Dashboard</h2>
+            <p className="text-sm text-white/70">Manage your service health checks</p>
           </div>
           
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2">
             <Button 
-              className="glass-button"
+              className="glass-button h-9"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -129,18 +129,18 @@ export default function Dashboard() {
             
             <div className="flex items-center gap-2">
               {lastCheckedTimestamp && (
-                <p className="text-white/60 text-sm">
+                <p className="text-white/60 text-xs">
                   Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
                 </p>
               )}
               <Button
                 size="sm"
                 variant="ghost"
-                className="glass-button p-2 h-8 w-8"
+                className="glass-button p-1.5 h-7 w-7"
                 onClick={handleManualRefresh}
                 disabled={isRefreshing}
               >
-                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
               </Button>
             </div>
           </div>
@@ -148,16 +148,16 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-3">
         {[
           { label: 'Total Checks', value: totalChecks.toString() },
           { label: 'Checks Up', value: checksUp.toString() },
           { label: 'Checks Down', value: checksDown.toString() },
           { label: 'Uptime %', value: `${uptimePercentage}%` },
         ].map((stat, index) => (
-          <div key={index} className="glass rounded-xl p-4">
-            <p className="text-white/70 text-sm">{stat.label}</p>
-            <p className="text-white text-2xl font-bold mt-1">{stat.value}</p>
+          <div key={index} className="glass rounded-xl p-3">
+            <p className="text-white/70 text-xs">{stat.label}</p>
+            <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -205,7 +205,7 @@ export default function Dashboard() {
       </div>
 
       {/* Checks List */}
-      <div className="glass rounded-2xl p-6 h-[calc(100vh-28rem)]">
+      <div className="glass rounded-2xl p-6 h-[calc(100vh-22rem)]">
         <h3 className="text-xl font-semibold text-white mb-4">
           {selectedGroup 
             ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
