@@ -110,7 +110,7 @@ export default function Dashboard() {
   const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
 
   return (
-    <div className="space-y-6 h-full flex flex-col">
+    <div className="h-full flex flex-col gap-6">
       {/* Header */}
       <div className="glass rounded-2xl p-4 flex-shrink-0">
         <div className="flex items-start justify-between">
@@ -149,7 +149,7 @@ export default function Dashboard() {
       </div>
 
       {/* Resizable Panels */}
-      <ResizablePanelGroup direction="vertical" className="flex-1 min-h-0">
+      <ResizablePanelGroup direction="vertical" className="flex-1 min-h-0 gap-3">
         <ResizablePanel defaultSize={30} minSize={15} maxSize={50}>
           <div className="space-y-3 h-full flex flex-col">
             {/* Stats Cards */}
@@ -211,7 +211,7 @@ export default function Dashboard() {
           </div>
         </ResizablePanel>
 
-        <ResizableHandle withHandle className="my-3" />
+        <ResizableHandle withHandle />
 
         <ResizablePanel defaultSize={70} minSize={50}>
           {/* Checks List */}
