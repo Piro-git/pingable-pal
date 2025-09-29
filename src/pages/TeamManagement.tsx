@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserPlus, Mail, Shield, Trash2, RefreshCw, Crown, Edit, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { AppLayout } from '@/components/AppLayout';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -224,19 +224,16 @@ export default function TeamManagement() {
 
   if (profile?.role !== 'admin') {
     return (
-      <AppLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-            <p className="text-white/70">Only administrators can access team management.</p>
-          </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+          <p className="text-white/70">Only administrators can access team management.</p>
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   return (
-    <AppLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="glass rounded-2xl p-6">
@@ -246,12 +243,12 @@ export default function TeamManagement() {
               <p className="text-white/70">Manage your team members and invitations</p>
             </div>
             <Badge variant="secondary" className="glass text-white border-white/20">
-              {teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}
+              <span>{teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}</span>
             </Badge>
           </div>
         </div>
 
-      <Tabs defaultValue="members" className="space-y-6">
+        <Tabs defaultValue="members" className="space-y-6">
         <TabsList className="glass border-white/20">
           <TabsTrigger value="members" className="text-white data-[state=active]:glass-button">
             Team Members
@@ -263,7 +260,7 @@ export default function TeamManagement() {
             Pending Invitations
             {invitations.length > 0 && (
               <Badge variant="secondary" className="ml-2 text-xs">
-                {invitations.length}
+                <span>{invitations.length}</span>
               </Badge>
             )}
           </TabsTrigger>
@@ -553,8 +550,7 @@ export default function TeamManagement() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+        </Tabs>
       </div>
-    </AppLayout>
   );
 }
