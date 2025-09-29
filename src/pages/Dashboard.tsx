@@ -109,7 +109,7 @@ export default function Dashboard() {
   const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full flex flex-col">
       {/* Header */}
       <div className="glass rounded-2xl p-4">
         <div className="flex items-start justify-between">
@@ -205,15 +205,15 @@ export default function Dashboard() {
       </div>
 
       {/* Checks List */}
-      <div className="glass rounded-2xl p-6 h-[calc(100vh-22rem)]">
-        <h3 className="text-xl font-semibold text-white mb-4">
+      <div className="glass rounded-2xl p-6 flex-1 flex flex-col min-h-0">
+        <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
           {selectedGroup 
             ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
             : 'Ungrouped Checks'
           }
         </h3>
         
-        <ScrollArea className="h-[calc(100%-3rem)]">
+        <ScrollArea className="flex-1">
           {loading ? (
             <div className="text-center py-12">
               <p className="text-white/70">Loading checks...</p>
