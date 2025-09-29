@@ -6,6 +6,7 @@ import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 interface Group {
@@ -204,7 +205,7 @@ export default function Dashboard() {
       </div>
 
       {/* Checks List */}
-      <div className="glass rounded-2xl p-6">
+      <div className="glass rounded-2xl p-6 h-[calc(100vh-32rem)]">
         <h3 className="text-xl font-semibold text-white mb-4">
           {selectedGroup 
             ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
@@ -212,61 +213,63 @@ export default function Dashboard() {
           }
         </h3>
         
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-white/70">Loading checks...</p>
-          </div>
-        ) : filteredChecks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-white/70 mb-4">No health checks in this group yet</p>
-            <Button 
-              className="glass-button"
-              onClick={() => setCreateModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Your First Check
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredChecks.map((check) => (
-              <div key={check.id} className="glass rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
-                    }`} />
-                    <div>
-                      <h4 className="text-white font-medium">{check.name}</h4>
-                      <p className="text-white/70 text-sm">
-                        Status: {check.status} • Every {check.interval_minutes}min
-                      </p>
+        <ScrollArea className="h-[calc(100%-3rem)]">
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-white/70">Loading checks...</p>
+            </div>
+          ) : filteredChecks.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-white/70 mb-4">No health checks in this group yet</p>
+              <Button 
+                className="glass-button"
+                onClick={() => setCreateModalOpen(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Check
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3 pr-4">
+              {filteredChecks.map((check) => (
+                <div key={check.id} className="glass rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
+                      }`} />
+                      <div>
+                        <h4 className="text-white font-medium">{check.name}</h4>
+                        <p className="text-white/70 text-sm">
+                          Status: {check.status} • Every {check.interval_minutes}min
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-white/70 text-sm">
-                        {check.last_pinged_at 
-                          ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
-                          : 'Never pinged'
-                        }
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-white/70 text-sm">
+                          {check.last_pinged_at 
+                            ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
+                            : 'Never pinged'
+                          }
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="glass-button"
+                        onClick={() => copyPingUrl(check.heartbeat_uuid)}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy URL
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="glass-button"
-                      onClick={() => copyPingUrl(check.heartbeat_uuid)}
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy URL
-                    </Button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </ScrollArea>
       </div>
 
       <CreateCheckModal
