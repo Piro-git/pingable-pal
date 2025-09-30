@@ -183,4 +183,26 @@ All colors MUST be HSL.
     background: rgba(255, 255, 255, 0.4);
     border-radius: 1px;
   }
+
+  .gutter.gutter-vertical {
+    cursor: row-resize;
+    height: 8px !important;
+  }
+
+  .gutter.gutter-vertical:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+  }
+
+  .gutter.gutter-vertical::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 1px;
+  }
 }
