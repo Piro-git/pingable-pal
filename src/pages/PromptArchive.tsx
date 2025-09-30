@@ -207,9 +207,9 @@ export default function PromptArchive() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 h-full">
+      <div className="flex flex-col gap-4 h-full">
         {/* Header */}
-        <div className="glass rounded-2xl p-6">
+        <div className="glass rounded-2xl p-6 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white">Prompt Archive</h2>
@@ -227,31 +227,32 @@ export default function PromptArchive() {
           </div>
         </div>
 
-        {/* Folder Filter Bar */}
-        <div className="glass rounded-2xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white">Filter by Folder</h3>
-            {(profile?.role === 'admin' || profile?.role === 'editor') && (
-              <Button
-                size="sm"
-                className="glass-button"
-                onClick={() => setCreateFolderModalOpen(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Folder
-              </Button>
-            )}
-          </div>
+        {/* Top Section - Filters */}
+        <div className="flex-shrink-0">
+          {/* Folder Filter Bar */}
+          <div className="glass rounded-2xl p-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-white">Filter by Folder</h3>
+              {(profile?.role === 'admin' || profile?.role === 'editor') && (
+                <Button
+                  size="sm"
+                  className="glass-button h-8"
+                  onClick={() => setCreateFolderModalOpen(true)}
+                >
+                  <Plus className="w-3 h-3 mr-1" />
+                  New Folder
+                </Button>
+              )}
+            </div>
 
-          <div className="overflow-x-auto">
-            <div className="flex gap-2 pb-2">
+            <div className="flex flex-wrap gap-2">
               {/* All Prompts Pill */}
               <button
                 onClick={() => setSelectedFolderId(null)}
-                className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
+                className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
                   !selectedFolderId 
                     ? 'glass-button text-white' 
-                    : 'glass text-white/70 hover:text-white hover:glass-button'
+                    : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                 }`}
               >
                 All Prompts ({prompts.length})
@@ -262,10 +263,10 @@ export default function PromptArchive() {
                 <button
                   key={folder.id}
                   onClick={() => setSelectedFolderId(folder.id)}
-                  className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
+                  className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
                     selectedFolderId === folder.id 
                       ? 'glass-button text-white' 
-                      : 'glass text-white/70 hover:text-white hover:glass-button'
+                      : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                   }`}
                 >
                   {folder.name} ({prompts.filter(p => p.folder_id === folder.id).length})
@@ -273,52 +274,56 @@ export default function PromptArchive() {
               ))}
             </div>
           </div>
+
+          {/* Tag Filter Bar */}
+          {tags.length > 0 && (
+            <div className="glass rounded-2xl p-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-white">Filter by Tags</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <button
+                    key={tag.id}
+                    onClick={() => {
+                      setSelectedTags(prev => 
+                        prev.includes(tag.id) 
+                          ? prev.filter(id => id !== tag.id)
+                          : [...prev, tag.id]
+                      );
+                    }}
+                    className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                      selectedTags.includes(tag.id)
+                        ? 'glass-button text-white' 
+                        : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                    }`}
+                    style={{ 
+                      backgroundColor: selectedTags.includes(tag.id) && tag.color 
+                        ? `${tag.color}40` 
+                        : undefined 
+                    }}
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+                {selectedTags.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTags([])}
+                    className="px-3 py-1.5 rounded-lg transition-colors text-sm text-white/50 hover:text-white hover:bg-white/10 border border-white/20"
+                  >
+                    Clear filters
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Tag Filter Bar */}
-        {tags.length > 0 && (
-          <div className="glass rounded-2xl p-4">
-            <h3 className="text-lg font-semibold text-white mb-3">Filter by Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <button
-                  key={tag.id}
-                  onClick={() => {
-                    setSelectedTags(prev => 
-                      prev.includes(tag.id) 
-                        ? prev.filter(id => id !== tag.id)
-                        : [...prev, tag.id]
-                    );
-                  }}
-                  className={`px-3 py-1 rounded-full text-xs transition-all ${
-                    selectedTags.includes(tag.id)
-                      ? 'glass-button text-white' 
-                      : 'text-white/70 hover:text-white border border-white/20 hover:border-white/40'
-                  }`}
-                  style={{ 
-                    backgroundColor: selectedTags.includes(tag.id) && tag.color 
-                      ? `${tag.color}40` 
-                      : undefined 
-                  }}
-                >
-                  {tag.name}
-                </button>
-              ))}
-              {selectedTags.length > 0 && (
-                <button
-                  onClick={() => setSelectedTags([])}
-                  className="px-3 py-1 rounded-full text-xs text-white/50 hover:text-white border border-white/20 hover:border-white/40"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Prompts List */}
-        <div className="glass rounded-2xl p-6 flex-1 min-h-0">
-          <div className="flex items-center justify-between mb-4">
+        {/* Bottom Section - Prompts List */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          {/* Prompts List */}
+          <div className="glass rounded-2xl p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4 flex-shrink-0">
             <h3 className="text-xl font-semibold text-white">
               {selectedFolderId 
                 ? folders.find(f => f.id === selectedFolderId)?.name || 'Folder' 
@@ -336,7 +341,7 @@ export default function PromptArchive() {
             )}
           </div>
 
-          <ScrollArea className="h-[calc(100%-4rem)]">
+          <ScrollArea className="flex-1">
             <div className="pr-2">
               {loading ? (
                 <div className="text-center py-12">
@@ -438,6 +443,7 @@ export default function PromptArchive() {
             </div>
           </ScrollArea>
         </div>
+      </div>
       </div>
 
       <CreateFolderModal
