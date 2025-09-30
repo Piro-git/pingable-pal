@@ -52,17 +52,21 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
       if (feedbackError) throw feedbackError;
 
       // Get profiles for each feedback
+      // Note: Due to RLS, users can only see their own profile or if they're admin
       const feedbacksWithProfiles = [];
       for (const feedback of feedbackData || []) {
         const { data: profileData } = await supabase
           .from('profiles')
           .select('full_name, email')
           .eq('id', feedback.user_id)
-          .single();
+          .maybeSingle();
 
         feedbacksWithProfiles.push({
           ...feedback,
-          profiles: profileData || { full_name: '', email: '' }
+          profiles: profileData ? profileData : { 
+            full_name: 'Anonymous User', 
+            email: '' 
+          }
         });
       }
 
