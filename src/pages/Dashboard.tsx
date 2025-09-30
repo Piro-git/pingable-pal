@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Activity, AlertTriangle, Plus, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import type { Database } from '@/integrations/supabase/types';
 
 type Check = Database['public']['Tables']['checks']['Row'];
@@ -269,42 +270,38 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold text-white">7-Day Uptime</h2>
           </div>
 
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={uptimeData}>
-                <XAxis 
-                  dataKey="date" 
-                  stroke="#ffffff60"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="#ffffff60"
-                  fontSize={12}
-                  domain={[0, 100]}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }}
-                  formatter={(value: number) => [`${value}%`, 'Uptime']}
-                />
-                <Bar 
-                  dataKey="uptime" 
-                  fill="url(#colorGradient)"
-                  radius={[8, 8, 0, 0]}
-                />
-                <defs>
-                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={1} />
-                  </linearGradient>
-                </defs>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartContainer
+            config={{
+              uptime: {
+                label: "Uptime",
+                color: "hsl(var(--chart-1))",
+              },
+            }}
+            className="h-64 w-full"
+          >
+            <BarChart data={uptimeData}>
+              <XAxis 
+                dataKey="date" 
+                stroke="hsl(var(--foreground))"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis 
+                stroke="hsl(var(--foreground))"
+                fontSize={12}
+                domain={[0, 100]}
+                tickLine={false}
+                axisLine={false}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar 
+                dataKey="uptime" 
+                fill="hsl(var(--chart-1))"
+                radius={[8, 8, 0, 0]}
+              />
+            </BarChart>
+          </ChartContainer>
         </Card>
 
         {/* Recent Activities */}
