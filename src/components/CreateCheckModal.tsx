@@ -20,7 +20,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [interval, setInterval] = useState('5');
-  const [groupId, setGroupId] = useState<string>('');
+  const [groupId, setGroupId] = useState<string>('none');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +63,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           user_id: user.id,
           name: name.trim(),
           interval_minutes: intervalNum,
-          group_id: groupId || null,
+          group_id: groupId === 'none' ? null : groupId,
         });
 
       if (error) {
@@ -78,7 +78,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       // Reset form
       setName('');
       setInterval('5');
-      setGroupId('');
+      setGroupId('none');
       onClose();
       onSuccess?.();
     } catch (error: any) {
@@ -95,7 +95,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const handleClose = () => {
     setName('');
     setInterval('5');
-    setGroupId('');
+    setGroupId('none');
     onClose();
   };
 
@@ -163,7 +163,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
                   <SelectValue placeholder="Select a group..." />
                 </SelectTrigger>
                 <SelectContent className="glass border-white/20">
-                  <SelectItem value="" className="text-white">No group</SelectItem>
+                  <SelectItem value="none" className="text-white">No group</SelectItem>
                   {groups.map((group) => (
                     <SelectItem key={group.id} value={group.id} className="text-white">
                       {group.name}
