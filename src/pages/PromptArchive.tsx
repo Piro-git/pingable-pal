@@ -228,9 +228,9 @@ export default function PromptArchive() {
         </div>
 
         {/* Folder Filter Bar */}
-        <div className="glass rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-white">Filter by Folder</h3>
+        <div className="glass rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-white">Filter by Folder</h3>
             {(profile?.role === 'admin' || profile?.role === 'editor') && (
               <Button
                 size="sm"
@@ -244,11 +244,11 @@ export default function PromptArchive() {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="flex gap-3 pb-2">
+            <div className="flex gap-2 pb-2">
               {/* All Prompts Pill */}
               <button
                 onClick={() => setSelectedFolderId(null)}
-                className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
+                className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
                   !selectedFolderId 
                     ? 'glass-button text-white' 
                     : 'glass text-white/70 hover:text-white hover:glass-button'
@@ -262,7 +262,7 @@ export default function PromptArchive() {
                 <button
                   key={folder.id}
                   onClick={() => setSelectedFolderId(folder.id)}
-                  className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
+                  className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
                     selectedFolderId === folder.id 
                       ? 'glass-button text-white' 
                       : 'glass text-white/70 hover:text-white hover:glass-button'
@@ -277,8 +277,8 @@ export default function PromptArchive() {
 
         {/* Tag Filter Bar */}
         {tags.length > 0 && (
-          <div className="glass rounded-2xl p-6">
-            <h3 className="text-xl font-semibold text-white mb-4">Filter by Tags</h3>
+          <div className="glass rounded-2xl p-4">
+            <h3 className="text-lg font-semibold text-white mb-3">Filter by Tags</h3>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <button
