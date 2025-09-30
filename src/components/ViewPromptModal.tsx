@@ -6,6 +6,7 @@ import { Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { FeedbackSection } from './FeedbackSection';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Tag {
   id: string;
@@ -54,7 +55,7 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="glass max-w-4xl max-h-[80vh] overflow-hidden">
+      <DialogContent className="glass max-w-4xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -69,64 +70,66 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
           </div>
         </DialogHeader>
         
-        <div className="space-y-4">
-          <div className="text-white/70 text-sm">
-            Created {new Date(prompt.created_at).toLocaleDateString()}
-          </div>
-          
-          {/* Tags */}
-          {prompt.tags && prompt.tags.length > 0 && (
-            <div>
-              <label className="text-white font-medium text-sm">Tags:</label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {prompt.tags.map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    variant="secondary"
-                    className="glass text-white border-white/20"
-                    style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-              </div>
+        <ScrollArea className="flex-1 pr-4">
+          <div className="space-y-4">
+            <div className="text-white/70 text-sm">
+              Created {new Date(prompt.created_at).toLocaleDateString()}
             </div>
-          )}
-          
-          <div className="space-y-3">
-            <label className="text-white font-medium">Prompt Content:</label>
-            <Textarea
-              value={prompt.content}
-              readOnly
-              className="min-h-[300px] glass text-white resize-none"
-              placeholder="Prompt content..."
-            />
+            
+            {/* Tags */}
+            {prompt.tags && prompt.tags.length > 0 && (
+              <div>
+                <label className="text-white font-medium text-sm">Tags:</label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {prompt.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant="secondary"
+                      className="glass text-white border-white/20"
+                      style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-3">
+              <label className="text-white font-medium">Prompt Content:</label>
+              <Textarea
+                value={prompt.content}
+                readOnly
+                className="min-h-[300px] glass text-white resize-none"
+                placeholder="Prompt content..."
+              />
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="glass-button-secondary"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={handleCopyPrompt}
+                className="glass-button"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Prompt
+              </Button>
+            </div>
+            
+            {/* Feedback Section */}
+            {promptId && (
+              <div className="border-t border-white/20 pt-6 mt-6">
+                <FeedbackSection promptId={promptId} />
+              </div>
+            )}
           </div>
-          
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="glass-button-secondary"
-            >
-              Close
-            </Button>
-            <Button
-              onClick={handleCopyPrompt}
-              className="glass-button"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy Prompt
-            </Button>
-          </div>
-        </div>
-        
-        {/* Feedback Section */}
-        {promptId && (
-          <div className="border-t border-white/20 pt-6 mt-6">
-            <FeedbackSection promptId={promptId} />
-          </div>
-        )}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

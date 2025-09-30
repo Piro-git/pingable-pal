@@ -7,6 +7,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
+const FOLDER_COLORS = [
+  '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16',
+  '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#D4BAFF', '#FFB3D4'
+];
+
 interface CreateFolderModalProps {
   open: boolean;
   onClose: () => void;
@@ -16,6 +21,7 @@ interface CreateFolderModalProps {
 export function CreateFolderModal({ open, onClose, onSuccess }: CreateFolderModalProps) {
   const { user } = useAuth();
   const [name, setName] = useState('');
+  const [selectedColor, setSelectedColor] = useState(FOLDER_COLORS[0]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,6 +34,7 @@ export function CreateFolderModal({ open, onClose, onSuccess }: CreateFolderModa
         .from('folders')
         .insert({
           name: name.trim(),
+          color: selectedColor,
           user_id: user.id
         });
 
@@ -53,6 +60,7 @@ export function CreateFolderModal({ open, onClose, onSuccess }: CreateFolderModa
 
   const handleClose = () => {
     setName('');
+    setSelectedColor(FOLDER_COLORS[0]);
     onClose();
   };
 
@@ -79,6 +87,26 @@ export function CreateFolderModal({ open, onClose, onSuccess }: CreateFolderModa
               required
             />
           </div>
+          
+          <div>
+            <Label className="text-white mb-3 block">Choose Color</Label>
+            <div className="grid grid-cols-8 gap-2">
+              {FOLDER_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    selectedColor === color 
+                      ? 'border-white scale-110' 
+                      : 'border-white/30 hover:border-white/60'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setSelectedColor(color)}
+                />
+              ))}
+            </div>
+          </div>
+          
           <div className="flex justify-end gap-3">
             <Button
               type="button"

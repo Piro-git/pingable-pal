@@ -9,6 +9,7 @@ import { CreateFolderModal } from '@/components/CreateFolderModal';
 import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
 import { UseTemplateModal } from '@/components/UseTemplateModal';
+import { EditPromptModal } from '@/components/EditPromptModal';
 import { useNavigate } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/badge';
@@ -62,6 +63,7 @@ export default function PromptArchive() {
   const [createPromptModalOpen, setCreatePromptModalOpen] = useState(false);
   const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
   const [useTemplateModalOpen, setUseTemplateModalOpen] = useState(false);
+  const [editPromptModalOpen, setEditPromptModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
 
   const fetchFolders = async () => {
@@ -203,6 +205,11 @@ export default function PromptArchive() {
   const handleUseTemplate = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
     setUseTemplateModalOpen(true);
+  };
+
+  const handleEditPrompt = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setEditPromptModalOpen(true);
   };
 
   return (
@@ -400,7 +407,7 @@ export default function PromptArchive() {
                                 className="glass-button-secondary p-2"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // Edit functionality can be added later
+                                  handleEditPrompt(prompt);
                                 }}
                               >
                                 <Edit className="w-4 h-4" />
@@ -481,6 +488,15 @@ export default function PromptArchive() {
           user_id: selectedPrompt.user_id,
           tags: []
         } : null}
+      />
+
+      <EditPromptModal
+        open={editPromptModalOpen}
+        onClose={() => setEditPromptModalOpen(false)}
+        onSuccess={fetchPrompts}
+        folders={folders}
+        promptId={selectedPrompt?.id || ''}
+        currentVersionId={selectedPrompt?.current_version?.id || ''}
       />
     </>
   );

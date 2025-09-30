@@ -22,6 +22,13 @@ const CATEGORY_COLORS = [
   '#F97316', // Orange
   '#06B6D4', // Cyan
   '#84CC16', // Lime
+  '#FFB3BA', // Pastel Pink
+  '#FFDFBA', // Pastel Peach
+  '#FFFFBA', // Pastel Yellow
+  '#BAFFC9', // Pastel Mint
+  '#BAE1FF', // Pastel Blue
+  '#D4BAFF', // Pastel Lavender
+  '#FFB3D4', // Pastel Rose
 ];
 
 export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategoryModalProps) {

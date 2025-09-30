@@ -9,6 +9,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
+const CHECK_COLORS = [
+  '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16',
+  '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#D4BAFF', '#FFB3D4'
+];
+
 interface CreateCheckModalProps {
   open: boolean;
   onClose: () => void;
@@ -21,6 +26,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const [name, setName] = useState('');
   const [interval, setInterval] = useState('5');
   const [groupId, setGroupId] = useState<string>('none');
+  const [selectedColor, setSelectedColor] = useState(CHECK_COLORS[0]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,6 +70,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           name: name.trim(),
           interval_minutes: intervalNum,
           group_id: groupId === 'none' ? null : groupId,
+          color: selectedColor,
         });
 
       if (error) {
@@ -79,6 +86,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       setName('');
       setInterval('5');
       setGroupId('none');
+      setSelectedColor(CHECK_COLORS[0]);
       onClose();
       onSuccess?.();
     } catch (error: any) {
@@ -96,6 +104,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
     setName('');
     setInterval('5');
     setGroupId('none');
+    setSelectedColor(CHECK_COLORS[0]);
     onClose();
   };
 
@@ -173,6 +182,25 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
               </Select>
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label className="text-white/90 text-sm font-medium">Choose Color</Label>
+            <div className="grid grid-cols-8 gap-2">
+              {CHECK_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    selectedColor === color 
+                      ? 'border-white scale-110' 
+                      : 'border-white/30 hover:border-white/60'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setSelectedColor(color)}
+                />
+              ))}
+            </div>
+          </div>
 
           <div className="flex gap-3 pt-4">
             <Button

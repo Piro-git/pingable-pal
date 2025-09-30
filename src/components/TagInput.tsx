@@ -48,7 +48,10 @@ export function TagInput({ selectedTags, onTagsChange }: TagInputProps) {
     if (!user) return null;
 
     try {
-      const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
+      const colors = [
+        '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899',
+        '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#D4BAFF', '#FFB3D4'
+      ];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
       const { data, error } = await supabase
