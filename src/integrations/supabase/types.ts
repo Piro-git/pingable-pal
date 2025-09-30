@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       checks: {
         Row: {
+          color: string | null
           created_at: string
           grace_period_minutes: number | null
           group_id: string | null
@@ -29,6 +30,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
           grace_period_minutes?: number | null
           group_id?: string | null
@@ -42,6 +44,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          color?: string | null
           created_at?: string
           grace_period_minutes?: number | null
           group_id?: string | null
@@ -58,6 +61,7 @@ export type Database = {
       }
       folders: {
         Row: {
+          color: string | null
           created_at: string
           id: string
           name: string
@@ -65,6 +69,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
           id?: string
           name: string
@@ -72,6 +77,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          color?: string | null
           created_at?: string
           id?: string
           name?: string
