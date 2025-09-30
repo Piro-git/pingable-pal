@@ -5,6 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  password: z.string()
+    .min(1, { message: "Password is required" })
+    .max(72, { message: "Password must be less than 72 characters" })
+});
 
 export default function Login() {
   const { user, signIn, loading } = useAuth();
@@ -20,19 +31,32 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    try {
+      // Validate inputs
+      const validated = loginSchema.parse({ email: email.trim(), password });
 
-    if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message || "Invalid login credentials",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Welcome back!",
-        description: "You have been logged in successfully.",
-      });
+      const { error } = await signIn(validated.email, validated.password);
+
+      if (error) {
+        toast({
+          title: "Login Failed",
+          description: error.message || "Invalid login credentials",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome back!",
+          description: "You have been logged in successfully.",
+        });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      }
     }
 
     setIsLoading(false);

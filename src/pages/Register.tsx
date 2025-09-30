@@ -6,6 +6,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
+
+const registerSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(72, { message: "Password must be less than 72 characters" })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 
 export default function Register() {
   const { user, signUp, loading } = useAuth();
@@ -65,59 +83,57 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (password.length < 6) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
 
-    const { error } = await signUp(email, password);
-
-    if (error) {
-      toast({
-        title: "Registration Failed",
-        description: error.message || "User already exists",
-        variant: "destructive",
+    try {
+      // Validate inputs
+      const validated = registerSchema.parse({ 
+        email: email.trim(), 
+        password, 
+        confirmPassword 
       });
-    } else {
-      // If this is an invite signup, update the invitation status
-      if (inviteToken) {
-        try {
-          const { error: inviteError } = await supabase
-            .from('invitations')
-            .update({ status: 'accepted' })
-            .eq('token', inviteToken);
 
-          if (inviteError) {
-            console.error('Error updating invitation status:', inviteError);
+      const { error } = await signUp(validated.email, validated.password);
+
+      if (error) {
+        toast({
+          title: "Registration Failed",
+          description: error.message || "User already exists",
+          variant: "destructive",
+        });
+      } else {
+        // If this is an invite signup, update the invitation status
+        if (inviteToken) {
+          try {
+            const { error: inviteError } = await supabase
+              .from('invitations')
+              .update({ status: 'accepted' })
+              .eq('token', inviteToken);
+
+            if (inviteError) {
+              console.error('Error updating invitation status');
+            }
+          } catch (error) {
+            console.error('Error processing invitation');
           }
-        } catch (error) {
-          console.error('Error processing invitation:', error);
         }
-      }
 
-      toast({
-        title: "Registration Successful",
-        description: inviteToken 
-          ? "Welcome to the team! Please check your email to confirm your account, then sign in."
-          : "Please check your email to confirm your account, then sign in.",
-      });
-      navigate('/login');
+        toast({
+          title: "Registration Successful",
+          description: inviteToken 
+            ? "Welcome to the team! Please check your email to confirm your account, then sign in."
+            : "Please check your email to confirm your account, then sign in.",
+        });
+        navigate('/login');
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      }
     }
 
     setIsLoading(false);
