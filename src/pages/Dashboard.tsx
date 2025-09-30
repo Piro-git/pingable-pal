@@ -164,9 +164,9 @@ export default function Dashboard() {
       </div>
 
       {/* Split Panes Container */}
-      <div className="flex-1 min-h-0 flex flex-col">
+      <div className="flex-1 min-h-0 split-container">
         {/* Top Pane */}
-        <div id="top-pane" className="overflow-auto">
+        <div id="top-pane" className="split-pane overflow-auto">
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3 mb-3">
             {[
@@ -226,7 +226,7 @@ export default function Dashboard() {
         </div>
 
         {/* Bottom Pane */}
-        <div id="bottom-pane" className="overflow-y-auto">
+        <div id="bottom-pane" className="split-pane overflow-y-auto">
           {/* Checks List */}
           <div className="glass rounded-2xl p-6 h-full flex flex-col">
             <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">

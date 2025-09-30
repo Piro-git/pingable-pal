@@ -184,9 +184,22 @@ All colors MUST be HSL.
     border-radius: 1px;
   }
 
+  .split-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .split-pane {
+    overflow: auto;
+    height: 100%;
+  }
+
   .gutter.gutter-vertical {
     cursor: row-resize;
-    height: 8px !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 8px;
+    flex-shrink: 0;
   }
 
   .gutter.gutter-vertical:hover {
@@ -200,9 +213,9 @@ All colors MUST be HSL.
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 20px;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 1px;
+    width: 40px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
   }
 }
