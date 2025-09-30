@@ -207,7 +207,7 @@ export default function PromptArchive() {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6 h-full">
         {/* Header */}
         <div className="glass rounded-2xl p-6">
           <div className="flex items-center justify-between">
@@ -243,7 +243,7 @@ export default function PromptArchive() {
             )}
           </div>
 
-          <ScrollArea className="w-full">
+          <div className="overflow-x-auto">
             <div className="flex gap-3 pb-2">
               {/* All Prompts Pill */}
               <button
@@ -272,7 +272,7 @@ export default function PromptArchive() {
                 </button>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </div>
 
         {/* Tag Filter Bar */}
@@ -317,7 +317,7 @@ export default function PromptArchive() {
         )}
 
         {/* Prompts List */}
-        <div className="glass rounded-2xl p-6 h-[calc(100vh-28rem)]">
+        <div className="glass rounded-2xl p-6 flex-1 min-h-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {selectedFolderId 
