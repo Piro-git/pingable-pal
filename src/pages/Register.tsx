@@ -47,12 +47,10 @@ export default function Register() {
 
   const validateInviteToken = async (token: string) => {
     try {
-      const { data, error } = await supabase
-        .from('invitations')
-        .select('email, role')
-        .eq('token', token)
-        .eq('status', 'pending')
-        .single();
+      // Use secure edge function to validate invitation token
+      const { data, error } = await supabase.functions.invoke('validate-invitation', {
+        body: { token }
+      });
 
       if (error || !data) {
         toast({
@@ -74,6 +72,11 @@ export default function Register() {
       });
     } catch (error) {
       console.error('Error validating invite token:', error);
+      toast({
+        title: "Error",
+        description: "Failed to validate invitation. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -105,16 +108,15 @@ export default function Register() {
         // If this is an invite signup, update the invitation status
         if (inviteToken) {
           try {
-            const { error: inviteError } = await supabase
-              .from('invitations')
-              .update({ status: 'accepted' })
-              .eq('token', inviteToken);
+            const { error: inviteError } = await supabase.functions.invoke('accept-invitation', {
+              body: { token: inviteToken }
+            });
 
             if (inviteError) {
-              console.error('Error updating invitation status');
+              console.error('Error updating invitation status:', inviteError);
             }
           } catch (error) {
-            console.error('Error processing invitation');
+            console.error('Error processing invitation:', error);
           }
         }
 
