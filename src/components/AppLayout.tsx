@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Archive, BarChart3, Users, Settings, LogOut } from 'lucide-react';
+import { Archive, BarChart3, Users, Settings, LogOut, Activity } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface AppLayoutProps {
@@ -22,6 +22,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       name: 'Dashboard',
       icon: BarChart3,
       path: '/dashboard',
+      roles: ['admin', 'editor', 'viewer']
+    },
+    {
+      name: 'Monitoring Checks',
+      icon: Activity,
+      path: '/monitoring',
       roles: ['admin', 'editor', 'viewer']
     },
     {

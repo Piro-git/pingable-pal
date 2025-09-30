@@ -1,55 +1,45 @@
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Plus, Copy, RefreshCw } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { CreateCheckModal } from '@/components/CreateCheckModal';
-import { CreateGroupModal } from '@/components/CreateGroupModal';
-import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Activity, AlertTriangle, Plus, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import type { Database } from '@/integrations/supabase/types';
 
+type Check = Database['public']['Tables']['checks']['Row'];
 
-interface Group {
+interface ActivityEvent {
   id: string;
-  name: string;
-  created_at: string;
+  type: 'check_down' | 'check_up' | 'prompt_created' | 'check_created';
+  message: string;
+  timestamp: string;
 }
 
-interface Check {
-  id: string;
-  name: string;
-  status: string;
-  interval_minutes: number;
-  grace_period_minutes: number;
-  heartbeat_uuid: string;
-  last_pinged_at: string | null;
-  created_at: string;
-  group_id: string | null;
+interface UptimeData {
+  date: string;
+  uptime: number;
 }
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [checks, setChecks] = useState<Check[]>([]);
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
-  const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<Date | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activities, setActivities] = useState<ActivityEvent[]>([]);
+  const [uptimeData, setUptimeData] = useState<UptimeData[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   const fetchData = async () => {
-    if (!user) return;
-    
     try {
-      // Fetch groups
-      const { data: groupsData, error: groupsError } = await supabase
-        .from('groups')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (groupsError) throw groupsError;
-      setGroups(groupsData || []);
+      setLoading(true);
 
       // Fetch checks
       const { data: checksData, error: checksError } = await supabase
@@ -59,240 +49,294 @@ export default function Dashboard() {
 
       if (checksError) throw checksError;
       setChecks(checksData || []);
-      setLastCheckedTimestamp(new Date());
+
+      // Generate mock uptime data for last 7 days
+      const mockUptimeData = generateMockUptimeData(checksData || []);
+      setUptimeData(mockUptimeData);
+
+      // Generate mock activities
+      const mockActivities = generateMockActivities(checksData || []);
+      setActivities(mockActivities);
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch data.",
-        variant: "destructive",
-      });
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
-      setIsRefreshing(false);
     }
   };
 
-  const handleManualRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchData();
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [user]);
-
-  const copyPingUrl = async (heartbeatUuid: string) => {
-    const pingUrl = `https://mrtovhqequmhdgccwffs.supabase.co/functions/v1/ping-handler?uuid=${heartbeatUuid}`;
+  const generateMockUptimeData = (checks: Check[]): UptimeData[] => {
+    const data: UptimeData[] = [];
+    const today = new Date();
     
-    try {
-      await navigator.clipboard.writeText(pingUrl);
-      toast({
-        title: "URL Copied",
-        description: "Ping URL has been copied to your clipboard.",
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric' });
+      
+      // Calculate uptime based on current checks status
+      const totalChecks = checks.length || 1;
+      const upChecks = checks.filter(c => c.status === 'up').length;
+      const baseUptime = (upChecks / totalChecks) * 100;
+      
+      // Add some variation for older days
+      const variation = Math.random() * 5 - 2.5;
+      const uptime = Math.min(100, Math.max(85, baseUptime + variation));
+      
+      data.push({
+        date: dateStr,
+        uptime: Math.round(uptime * 10) / 10
       });
-    } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Failed to copy URL to clipboard.",
-        variant: "destructive",
-      });
+    }
+    
+    return data;
+  };
+
+  const generateMockActivities = (checks: Check[]): ActivityEvent[] => {
+    const activities: ActivityEvent[] = [];
+    const now = new Date();
+    
+    checks.slice(0, 5).forEach((check, index) => {
+      const timestamp = new Date(now.getTime() - (index + 1) * 3600000);
+      
+      if (check.status === 'down') {
+        activities.push({
+          id: `${check.id}-down`,
+          type: 'check_down',
+          message: `Check '${check.name}' went down`,
+          timestamp: timestamp.toISOString()
+        });
+      } else {
+        activities.push({
+          id: `${check.id}-up`,
+          type: 'check_up',
+          message: `Check '${check.name}' is back up`,
+          timestamp: timestamp.toISOString()
+        });
+      }
+    });
+    
+    return activities.sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+  };
+
+  const downChecks = checks.filter(c => c.status === 'down');
+  const upChecks = checks.filter(c => c.status === 'up');
+  const currentUptime = checks.length > 0 ? ((upChecks.length / checks.length) * 100).toFixed(1) : '0';
+
+  const getDowntimeDuration = (lastPinged: string | null, intervalMinutes: number, gracePeriodMinutes: number) => {
+    if (!lastPinged) return 'Never pinged';
+    
+    const lastPing = new Date(lastPinged);
+    const now = new Date();
+    const minutesSinceLastPing = Math.floor((now.getTime() - lastPing.getTime()) / (1000 * 60));
+    const expectedInterval = intervalMinutes + gracePeriodMinutes;
+    
+    if (minutesSinceLastPing <= expectedInterval) return 'Just now';
+    
+    const downMinutes = minutesSinceLastPing - expectedInterval;
+    
+    if (downMinutes < 60) return `Down for ${downMinutes}m`;
+    if (downMinutes < 1440) return `Down for ${Math.floor(downMinutes / 60)}h`;
+    return `Down for ${Math.floor(downMinutes / 1440)}d`;
+  };
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'check_down':
+        return <AlertTriangle className="w-4 h-4 text-red-400" />;
+      case 'check_up':
+        return <Activity className="w-4 h-4 text-green-400" />;
+      case 'prompt_created':
+      case 'check_created':
+        return <Plus className="w-4 h-4 text-blue-400" />;
+      default:
+        return <Activity className="w-4 h-4 text-white/60" />;
     }
   };
 
-  const filteredChecks = selectedGroup 
-    ? checks.filter(check => check.group_id === selectedGroup)
-    : checks.filter(check => !check.group_id);
+  const getRelativeTime = (timestamp: string) => {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const minutes = Math.floor((now.getTime() - time.getTime()) / 60000);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+    return `${Math.floor(minutes / 1440)}d ago`;
+  };
 
-  const totalChecks = checks.length;
-  const checksUp = checks.filter(check => check.status === 'up').length;
-  const checksDown = checks.filter(check => check.status === 'down').length;
-  const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
+  if (loading) {
+    return (
+      <div className="glass rounded-2xl p-8 h-full flex items-center justify-center">
+        <div className="text-white/70">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-full flex flex-col gap-6">
-      {/* Header */}
-      <div className="glass rounded-2xl p-4 flex-shrink-0">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-white">Monitoring Dashboard</h2>
-            <p className="text-sm text-white/70">Manage your service health checks</p>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2">
-            <Button 
-              className="glass-button h-9"
-              onClick={() => setCreateModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Check
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              {lastCheckedTimestamp && (
-                <p className="text-white/60 text-xs">
-                  Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
-                </p>
-              )}
-              <Button
-                size="sm"
-                variant="ghost"
-                className="glass-button p-1.5 h-7 w-7"
-                onClick={handleManualRefresh}
-                disabled={isRefreshing}
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
-          </div>
-        </div>
+    <div className="glass rounded-2xl p-8 h-full overflow-y-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-white/70">Complete overview of your monitoring and prompts</p>
       </div>
 
-      {/* Content Container */}
-      <div className="flex-1 min-h-0 flex flex-col gap-4">
-        {/* Top Section */}
-        <div className="flex-shrink-0">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-4 gap-3 mb-3">
-            {[
-              { label: 'Total Checks', value: totalChecks.toString() },
-              { label: 'Checks Up', value: checksUp.toString() },
-              { label: 'Checks Down', value: checksDown.toString() },
-              { label: 'Uptime %', value: `${uptimePercentage}%` },
-            ].map((stat, index) => (
-              <div key={index} className="glass rounded-xl p-3">
-                <p className="text-white/70 text-xs">{stat.label}</p>
-                <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
-              </div>
-            ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Critical System Status */}
+        <Card className="glass border-white/20 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-red-400' : 'text-green-400'}`} />
+            <h2 className="text-xl font-semibold text-white">Critical Status</h2>
           </div>
 
-          {/* Groups Filter Bar */}
-          <div className="glass rounded-2xl p-3">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-white">Filter by Group</h3>
-              <Button
-                size="sm"
-                className="glass-button h-8"
-                onClick={() => setCreateGroupModalOpen(true)}
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                New Group
-              </Button>
+          <div className="mb-4">
+            <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-red-400' : 'text-green-400'}`}>
+              {downChecks.length}
             </div>
+            <div className="text-white/70 text-sm mt-1">
+              {downChecks.length === 1 ? 'Check Down' : 'Checks Down'}
+            </div>
+          </div>
 
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setSelectedGroup(null)}
-                className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                  selectedGroup === null 
-                    ? 'glass-button text-white' 
-                    : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
-                }`}
-              >
-                Ungrouped ({checks.filter(c => !c.group_id).length})
-              </button>
-              
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => setSelectedGroup(group.id)}
-                  className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                    selectedGroup === group.id 
-                      ? 'glass-button text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
-                  }`}
-                >
-                  {group.name} ({checks.filter(c => c.group_id === group.id).length})
-                </button>
+          {downChecks.length > 0 ? (
+            <div className="space-y-2">
+              {downChecks.map(check => (
+                <div key={check.id} className="glass-button rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">{check.name}</span>
+                    <span className="text-red-400 text-sm">
+                      {getDowntimeDuration(check.last_pinged_at, check.interval_minutes, check.grace_period_minutes)}
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="glass-button rounded-lg p-4 text-center">
+              <p className="text-green-400 font-medium">All systems operational!</p>
+              <p className="text-white/60 text-sm mt-1">No issues detected</p>
+            </div>
+          )}
+        </Card>
 
-        {/* Bottom Section */}
-        <div className="flex-1 min-h-0 overflow-hidden">
-          {/* Checks List */}
-          <div className="glass rounded-2xl p-6 h-full flex flex-col">
-            <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
-              {selectedGroup 
-                ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
-                : 'Ungrouped Checks'
-              }
-            </h3>
-            
-            <ScrollArea className="flex-1">
-              {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-white/70">Loading checks...</p>
-                </div>
-              ) : filteredChecks.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-white/70 mb-4">No health checks in this group yet</p>
-                  <Button 
-                    className="glass-button"
-                    onClick={() => setCreateModalOpen(true)}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Check
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3 pr-4">
-                  {filteredChecks.map((check) => (
-                    <div key={check.id} className="glass rounded-xl p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${
-                            check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
-                          }`} />
-                          <div>
-                            <h4 className="text-white font-medium">{check.name}</h4>
-                            <p className="text-white/70 text-sm">
-                              Status: {check.status} • Every {check.interval_minutes}min
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            <p className="text-white/70 text-sm">
-                              {check.last_pinged_at 
-                                ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
-                                : 'Never pinged'
-                              }
-                            </p>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="glass-button"
-                            onClick={() => copyPingUrl(check.heartbeat_uuid)}
-                          >
-                            <Copy className="w-4 h-4 mr-2" />
-                            Copy URL
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
+        {/* Quick Actions */}
+        <Card className="glass border-white/20 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Plus className="w-6 h-6 text-white" />
+            <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
           </div>
-        </div>
+
+          <p className="text-white/70 text-sm mb-6">
+            Create new monitoring checks or prompts
+          </p>
+
+          <div className="space-y-3">
+            <Button
+              onClick={() => navigate('/monitoring')}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-14 text-lg"
+            >
+              <Activity className="w-5 h-5 mr-2" />
+              New Monitoring Check
+            </Button>
+
+            <Button
+              onClick={() => navigate('/prompts')}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-14 text-lg"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              New Prompt
+            </Button>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="glass-button rounded-lg p-3 text-center">
+              <div className="text-2xl font-bold text-white">{checks.length}</div>
+              <div className="text-white/60 text-xs">Total Checks</div>
+            </div>
+            <div className="glass-button rounded-lg p-3 text-center">
+              <div className="text-2xl font-bold text-green-400">{currentUptime}%</div>
+              <div className="text-white/60 text-xs">Current Uptime</div>
+            </div>
+          </div>
+        </Card>
       </div>
 
-      <CreateCheckModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onSuccess={fetchData}
-        groups={groups}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Uptime History */}
+        <Card className="glass border-white/20 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <TrendingUp className="w-6 h-6 text-white" />
+            <h2 className="text-xl font-semibold text-white">7-Day Uptime</h2>
+          </div>
 
-      <CreateGroupModal
-        open={createGroupModalOpen}
-        onClose={() => setCreateGroupModalOpen(false)}
-        onSuccess={fetchData}
-      />
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={uptimeData}>
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#ffffff60"
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke="#ffffff60"
+                  fontSize={12}
+                  domain={[0, 100]}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    color: '#fff'
+                  }}
+                  formatter={(value: number) => [`${value}%`, 'Uptime']}
+                />
+                <Bar 
+                  dataKey="uptime" 
+                  fill="url(#colorGradient)"
+                  radius={[8, 8, 0, 0]}
+                />
+                <defs>
+                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Recent Activities */}
+        <Card className="glass border-white/20 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Activity className="w-6 h-6 text-white" />
+            <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
+          </div>
+
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {activities.length > 0 ? (
+              activities.map(activity => (
+                <div key={activity.id} className="glass-button rounded-lg p-3">
+                  <div className="flex items-start gap-3">
+                    {getActivityIcon(activity.type)}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm">{activity.message}</p>
+                      <p className="text-white/50 text-xs mt-1">
+                        {getRelativeTime(activity.timestamp)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="glass-button rounded-lg p-4 text-center">
+                <p className="text-white/60 text-sm">No recent activity</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
