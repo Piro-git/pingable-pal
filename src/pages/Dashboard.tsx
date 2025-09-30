@@ -7,7 +7,6 @@ import { CreateGroupModal } from '@/components/CreateGroupModal';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Split from 'split.js';
 
 
 interface Group {
@@ -82,21 +81,6 @@ export default function Dashboard() {
     fetchData();
   }, [user]);
 
-  useEffect(() => {
-    // Initialize Split.js for vertical panes
-    const split = Split(['#top-pane', '#bottom-pane'], {
-      direction: 'vertical',
-      sizes: [40, 60],
-      minSize: 150,
-      gutterSize: 8,
-      cursor: 'row-resize',
-    });
-
-    return () => {
-      split.destroy();
-    };
-  }, []);
-
   const copyPingUrl = async (heartbeatUuid: string) => {
     const pingUrl = `https://mrtovhqequmhdgccwffs.supabase.co/functions/v1/ping-handler?uuid=${heartbeatUuid}`;
     
@@ -163,10 +147,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Split Panes Container */}
-      <div className="flex-1 min-h-0 split-container">
-        {/* Top Pane */}
-        <div id="top-pane" className="split-pane overflow-auto">
+      {/* Content Container */}
+      <div className="flex-1 min-h-0 flex flex-col gap-4">
+        {/* Top Section */}
+        <div className="flex-shrink-0">
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-3 mb-3">
             {[
@@ -225,8 +209,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Bottom Pane */}
-        <div id="bottom-pane" className="split-pane overflow-y-auto">
+        {/* Bottom Section */}
+        <div className="flex-1 min-h-0 overflow-hidden">
           {/* Checks List */}
           <div className="glass rounded-2xl p-6 h-full flex flex-col">
             <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
