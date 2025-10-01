@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Shield, Zap, Clock, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles, Shield, Zap, Clock, CheckCircle2, ArrowRight, Lock, Users, Code, Briefcase, Target } from 'lucide-react';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -88,74 +88,72 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-8 animate-fade-in">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Simple, Reliable, Powerful</span>
-          </div>
-          
           <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-6 tracking-tight animate-fade-in">
             Monitor Everything.<br />
             <span className="text-primary">Worry About Nothing.</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in">
-            Enterprise-grade uptime monitoring with heartbeat URLs. Know instantly when your services go down.
+          <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in">
+            Stop worrying about silent failures and messy prompts. Get instant alerts and a single source of truth for your entire automation stack.
           </p>
 
-          {/* Waitlist Form */}
-          <form onSubmit={handleWaitlistSubmit} className="max-w-md mx-auto mb-8 animate-fade-in">
-            <div className="flex gap-3">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="glass text-base h-12"
-                required
-              />
-              <Button type="submit" disabled={isSubmitting} className="h-12 px-8 whitespace-nowrap">
-                {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+          {/* CTA Button */}
+          <div className="mb-8 animate-fade-in">
+            <Link to="/register">
+              <Button size="lg" className="h-14 px-10 text-base">
+                Start Your Free Trial <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-            </div>
-          </form>
+            </Link>
+          </div>
 
-          <p className="text-sm text-muted-foreground animate-fade-in">
-            Join 10,000+ developers monitoring their services
-          </p>
+          {/* Social Proof */}
+          <div className="animate-fade-in">
+            <p className="text-sm text-muted-foreground mb-4">Works with:</p>
+            <div className="flex items-center justify-center gap-8 flex-wrap">
+              <div className="glass rounded-lg px-6 py-3 text-foreground font-semibold text-sm border border-border/40">n8n</div>
+              <div className="glass rounded-lg px-6 py-3 text-foreground font-semibold text-sm border border-border/40">Make</div>
+              <div className="glass rounded-lg px-6 py-3 text-foreground font-semibold text-sm border border-border/40">Zapier</div>
+              <div className="glass rounded-lg px-6 py-3 text-foreground font-semibold text-sm border border-border/40">Voiceflow</div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* Feature Pillars */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
+            Your Complete Automation Safety Net
+          </h2>
+          
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="glass rounded-2xl p-8 hover:scale-105 transition-all duration-300 border border-border/40">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">Lightning Fast</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Get instant notifications the moment your service goes down. No delays, no missed alerts.
-              </p>
-            </div>
-
             <div className="glass rounded-2xl p-8 hover:scale-105 transition-all duration-300 border border-border/40">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                 <Shield className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">Rock Solid</h3>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">Bulletproof Reliability</h3>
               <p className="text-muted-foreground leading-relaxed">
-                99.99% uptime guarantee. We monitor the monitors so you don't have to worry.
+                Get instant alerts the moment a critical workflow or cron job goes silent. We're your 24/7 digital watchdog, so you never have to worry about costly, silent failures again.
               </p>
             </div>
 
             <div className="glass rounded-2xl p-8 hover:scale-105 transition-all duration-300 border border-border/40">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <Clock className="w-6 h-6 text-primary" />
+                <Lock className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">Set & Forget</h3>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">Secure Prompt & Asset Vault</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Simple heartbeat URLs. Ping once, we handle the rest. No complex configuration needed.
+                Centralize, version, and control every prompt your team uses. Eliminate the chaos and reduce the risk of outdated or incorrect AI instructions. Your single source of truth for AI quality and consistency.
+              </p>
+            </div>
+
+            <div className="glass rounded-2xl p-8 hover:scale-105 transition-all duration-300 border border-border/40">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Users className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">Centralized Control for Teams</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Manage all client monitors and prompt libraries from one secure dashboard. Granular permissions (Admin, Editor, Viewer) ensure the right people have the right access, reducing errors and stress.
               </p>
             </div>
           </div>
@@ -166,7 +164,7 @@ const Index = () => {
       <section className="py-20 px-6 bg-gradient-to-b from-transparent to-primary/5">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-            How It Works
+            Get Peace of Mind in 3 Simple Steps
           </h2>
           
           <div className="space-y-8">
@@ -177,7 +175,7 @@ const Index = () => {
               <div>
                 <h3 className="text-2xl font-semibold text-foreground mb-2">Create a Check</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Get a unique heartbeat URL in seconds. No credit card required.
+                  Get a unique heartbeat URL in seconds. No complex configuration required.
                 </p>
               </div>
             </div>
@@ -189,7 +187,7 @@ const Index = () => {
               <div>
                 <h3 className="text-2xl font-semibold text-foreground mb-2">Ping Regularly</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Add a simple HTTP request to your cron job, script, or service.
+                  Add a simple HTTP request to the end of your cron job, script, or service.
                 </p>
               </div>
             </div>
@@ -201,7 +199,7 @@ const Index = () => {
               <div>
                 <h3 className="text-2xl font-semibold text-foreground mb-2">Relax</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  We'll alert you via email if we don't hear from your service on time.
+                  We'll alert you via email the moment we don't hear from your service on time.
                 </p>
               </div>
             </div>
@@ -209,29 +207,43 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Who Is It For */}
       <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-            Why Developers Love Us
+            Built for the Modern Automation Workflow
           </h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              'Zero configuration required',
-              'Custom check intervals',
-              'Grace period support',
-              'Instant email alerts',
-              'Beautiful dashboard',
-              'Team collaboration',
-              'Detailed check history',
-              'Color-coded organization'
-            ].map((benefit) => (
-              <div key={benefit} className="flex items-center gap-3">
-                <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
-                <span className="text-lg text-foreground">{benefit}</span>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="glass rounded-2xl p-8 border border-border/40">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Briefcase className="w-6 h-6 text-primary" />
               </div>
-            ))}
+              <h3 className="text-2xl font-semibold text-foreground mb-4">For Automation Agencies</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Manage all your clients' monitors and prompt libraries in one secure place. Offer your clients true peace of mind with added reliability and transparency.
+              </p>
+            </div>
+
+            <div className="glass rounded-2xl p-8 border border-border/40">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">For Marketing & Ops Teams</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Focus on your campaigns, not your code. We'll ensure your internal lead-gen and reporting automations never fail, so you don't have to.
+              </p>
+            </div>
+
+            <div className="glass rounded-2xl p-8 border border-border/40">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Code className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">For Solo Developers & Freelancers</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Ship your projects with confidence. Stay in control of your cronjobs and personal projects without the late-night stress.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -240,10 +252,10 @@ const Index = () => {
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto glass rounded-3xl p-12 text-center border border-primary/20">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Ready to Get Started?
+            Ready to Automate with Confidence?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Join thousands of developers monitoring their services with StatusPing
+            Join thousands of developers monitoring their services with StatusPing.
           </p>
           
           <form onSubmit={handleWaitlistSubmit} className="max-w-md mx-auto mb-6">
@@ -257,7 +269,7 @@ const Index = () => {
                 required
               />
               <Button type="submit" disabled={isSubmitting} className="h-12 px-8 whitespace-nowrap">
-                Get Early Access <ArrowRight className="w-4 h-4 ml-2" />
+                {isSubmitting ? 'Joining...' : 'Sign Up for Free'} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </form>
