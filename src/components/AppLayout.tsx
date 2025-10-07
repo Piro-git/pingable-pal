@@ -58,13 +58,13 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen">
       <div className="h-[calc(100vh)] flex">
         {/* Persistent Left Sidebar */}
-        <div className="w-64 glass rounded-2xl p-6 m-4 mr-2 overflow-y-auto">
+        <div className="w-64 bg-bg-base/60 backdrop-blur-xl rounded-2xl p-6 m-4 mr-2 overflow-y-auto shadow-realistic">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white">StatusPing</h1>
             <p className="text-white/70 text-sm mt-1">Monitoring Dashboard</p>
           </div>
 
-          <nav className="space-y-3">
+          <nav className="space-y-2">
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -72,16 +72,16 @@ export function AppLayout({ children }: AppLayoutProps) {
               return (
                 <div
                   key={item.name}
-                  className={`px-4 py-2 cursor-pointer transition-all rounded-lg ${
+                  className={`px-4 py-2.5 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
-                      ? 'glass-button text-white' 
-                      : 'text-white/70 hover:text-white hover:glass-button'
+                      ? 'bg-bg-lighter/90 backdrop-blur-xl text-white shadow-realistic' 
+                      : 'text-white/70 hover:text-white hover:bg-bg-lighter/50'
                   }`}
                   onClick={() => navigate(item.path)}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4" />
-                    {item.name}
+                    <span className="font-medium">{item.name}</span>
                   </div>
                 </div>
               );
@@ -89,14 +89,14 @@ export function AppLayout({ children }: AppLayoutProps) {
           </nav>
 
           <div className="mt-auto pt-6">
-            <div className="glass rounded-lg p-3 mb-3">
+            <div className="bg-bg-lighter/40 backdrop-blur-xl rounded-lg p-3 mb-3 shadow-inset-deep">
               <p className="text-white/70 text-sm">Signed in as:</p>
               <p className="text-white text-sm font-medium truncate">{user?.email}</p>
               <p className="text-white/60 text-xs mt-1 capitalize">{profile?.role}</p>
             </div>
             <Button 
               variant="outline" 
-              className="w-full glass border-white/20 text-white hover:bg-white/10"
+              className="w-full"
               onClick={handleSignOut}
             >
               <LogOut className="w-4 h-4 mr-2" />

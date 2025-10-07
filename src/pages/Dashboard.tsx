@@ -169,14 +169,14 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="glass rounded-2xl p-8 h-full flex items-center justify-center">
+      <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-8 h-full flex items-center justify-center shadow-realistic">
         <div className="text-white/70">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="glass rounded-2xl p-8 h-full overflow-y-auto">
+    <div className="bg-bg-base/50 backdrop-blur-xl rounded-2xl p-8 h-full overflow-y-auto shadow-realistic">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
         <p className="text-white/70">Complete overview of your monitoring and prompts</p>
@@ -184,7 +184,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Critical System Status */}
-        <Card className="glass border-white/20 p-6">
+        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
             <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-red-400' : 'text-green-400'}`} />
             <h2 className="text-xl font-semibold text-white">Critical Status</h2>
@@ -202,7 +202,7 @@ export default function Dashboard() {
           {downChecks.length > 0 ? (
             <div className="space-y-2">
               {downChecks.map(check => (
-                <div key={check.id} className="glass-button rounded-lg p-3">
+                <div key={check.id} className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
                   <div className="flex items-center justify-between">
                     <span className="text-white font-medium">{check.name}</span>
                     <span className="text-red-400 text-sm">
@@ -213,7 +213,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="glass-button rounded-lg p-4 text-center">
+            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-4 text-center shadow-realistic">
               <p className="text-green-400 font-medium">All systems operational!</p>
               <p className="text-white/60 text-sm mt-1">No issues detected</p>
             </div>
@@ -221,7 +221,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass border-white/20 p-6">
+        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
             <Plus className="w-6 h-6 text-white" />
             <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
@@ -234,7 +234,7 @@ export default function Dashboard() {
           <div className="space-y-3">
             <Button
               onClick={() => navigate('/monitoring')}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-14 text-lg"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
             >
               <Activity className="w-5 h-5 mr-2" />
               New Monitoring Check
@@ -242,7 +242,7 @@ export default function Dashboard() {
 
             <Button
               onClick={() => navigate('/prompts')}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-14 text-lg"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
             >
               <Plus className="w-5 h-5 mr-2" />
               New Prompt
@@ -250,11 +250,11 @@ export default function Dashboard() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="glass-button rounded-lg p-3 text-center">
+            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 text-center shadow-realistic">
               <div className="text-2xl font-bold text-white">{checks.length}</div>
               <div className="text-white/60 text-xs">Total Checks</div>
             </div>
-            <div className="glass-button rounded-lg p-3 text-center">
+            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 text-center shadow-realistic">
               <div className="text-2xl font-bold text-green-400">{currentUptime}%</div>
               <div className="text-white/60 text-xs">Current Uptime</div>
             </div>
@@ -264,7 +264,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Uptime History */}
-        <Card className="glass border-white/20 p-6">
+        <Card className="p-6 bg-bg-darker/50 backdrop-blur-xl shadow-inset-deep hover:bg-bg-darker/60 transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
             <TrendingUp className="w-6 h-6 text-white" />
             <h2 className="text-xl font-semibold text-white">7-Day Uptime</h2>
@@ -305,7 +305,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Recent Activities */}
-        <Card className="glass border-white/20 p-6">
+        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
             <Activity className="w-6 h-6 text-white" />
             <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
@@ -314,7 +314,7 @@ export default function Dashboard() {
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {activities.length > 0 ? (
               activities.map(activity => (
-                <div key={activity.id} className="glass-button rounded-lg p-3">
+                <div key={activity.id} className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
                   <div className="flex items-start gap-3">
                     {getActivityIcon(activity.type)}
                     <div className="flex-1 min-w-0">
@@ -327,7 +327,7 @@ export default function Dashboard() {
                 </div>
               ))
             ) : (
-              <div className="glass-button rounded-lg p-4 text-center">
+              <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-4 text-center shadow-realistic">
                 <p className="text-white/60 text-sm">No recent activity</p>
               </div>
             )}

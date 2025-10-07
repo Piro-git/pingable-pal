@@ -19,6 +19,12 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        
+        // Depth & Layering System
+        "bg-base": "hsl(var(--bg-base))",
+        "bg-lighter": "hsl(var(--bg-lighter))",
+        "bg-darker": "hsl(var(--bg-darker))",
+        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -57,6 +63,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      boxShadow: {
+        'realistic': 'var(--shadow-realistic)',
+        'realistic-lg': 'var(--shadow-realistic-lg)',
+        'inset-deep': 'var(--shadow-inset-deep)',
       },
       borderRadius: {
         lg: "var(--radius)",

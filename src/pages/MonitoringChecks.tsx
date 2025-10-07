@@ -111,7 +111,7 @@ export default function Dashboard() {
   return (
     <div className="h-full flex flex-col gap-6">
       {/* Header */}
-      <div className="glass rounded-2xl p-4 flex-shrink-0">
+      <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-4 flex-shrink-0 shadow-realistic">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-bold text-white">Monitoring Dashboard</h2>
@@ -120,7 +120,8 @@ export default function Dashboard() {
           
           <div className="flex flex-col items-center gap-2">
             <Button 
-              className="glass-button h-9"
+              variant="outline"
+              className="h-9"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -136,7 +137,7 @@ export default function Dashboard() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="glass-button p-1.5 h-7 w-7"
+                className="p-1.5 h-7 w-7"
                 onClick={handleManualRefresh}
                 disabled={isRefreshing}
               >
@@ -159,7 +160,7 @@ export default function Dashboard() {
               { label: 'Checks Down', value: checksDown.toString() },
               { label: 'Uptime %', value: `${uptimePercentage}%` },
             ].map((stat, index) => (
-              <div key={index} className="glass rounded-xl p-3">
+              <div key={index} className="bg-bg-lighter/60 backdrop-blur-xl rounded-xl p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
                 <p className="text-white/70 text-xs">{stat.label}</p>
                 <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
               </div>
@@ -167,12 +168,13 @@ export default function Dashboard() {
           </div>
 
           {/* Groups Filter Bar */}
-          <div className="glass rounded-2xl p-3">
+          <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-3 shadow-realistic">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-white">Filter by Group</h3>
               <Button
                 size="sm"
-                className="glass-button h-8"
+                variant="outline"
+                className="h-8"
                 onClick={() => setCreateGroupModalOpen(true)}
               >
                 <Plus className="w-3 h-3 mr-1" />
@@ -183,10 +185,10 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedGroup(null)}
-                className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
                   selectedGroup === null 
-                    ? 'glass-button text-white' 
-                    : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                    ? 'bg-bg-lighter/80 backdrop-blur-xl text-white shadow-realistic' 
+                    : 'text-white/70 hover:text-white hover:bg-bg-base/40 border border-white/10'
                 }`}
               >
                 Ungrouped ({checks.filter(c => !c.group_id).length})
@@ -196,10 +198,10 @@ export default function Dashboard() {
                 <button
                   key={group.id}
                   onClick={() => setSelectedGroup(group.id)}
-                  className={`px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
                     selectedGroup === group.id 
-                      ? 'glass-button text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                      ? 'bg-bg-lighter/80 backdrop-blur-xl text-white shadow-realistic' 
+                      : 'text-white/70 hover:text-white hover:bg-bg-base/40 border border-white/10'
                   }`}
                 >
                   {group.name} ({checks.filter(c => c.group_id === group.id).length})
@@ -212,7 +214,7 @@ export default function Dashboard() {
         {/* Bottom Section */}
         <div className="flex-1 min-h-0 overflow-hidden">
           {/* Checks List */}
-          <div className="glass rounded-2xl p-6 h-full flex flex-col">
+          <div className="bg-bg-base/50 backdrop-blur-xl rounded-2xl p-6 h-full flex flex-col shadow-realistic">
             <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
               {selectedGroup 
                 ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
@@ -229,7 +231,7 @@ export default function Dashboard() {
                 <div className="text-center py-12">
                   <p className="text-white/70 mb-4">No health checks in this group yet</p>
                   <Button 
-                    className="glass-button"
+                    variant="outline"
                     onClick={() => setCreateModalOpen(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -239,10 +241,10 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3 pr-4">
                   {filteredChecks.map((check) => (
-                    <div key={check.id} className="glass rounded-xl p-4">
+                    <div key={check.id} className="bg-bg-lighter/60 backdrop-blur-xl rounded-xl p-4 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${
+                          <div className={`w-3 h-3 rounded-full shadow-realistic ${
                             check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
                           }`} />
                           <div>
@@ -264,7 +266,6 @@ export default function Dashboard() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="glass-button"
                             onClick={() => copyPingUrl(check.heartbeat_uuid)}
                           >
                             <Copy className="w-4 h-4 mr-2" />
