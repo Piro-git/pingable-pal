@@ -8,7 +8,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, role, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -51,7 +51,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   ];
 
   const filteredNavItems = navigationItems.filter(item => 
-    profile && item.roles.includes(profile.role)
+    role && item.roles.includes(role)
   );
 
   return (
@@ -92,7 +92,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="bg-bg-lighter/40 backdrop-blur-xl rounded-lg p-3 mb-3 shadow-inset-deep">
               <p className="text-white/70 text-sm">Signed in as:</p>
               <p className="text-white text-sm font-medium truncate">{user?.email}</p>
-              <p className="text-white/60 text-xs mt-1 capitalize">{profile?.role}</p>
+              <p className="text-white/60 text-xs mt-1 capitalize">{role}</p>
             </div>
             <Button 
               variant="outline" 

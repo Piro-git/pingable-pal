@@ -6,6 +6,9 @@ interface UserProfile {
   id: string;
   email: string;
   full_name: string;
+}
+
+interface UserRole {
   role: 'admin' | 'editor' | 'viewer';
 }
 
@@ -13,6 +16,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: UserProfile | null;
+  role: 'admin' | 'editor' | 'viewer' | null;
   loading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -25,28 +29,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [role, setRole] = useState<'admin' | 'editor' | 'viewer' | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Fetch profile
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) {
+      if (profileError) {
         console.error('Error fetching profile');
         return;
       }
 
-      if (data) {
-        setProfile(data as UserProfile);
+      if (profileData) {
+        setProfile(profileData as UserProfile);
       } else {
         setProfile(null);
       }
+
+      // Fetch role from user_roles table
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (roleError) {
+        console.error('Error fetching role');
+        return;
+      }
+
+      if (roleData) {
+        setRole(roleData.role);
+      } else {
+        setRole(null);
+      }
     } catch (error) {
-      console.error('Error fetching profile');
+      console.error('Error fetching profile and role');
     }
   };
 
@@ -63,6 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }, 0);
         } else {
           setProfile(null);
+          setRole(null);
         }
         
         setLoading(false);
@@ -113,6 +138,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     session,
     profile,
+    role,
     loading,
     signUp,
     signIn,

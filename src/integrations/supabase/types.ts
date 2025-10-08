@@ -149,7 +149,6 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
-          role: string
           updated_at: string
         }
         Insert: {
@@ -157,7 +156,6 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
-          role?: string
           updated_at?: string
         }
         Update: {
@@ -165,7 +163,6 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
-          role?: string
           updated_at?: string
         }
         Relationships: []
@@ -376,6 +373,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string
@@ -409,6 +430,13 @@ export type Database = {
       get_user_role: {
         Args: { _user_id: string }
         Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
       has_role_access: {
         Args: { _required_roles: string[]; _user_id: string }
@@ -479,7 +507,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor" | "viewer"
     }
     CompositeTypes: {
       http_header: {
@@ -622,6 +650,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor", "viewer"],
+    },
   },
 } as const

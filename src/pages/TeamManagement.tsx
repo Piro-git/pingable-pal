@@ -40,7 +40,7 @@ interface Invitation {
 }
 
 export default function TeamManagement() {
-  const { user, profile } = useAuth();
+  const { user, role } = useAuth();
   const [teamMembers, setTeamMembers] = useState<UserProfile[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,20 +51,32 @@ export default function TeamManagement() {
   const [inviteLoading, setInviteLoading] = useState(false);
 
   const fetchTeamData = async () => {
-    if (!user || profile?.role !== 'admin') return;
+    if (!user || role !== 'admin') return;
 
     try {
-      // Fetch team members
+      // Fetch team members with their roles
       const { data: members, error: membersError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, email, full_name, created_at')
         .order('created_at', { ascending: false });
 
       if (membersError) throw membersError;
-      setTeamMembers((members || []).map(member => ({
-        ...member,
-        role: member.role as 'admin' | 'editor' | 'viewer'
-      })));
+      
+      // Fetch roles for all members
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+      
+      if (rolesError) throw rolesError;
+      
+      // Combine members with their roles
+      setTeamMembers((members || []).map(member => {
+        const userRole = rolesData?.find(r => r.user_id === member.id);
+        return {
+          ...member,
+          role: (userRole?.role || 'viewer') as 'admin' | 'editor' | 'viewer'
+        };
+      }));
 
       // Fetch pending invitations
       const { data: invites, error: invitesError } = await supabase
@@ -93,7 +105,7 @@ export default function TeamManagement() {
 
   useEffect(() => {
     fetchTeamData();
-  }, [user, profile]);
+  }, [user, role]);
 
   const handleSendInvitation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,10 +143,16 @@ export default function TeamManagement() {
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'editor' | 'viewer') => {
     try {
+      // First delete existing role
+      await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId);
+      
+      // Then insert new role
       const { error } = await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('id', userId);
+        .from('user_roles')
+        .insert({ user_id: userId, role: newRole });
 
       if (error) throw error;
 
@@ -222,7 +240,7 @@ export default function TeamManagement() {
     }
   };
 
-  if (profile?.role !== 'admin') {
+  if (role !== 'admin') {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">

@@ -48,7 +48,7 @@ interface Prompt {
 }
 
 export default function PromptArchive() {
-  const { user, profile } = useAuth();
+  const { user, role } = useAuth();
   const navigate = useNavigate();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -240,7 +240,7 @@ export default function PromptArchive() {
           <div className="glass rounded-2xl p-3 mb-3">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-white">Filter by Folder</h3>
-              {(profile?.role === 'admin' || profile?.role === 'editor') && (
+              {(role === 'admin' || role === 'editor') && (
                 <Button
                   size="sm"
                   className="glass-button h-8"
@@ -337,7 +337,7 @@ export default function PromptArchive() {
                 : 'All Prompts'
               } ({filteredPrompts.length})
             </h3>
-            {(profile?.role === 'admin' || profile?.role === 'editor') && (
+            {(role === 'admin' || role === 'editor') && (
               <Button
                 className="glass-button"
                 onClick={() => setCreatePromptModalOpen(true)}
@@ -362,7 +362,7 @@ export default function PromptArchive() {
                       : 'No prompts in this folder yet'
                     }
                   </p>
-                  {(!searchTerm && selectedTags.length === 0) && (profile?.role === 'admin' || profile?.role === 'editor') && (
+                  {(!searchTerm && selectedTags.length === 0) && (role === 'admin' || role === 'editor') && (
                     <Button 
                       className="glass-button"
                       onClick={() => setCreatePromptModalOpen(true)}
@@ -400,7 +400,7 @@ export default function PromptArchive() {
                             >
                               <Play className="w-4 h-4" />
                             </Button>
-                            {(profile?.role === 'admin' || profile?.role === 'editor') && (
+                            {(role === 'admin' || role === 'editor') && (
                               <Button 
                                 size="sm" 
                                 variant="ghost" 
