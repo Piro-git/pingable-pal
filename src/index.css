@@ -49,7 +49,7 @@ All colors MUST be HSL.
     --glass-border: 0 0% 100%;
     --glass-shadow: 258 76% 55%;
     --gradient-primary: linear-gradient(135deg, hsl(210 80% 50%), hsl(350 80% 60%));
-    --gradient-bg: radial-gradient(ellipse at top, hsl(200 40% 20%), hsl(210 60% 25%) 25%, hsl(215 70% 40%) 50%, hsl(350 75% 55%) 70%, hsl(15 80% 55%) 85%, hsl(210 65% 35%));
+    --gradient-bg: radial-gradient(ellipse 150% 100% at 50% 10%, hsl(200 50% 15%), hsl(210 70% 35%) 30%, hsl(215 80% 50%) 45%, hsl(320 75% 55%) 65%, hsl(15 85% 60%) 80%, hsl(210 70% 40%) 100%);
     --blur-strength: 25px;
 
     /* Realistic Shadow System */
