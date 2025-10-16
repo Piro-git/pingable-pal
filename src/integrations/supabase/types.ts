@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      check_runs: {
+        Row: {
+          check_id: string
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          payload: Json | null
+          status: string
+        }
+        Insert: {
+          check_id: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          status: string
+        }
+        Update: {
+          check_id?: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_runs_check_id_fkey"
+            columns: ["check_id"]
+            isOneToOne: false
+            referencedRelation: "checks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checks: {
         Row: {
           color: string | null
