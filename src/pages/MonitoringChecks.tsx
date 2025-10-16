@@ -1,9 +1,10 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Plus, Copy, RefreshCw } from 'lucide-react';
+import { Plus, Copy, RefreshCw, Info } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
+import { CheckInstructionsModal } from '@/components/CheckInstructionsModal';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -25,6 +26,7 @@ interface Check {
   last_pinged_at: string | null;
   created_at: string;
   group_id: string | null;
+  type: 'simple_ping' | 'api_report';
 }
 
 export default function Dashboard() {
@@ -35,6 +37,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
+  const [instructionsModalOpen, setInstructionsModalOpen] = useState(false);
+  const [selectedCheck, setSelectedCheck] = useState<Check | null>(null);
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -58,7 +62,7 @@ export default function Dashboard() {
         .order('created_at', { ascending: false });
 
       if (checksError) throw checksError;
-      setChecks(checksData || []);
+      setChecks(checksData as Check[] || []);
       setLastCheckedTimestamp(new Date());
     } catch (error: any) {
       toast({
@@ -97,6 +101,11 @@ export default function Dashboard() {
         variant: "destructive",
       });
     }
+  };
+
+  const showInstructions = (check: Check) => {
+    setSelectedCheck(check);
+    setInstructionsModalOpen(true);
   };
 
   const filteredChecks = selectedGroup 
@@ -267,9 +276,18 @@ export default function Dashboard() {
                             size="sm"
                             variant="outline"
                             onClick={() => copyPingUrl(check.heartbeat_uuid)}
+                            className="mr-2"
                           >
                             <Copy className="w-4 h-4 mr-2" />
                             Copy URL
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => showInstructions(check)}
+                          >
+                            <Info className="w-4 h-4 mr-2" />
+                            Instructions
                           </Button>
                         </div>
                       </div>
@@ -294,6 +312,16 @@ export default function Dashboard() {
         onClose={() => setCreateGroupModalOpen(false)}
         onSuccess={fetchData}
       />
+
+      {selectedCheck && (
+        <CheckInstructionsModal
+          open={instructionsModalOpen}
+          onClose={() => setInstructionsModalOpen(false)}
+          checkName={selectedCheck.name}
+          heartbeatUuid={selectedCheck.heartbeat_uuid}
+          checkType={selectedCheck.type}
+        />
+      )}
     </div>
   );
 }

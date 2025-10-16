@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X } from 'lucide-react';
+import { X, Radio, Send } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,6 +27,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const [interval, setInterval] = useState('5');
   const [groupId, setGroupId] = useState<string>('none');
   const [selectedColor, setSelectedColor] = useState(CHECK_COLORS[0]);
+  const [type, setType] = useState<'simple_ping' | 'api_report'>('simple_ping');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +72,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           interval_minutes: intervalNum,
           group_id: groupId === 'none' ? null : groupId,
           color: selectedColor,
+          type: type,
         });
 
       if (error) {
@@ -87,6 +89,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       setInterval('5');
       setGroupId('none');
       setSelectedColor(CHECK_COLORS[0]);
+      setType('simple_ping');
       onClose();
       onSuccess?.();
     } catch (error: any) {
@@ -105,6 +108,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
     setInterval('5');
     setGroupId('none');
     setSelectedColor(CHECK_COLORS[0]);
+    setType('simple_ping');
     onClose();
   };
 
@@ -160,6 +164,53 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
               className="glass-input"
               disabled={loading}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-white/90 text-sm font-medium">Check Type</Label>
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                type="button"
+                onClick={() => setType('simple_ping')}
+                disabled={loading}
+                className={`glass border-2 rounded-lg p-4 text-left transition-all ${
+                  type === 'simple_ping'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-white/20 hover:border-white/40'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <Radio className={`w-5 h-5 mt-0.5 ${type === 'simple_ping' ? 'text-primary' : 'text-white/50'}`} />
+                  <div className="flex-1">
+                    <div className="text-white font-medium mb-1">Simple Ping (GET)</div>
+                    <div className="text-white/60 text-sm">
+                      A basic heartbeat to confirm your service is online.
+                    </div>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setType('api_report')}
+                disabled={loading}
+                className={`glass border-2 rounded-lg p-4 text-left transition-all ${
+                  type === 'api_report'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-white/20 hover:border-white/40'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <Send className={`w-5 h-5 mt-0.5 ${type === 'api_report' ? 'text-primary' : 'text-white/50'}`} />
+                  <div className="flex-1">
+                    <div className="text-white font-medium mb-1">API Report (POST)</div>
+                    <div className="text-white/60 text-sm">
+                      Send detailed reports with KPIs and error messages.
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
 
           {groups.length > 0 && (
