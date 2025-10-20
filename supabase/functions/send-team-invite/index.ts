@@ -42,14 +42,11 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Authentication failed');
     }
 
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Check if user is admin using the secure user_roles table
+    const { data: hasAdminRole, error: roleError } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'admin' });
 
-    if (profile?.role !== 'admin') {
+    if (roleError || !hasAdminRole) {
       throw new Error('Only admins can send invitations');
     }
 

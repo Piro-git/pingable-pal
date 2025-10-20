@@ -34,10 +34,10 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Find the check with the matching heartbeat_uuid
+    // Find the check with the matching heartbeat_uuid (include last_pinged_at for rate limiting)
     const { data: check, error: selectError } = await supabase
       .from('checks')
-      .select('id, name')
+      .select('id, name, last_pinged_at')
       .eq('heartbeat_uuid', uuid)
       .single();
 
@@ -54,11 +54,51 @@ Deno.serve(async (req) => {
 
     console.log('Found check:', check.name);
 
-    // Parse request body for POST requests
+    // Rate limiting: Enforce minimum 30 second interval between pings
+    if (check.last_pinged_at) {
+      const lastPing = new Date(check.last_pinged_at).getTime();
+      const now = Date.now();
+      const minInterval = 30 * 1000; // 30 seconds
+      
+      if (now - lastPing < minInterval) {
+        const retryAfter = Math.ceil((minInterval - (now - lastPing)) / 1000);
+        console.log(`Rate limit exceeded for check ${check.id}. Retry after ${retryAfter}s`);
+        return new Response(
+          JSON.stringify({ 
+            status: 'error', 
+            message: 'Rate limit exceeded. Minimum interval between pings is 30 seconds.',
+            retry_after_seconds: retryAfter
+          }),
+          { 
+            status: 429, 
+            headers: { 
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Retry-After': String(retryAfter)
+            } 
+          }
+        );
+      }
+    }
+
+    // Parse request body for POST requests with validation
     let requestBody: any = {};
     if (req.method === 'POST') {
       try {
         const text = await req.text();
+        
+        // Validate payload size (max 10KB)
+        if (text.length > 10240) {
+          console.log('Payload too large:', text.length, 'bytes');
+          return new Response(
+            JSON.stringify({ status: 'error', message: 'Payload too large. Maximum size is 10KB.' }),
+            { 
+              status: 413, 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            }
+          );
+        }
+        
         if (text) {
           requestBody = JSON.parse(text);
           console.log('Parsed request body:', requestBody);
@@ -75,11 +115,50 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Extract data from request body with defaults
+    // Extract and validate data from request body
     const runStatus = requestBody.status || 'success';
+    
+    // Validate status field
+    if (!['success', 'failed', 'pending'].includes(runStatus)) {
+      return new Response(
+        JSON.stringify({ status: 'error', message: "Invalid status. Must be 'success', 'failed', or 'pending'." }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+    
     const payload = requestBody.payload || {};
     const errorMessage = requestBody.error_message || null;
-    const durationMs = requestBody.duration_ms || null;
+    
+    // Validate error message length
+    if (errorMessage && typeof errorMessage === 'string' && errorMessage.length > 1000) {
+      return new Response(
+        JSON.stringify({ status: 'error', message: 'Error message too long. Maximum length is 1000 characters.' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+    
+    let durationMs = requestBody.duration_ms || null;
+    
+    // Validate duration
+    if (durationMs !== null && durationMs !== undefined) {
+      const parsedDuration = parseInt(durationMs);
+      if (isNaN(parsedDuration) || parsedDuration < 0 || parsedDuration > 3600000) {
+        return new Response(
+          JSON.stringify({ status: 'error', message: 'Invalid duration. Must be between 0 and 3600000 ms.' }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      durationMs = parsedDuration;
+    }
 
     // Determine the check status (up if success, down if failed)
     const checkStatus = runStatus === 'success' ? 'up' : 'down';
