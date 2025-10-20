@@ -24,7 +24,7 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 98%;
 
     /* Orange accent - used sparingly for high impact */
-    --primary: 25 95% 53%;        /* Vibrant orange #FF6B00 */
+    --primary: 25 95% 53%;        /* Vibrant orange #FF6B00 - Forcing rebuild */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 15%;
