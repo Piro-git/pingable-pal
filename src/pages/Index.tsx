@@ -67,12 +67,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0a0f1e]">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 border-b border-border/40 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-50 bg-[#0a0f1e]/80 border-b border-white/5 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={flowzenLogo} alt="FlowZen" className="h-12 w-auto" />
+            <img src={flowzenLogo} alt="FlowZen" className="h-30 w-auto" />
           </div>
           <div className="flex items-center gap-4">
             <Link to="/login">
