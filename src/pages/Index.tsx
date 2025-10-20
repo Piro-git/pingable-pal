@@ -72,7 +72,7 @@ const Index = () => {
       <nav className="fixed top-0 w-full z-50 bg-background/80 border-b border-border/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={flowzenLogo} alt="FlowZen" className="h-8 w-auto" />
+            <img src={flowzenLogo} alt="FlowZen" className="h-12 w-auto" />
           </div>
           <div className="flex items-center gap-4">
             <Link to="/login">
