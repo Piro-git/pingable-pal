@@ -145,12 +145,12 @@ export default function Dashboard() {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'check_down':
-        return <AlertTriangle className="w-4 h-4 text-red-400" />;
+        return <AlertTriangle className="w-4 h-4 text-primary" />;
       case 'check_up':
-        return <Activity className="w-4 h-4 text-green-400" />;
+        return <Activity className="w-4 h-4 text-success" />;
       case 'prompt_created':
       case 'check_created':
-        return <Plus className="w-4 h-4 text-blue-400" />;
+        return <Plus className="w-4 h-4 text-accent" />;
       default:
         return <Activity className="w-4 h-4 text-white/60" />;
     }
@@ -186,12 +186,12 @@ export default function Dashboard() {
         {/* Critical System Status */}
         <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
-            <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-red-400' : 'text-green-400'}`} />
+            <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-primary' : 'text-success'}`} />
             <h2 className="text-xl font-semibold text-white">Critical Status</h2>
           </div>
 
           <div className="mb-4">
-            <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-red-400' : 'text-green-400'}`}>
+            <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-primary' : 'text-success'}`}>
               {downChecks.length}
             </div>
             <div className="text-white/70 text-sm mt-1">
@@ -205,7 +205,7 @@ export default function Dashboard() {
                 <div key={check.id} className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
                   <div className="flex items-center justify-between">
                     <span className="text-white font-medium">{check.name}</span>
-                    <span className="text-red-400 text-sm">
+                    <span className="text-primary text-sm">
                       {getDowntimeDuration(check.last_pinged_at, check.interval_minutes, check.grace_period_minutes)}
                     </span>
                   </div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-4 text-center shadow-realistic">
-              <p className="text-green-400 font-medium">All systems operational!</p>
+              <p className="text-success font-medium">All systems operational!</p>
               <p className="text-white/60 text-sm mt-1">No issues detected</p>
             </div>
           )}
@@ -234,7 +234,7 @@ export default function Dashboard() {
           <div className="space-y-3">
             <Button
               onClick={() => navigate('/monitoring')}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
             >
               <Activity className="w-5 h-5 mr-2" />
               New Monitoring Check
@@ -242,7 +242,8 @@ export default function Dashboard() {
 
             <Button
               onClick={() => navigate('/prompts')}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
+              variant="secondary"
+              className="w-full h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
             >
               <Plus className="w-5 h-5 mr-2" />
               New Prompt
@@ -255,7 +256,7 @@ export default function Dashboard() {
               <div className="text-white/60 text-xs">Total Checks</div>
             </div>
             <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 text-center shadow-realistic">
-              <div className="text-2xl font-bold text-green-400">{currentUptime}%</div>
+              <div className="text-2xl font-bold text-success">{currentUptime}%</div>
               <div className="text-white/60 text-xs">Current Uptime</div>
             </div>
           </div>

@@ -328,9 +328,9 @@ export default function TeamManagement() {
                       
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                          {member.role === 'admin' && <Crown className="w-4 h-4 text-yellow-400" />}
-                          {member.role === 'editor' && <Edit className="w-4 h-4 text-blue-400" />}
-                          {member.role === 'viewer' && <Eye className="w-4 h-4 text-gray-400" />}
+                          {member.role === 'admin' && <Crown className="w-4 h-4 text-primary" />}
+                          {member.role === 'editor' && <Edit className="w-4 h-4 text-accent" />}
+                          {member.role === 'viewer' && <Eye className="w-4 h-4 text-muted-foreground" />}
                           <span className="text-white capitalize">{member.role}</span>
                         </div>
                         
@@ -357,7 +357,7 @@ export default function TeamManagement() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="glass border-red-500/50 text-red-400 hover:bg-red-500/20"
+                                  className="glass border-primary/50 text-primary hover:bg-primary/20"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -375,7 +375,7 @@ export default function TeamManagement() {
                                   </AlertDialogCancel>
                                   <AlertDialogAction 
                                     onClick={() => handleRemoveUser(member.id)}
-                                    className="bg-red-600 hover:bg-red-700"
+                                    className="bg-primary hover:bg-primary/90"
                                   >
                                     Remove
                                   </AlertDialogAction>
@@ -455,7 +455,7 @@ export default function TeamManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="glass rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-2">
-                      <Edit className="w-4 h-4 text-blue-400" />
+                      <Edit className="w-4 h-4 text-accent" />
                       <span className="text-white font-medium">Editor</span>
                     </div>
                     <p className="text-white/70 text-sm">
@@ -464,7 +464,7 @@ export default function TeamManagement() {
                   </div>
                   <div className="glass rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-2">
-                      <Eye className="w-4 h-4 text-gray-400" />
+                      <Eye className="w-4 h-4 text-muted-foreground" />
                       <span className="text-white font-medium">Viewer</span>
                     </div>
                     <p className="text-white/70 text-sm">
@@ -535,7 +535,7 @@ export default function TeamManagement() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="glass border-red-500/50 text-red-400 hover:bg-red-500/20"
+                              className="glass border-primary/50 text-primary hover:bg-primary/20"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -553,7 +553,7 @@ export default function TeamManagement() {
                               </AlertDialogCancel>
                               <AlertDialogAction 
                                 onClick={() => handleRevokeInvitation(invitation.id)}
-                                className="bg-red-600 hover:bg-red-700"
+                                className="bg-primary hover:bg-primary/90"
                               >
                                 Revoke
                               </AlertDialogAction>

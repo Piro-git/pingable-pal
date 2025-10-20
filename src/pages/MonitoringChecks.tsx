@@ -254,7 +254,7 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full shadow-realistic ${
-                            check.status === 'up' ? 'bg-green-400' : 'bg-red-400'
+                            check.status === 'up' ? 'bg-success' : 'bg-primary'
                           }`} />
                           <div>
                             <h4 className="text-white font-medium">{check.name}</h4>

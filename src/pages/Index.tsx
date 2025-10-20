@@ -67,9 +67,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e]">
+    <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-[#0a0f1e]/80 border-b border-white/5 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-50 bg-background/80 border-b border-border/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src={flowzenLogo} alt="FlowZen" className="h-10 w-auto" />
@@ -79,7 +79,7 @@ const Index = () => {
               <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">Sign in</Button>
             </Link>
             <Link to="/register">
-              <Button className="text-sm bg-[#6366F1] hover:bg-[#5558E3] text-white">Sign up</Button>
+              <Button className="text-sm bg-primary hover:bg-primary/90 text-primary-foreground">Sign up</Button>
             </Link>
           </div>
         </div>
@@ -113,7 +113,7 @@ const Index = () => {
                 type="submit" 
                 disabled={isSubmitting}
                 size="lg" 
-                className="h-12 px-8 bg-[#6366F1] hover:bg-[#5558E3] text-white font-medium whitespace-nowrap"
+                className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium whitespace-nowrap"
               >
                 {isSubmitting ? 'Starting...' : 'Get started in 30 seconds'}
               </Button>
@@ -206,8 +206,8 @@ const Index = () => {
               <div className="glass-deep rounded-2xl p-8 min-h-[300px] flex items-center justify-center">
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-success"></div>
+                    <div className="w-3 h-3 rounded-full bg-accent"></div>
                     <div className="w-3 h-3 rounded-full bg-destructive"></div>
                   </div>
                   <p className="text-muted-foreground">Error visualization preview</p>
@@ -287,7 +287,7 @@ const Index = () => {
               </p>
               <div className="glass-deep rounded-xl p-6 min-h-[200px] flex items-center justify-center">
                 <div className="text-center">
-                  <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                  <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-3" />
                   <p className="text-foreground font-medium">All systems operational</p>
                 </div>
               </div>
