@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, Shield, Zap, Clock, CheckCircle2, ArrowRight, Lock, Users, Code, Briefcase, Target } from 'lucide-react';
+import flowzenLogo from '@/assets/flowzen-logo.png';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -68,18 +69,17 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 glass border-b border-border/40 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-50 bg-background/80 border-b border-border/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-primary" />
-            <span className="text-xl font-bold text-foreground">FlowZen</span>
+          <div className="flex items-center gap-3">
+            <img src={flowzenLogo} alt="FlowZen" className="h-8 w-auto" />
           </div>
           <div className="flex items-center gap-4">
             <Link to="/login">
-              <Button variant="ghost" className="text-sm">Sign In</Button>
+              <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">Sign in</Button>
             </Link>
             <Link to="/register">
-              <Button className="text-sm">Get Started</Button>
+              <Button className="text-sm bg-[#6366F1] hover:bg-[#5558E3] text-white">Sign up</Button>
             </Link>
           </div>
         </div>
@@ -88,7 +88,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight animate-fade-in leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight animate-fade-in leading-[1.1]">
             The most reliable<br />
             uptime monitoring
           </h1>
@@ -99,28 +99,83 @@ const Index = () => {
           </p>
 
           {/* CTA Section */}
-          <div className="mb-8 animate-fade-in max-w-2xl mx-auto">
+          <div className="mb-16 animate-fade-in max-w-2xl mx-auto">
             <form onSubmit={handleWaitlistSubmit} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
               <Input
                 type="email"
                 placeholder="Your work e-mail"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="glass-input h-12 px-4 max-w-xs w-full text-base"
+                className="glass-input h-12 px-4 max-w-xs w-full text-base bg-white/[0.03] border-white/10 text-white placeholder:text-white/40"
                 required
               />
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
                 size="lg" 
-                className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium whitespace-nowrap"
+                className="h-12 px-8 bg-[#6366F1] hover:bg-[#5558E3] text-white font-medium whitespace-nowrap"
               >
                 {isSubmitting ? 'Starting...' : 'Get started in 30 seconds'}
               </Button>
             </form>
             <p className="text-sm text-muted-foreground mt-4">
-              Looking for an enterprise solution? <span className="text-foreground hover:text-primary cursor-pointer">Book a demo</span>
+              Looking for an enterprise solution? <span className="text-white/90 hover:text-white cursor-pointer underline decoration-white/30 hover:decoration-white/60 transition-colors">Book a demo</span>
             </p>
+          </div>
+
+          {/* Product Preview */}
+          <div className="max-w-5xl mx-auto">
+            <div className="glass rounded-2xl p-6 md:p-8 border border-white/10 shadow-2xl">
+              <div className="glass-deep rounded-xl p-6 md:p-8 min-h-[400px] flex flex-col">
+                {/* Mock Dashboard Header */}
+                <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-sm font-medium text-white/80">Uptime</span>
+                  </div>
+                </div>
+
+                {/* Mock Monitor Status */}
+                <div className="space-y-4">
+                  <div className="glass rounded-lg p-4 border border-white/5">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                        <span className="text-white font-medium">time.com/status</span>
+                      </div>
+                      <span className="text-xs text-success">Up - Checked every 30 seconds</span>
+                    </div>
+                    <div className="flex gap-2 text-xs text-muted-foreground">
+                      <span>🚨 Send a test alert</span>
+                      <span>📊 Incidents</span>
+                      <span>⏸️ Pause this monitor</span>
+                      <span>⚙️ Configure</span>
+                    </div>
+                  </div>
+
+                  {/* Timeline Visualization */}
+                  <div className="glass-deep rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs text-muted-foreground">Monitor is up for</span>
+                      <span className="text-xs text-muted-foreground">Last checked</span>
+                    </div>
+                    <div className="flex gap-1 h-8 items-center">
+                      {Array.from({ length: 50 }).map((_, i) => (
+                        <div 
+                          key={i} 
+                          className="flex-1 h-full rounded-sm bg-success/30"
+                        />
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between mt-3">
+                      <span className="text-xs text-muted-foreground">Incidents</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -271,8 +326,8 @@ const Index = () => {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-primary" />
+          <div className="flex items-center gap-3">
+            <img src={flowzenLogo} alt="FlowZen" className="h-6 w-auto" />
             <span className="text-sm text-muted-foreground">© 2025 FlowZen. All rights reserved.</span>
           </div>
           <div className="flex gap-6">

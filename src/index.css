@@ -9,28 +9,28 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Orange Tech Design System - Inspired by Better Stack */
-    --background: 0 0% 7%;        /* Very dark gray (#111111) */
+    --background: 222 47% 8%;        /* Dark navy blue (#0D1117) */
     --foreground: 0 0% 98%;       /* White text */
 
     /* Depth & Layering System */
-    --bg-base: 0 0% 10%;          /* Base layer for cards */
-    --bg-lighter: 0 0% 12%;       /* Elevated interactive elements */
-    --bg-darker: 0 0% 8%;         /* Recessed backgrounds */
+    --bg-base: 222 47% 10%;          /* Base layer for cards */
+    --bg-lighter: 222 47% 12%;       /* Elevated interactive elements */
+    --bg-darker: 222 47% 6%;         /* Recessed backgrounds */
 
-    --card: 0 0% 10%;
+    --card: 222 47% 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 10%;
+    --popover: 222 47% 10%;
     --popover-foreground: 0 0% 98%;
 
     /* Orange accent - used sparingly for high impact */
     --primary: 25 95% 53%;        /* Vibrant orange #FF6B00 - Forcing rebuild */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
+    --secondary: 222 47% 15%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 15%;
+    --muted: 222 47% 15%;
     --muted-foreground: 0 0% 60%;
 
     --accent: 25 95% 53%;         /* Orange accent */
@@ -43,17 +43,17 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 12%;
+    --border: 222 47% 20%;
+    --input: 222 47% 12%;
     --ring: 25 95% 53%;
 
     --radius: 0.75rem;
 
     /* Glassmorphism - Liquid Glass Effect */
-    --glass-bg: 0 0% 10%;
+    --glass-bg: 222 47% 10%;
     --glass-blur: 20px;
     --glass-border: 0 0% 100%;
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 7%) 0%, hsl(0 0% 5%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 6%) 100%);
 
     /* Subtle Shadow System */
     --shadow-realistic: 
@@ -65,13 +65,13 @@ All colors MUST be HSL.
     --shadow-inset-deep:
       inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
 
-    --sidebar-background: 0 0% 10%;
+    --sidebar-background: 222 47% 10%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent: 222 47% 15%;
     --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 20%;
+    --sidebar-border: 222 47% 20%;
     --sidebar-ring: 25 95% 53%;
   }
 
