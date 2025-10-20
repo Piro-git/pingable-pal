@@ -8,71 +8,71 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* macOS Glassmorphism Design System */
-    --background: 258 100% 10%;
-    --foreground: 0 0% 98%;
+    /* Orange Tech Design System - Inspired by Better Stack */
+    --background: 0 0% 7%;        /* Very dark gray (#111111) */
+    --foreground: 0 0% 98%;       /* White text */
 
-    /* Depth & Layering System - Three Shades */
-    --bg-base: 240 10% 15%;      /* Base layer for cards and panels */
-    --bg-lighter: 240 12% 22%;   /* Elevated layer for interactive elements */
-    --bg-darker: 240 8% 12%;     /* Recessed layer for backgrounds */
+    /* Depth & Layering System */
+    --bg-base: 0 0% 10%;          /* Base layer for cards */
+    --bg-lighter: 0 0% 12%;       /* Elevated interactive elements */
+    --bg-darker: 0 0% 8%;         /* Recessed backgrounds */
 
-    --card: 240 10% 15%;
+    --card: 0 0% 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 12% 22%;
+    --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 258 76% 55%;  
-    --primary-foreground: 0 0% 98%;
+    /* Orange accent - used sparingly for high impact */
+    --primary: 25 95% 53%;        /* Vibrant orange #FF6B00 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 10% 20%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 240 10% 20%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 258 76% 55%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 25 95% 53%;         /* Orange accent */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    /* Success green for "up" status */
+    --success: 142 76% 36%;       /* Calm green #16A34A */
+    --success-foreground: 0 0% 100%;
 
-    --border: 0 0% 100%;
-    --input: 240 10% 15%;
-    --ring: 258 76% 55%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 1rem;
+    --border: 0 0% 20%;
+    --input: 0 0% 12%;
+    --ring: 25 95% 53%;
 
-    /* Glassmorphism specific tokens */
-    --glass-bg: 240 10% 15%;
+    --radius: 0.75rem;
+
+    /* Glassmorphism - Liquid Glass Effect */
+    --glass-bg: 0 0% 10%;
+    --glass-blur: 20px;
     --glass-border: 0 0% 100%;
-    --glass-shadow: 258 76% 55%;
-    --gradient-primary: linear-gradient(135deg, hsl(210 80% 50%), hsl(350 80% 60%));
-    --gradient-bg: radial-gradient(ellipse 150% 100% at 50% 10%, hsl(200 50% 15%), hsl(210 70% 35%) 30%, hsl(215 80% 50%) 45%, hsl(320 75% 55%) 65%, hsl(15 85% 60%) 80%, hsl(210 70% 40%) 100%);
-    --blur-strength: 25px;
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 7%) 0%, hsl(0 0% 5%) 100%);
 
-    /* Realistic Shadow System */
+    /* Subtle Shadow System */
     --shadow-realistic: 
-      0 -1px 0 0 rgba(255, 255, 255, 0.1),  /* Top light border */
-      0 8px 16px -4px rgba(0, 0, 0, 0.4);   /* Bottom soft shadow */
+      0 1px 3px 0 rgba(0, 0, 0, 0.5);
     
     --shadow-realistic-lg: 
-      0 -1px 0 0 rgba(255, 255, 255, 0.12),
-      0 12px 24px -6px rgba(0, 0, 0, 0.5);
+      0 4px 12px 0 rgba(0, 0, 0, 0.6);
     
     --shadow-inset-deep:
-      inset 0 2px 4px 0 rgba(0, 0, 0, 0.3),  /* Top dark shadow */
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);  /* Bottom light */
+      inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
 
-    --sidebar-background: 240 10% 15%;
+    --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 258 76% 55%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 10% 20%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 100%;
-    --sidebar-ring: 258 76% 55%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 25 95% 53%;
   }
 
   .dark {
@@ -124,82 +124,71 @@ All colors MUST be HSL.
     background: var(--gradient-bg);
     min-height: 100vh;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Depth System - Base panels and cards (elevated) */
+  /* Liquid Glass Effect - Panels and Cards */
   .glass {
-    background: hsl(var(--bg-lighter) / 0.6);
-    backdrop-filter: blur(var(--blur-strength));
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: var(--shadow-realistic);
   }
 
   .glass:hover {
-    box-shadow: var(--shadow-realistic-lg);
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  /* Interactive elements (most elevated) */
+  /* Interactive Buttons */
   .glass-button {
-    background: hsl(var(--bg-lighter) / 0.8);
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: white;
-    box-shadow: var(--shadow-realistic);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
   }
 
   .glass-button:hover {
-    background: hsl(var(--bg-lighter) / 0.95);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-realistic-lg);
-  }
-
-  .glass-button:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-inset-deep);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .glass-button-secondary {
-    background: hsl(var(--bg-base) / 0.6);
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    box-shadow: var(--shadow-realistic);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    transition: all 0.2s ease;
   }
 
   .glass-button-secondary:hover {
-    background: hsl(var(--bg-lighter) / 0.7);
+    background: rgba(255, 255, 255, 0.06);
     color: white;
   }
 
-  /* Input fields (recessed) */
+  /* Input Fields */
   .glass-input {
-    background: hsl(var(--bg-darker) / 0.8);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: white;
-    box-shadow: var(--shadow-inset-deep);
   }
 
   .glass-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.4);
   }
 
   .glass-input:focus {
-    background: hsl(var(--bg-base) / 0.9);
+    background: rgba(255, 255, 255, 0.05);
     border-color: hsl(var(--primary) / 0.5);
-    box-shadow: 
-      var(--shadow-inset-deep),
-      0 0 0 3px hsl(var(--primary) / 0.1);
+    outline: none;
   }
 
-  /* Deep/recessed elements (tables, charts) */
+  /* Recessed Elements */
   .glass-deep {
-    background: hsl(var(--bg-darker) / 0.7);
+    background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: var(--shadow-inset-deep);
   }
 
   /* Split.js Gutter Styles */
