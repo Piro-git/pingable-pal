@@ -8,29 +8,29 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Orange Tech Design System - Near-Black with Orange Accents */
-    --background: 0 0% 7%;           /* Near-black gray (#111111) */
+    /* Orange Tech Design System - Pure Black with Orange Accents */
+    --background: 0 0% 3%;           /* Nearly pure black (#080808) */
     --foreground: 0 0% 98%;          /* White text */
 
     /* Depth & Layering System */
-    --bg-base: 0 0% 9%;              /* Base layer for cards */
-    --bg-lighter: 0 0% 11%;          /* Elevated interactive elements */
-    --bg-darker: 0 0% 5%;            /* Recessed backgrounds */
+    --bg-base: 0 0% 6%;              /* Base layer for cards */
+    --bg-lighter: 0 0% 9%;           /* Elevated interactive elements */
+    --bg-darker: 0 0% 2%;            /* Recessed backgrounds */
 
-    --card: 0 0% 9%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 9%;
+    --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
 
     /* Orange accent - used sparingly for high impact */
     --primary: 25 95% 53%;           /* Vibrant orange #FF6B00 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
+    --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 15%;
+    --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
     --accent: 25 95% 53%;            /* Orange accent */
@@ -43,17 +43,17 @@ All colors MUST be HSL.
     --destructive: 25 95% 53%;       /* Orange for critical alerts */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 11%;
+    --border: 0 0% 15%;
+    --input: 0 0% 9%;
     --ring: 25 95% 53%;
 
     --radius: 0.75rem;
 
     /* Glassmorphism - Liquid Glass Effect */
-    --glass-bg: 0 0% 9%;
+    --glass-bg: 0 0% 6%;
     --glass-blur: 20px;
     --glass-border: 0 0% 100%;
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 7%) 0%, hsl(0 0% 5%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 3%) 0%, hsl(0 0% 2%) 100%);
 
     /* Subtle Shadow System */
     --shadow-realistic: 
@@ -77,22 +77,22 @@ All colors MUST be HSL.
 
   .dark {
     /* Dark mode uses same Orange Tech palette */
-    --background: 0 0% 7%;
+    --background: 0 0% 3%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 9%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 9%;
+    --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
+    --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 15%;
+    --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
     --accent: 25 95% 53%;
@@ -101,16 +101,16 @@ All colors MUST be HSL.
     --destructive: 25 95% 53%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 11%;
+    --border: 0 0% 15%;
+    --input: 0 0% 9%;
     --ring: 25 95% 53%;
-    --sidebar-background: 0 0% 9%;
+    --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 20%;
+    --sidebar-border: 0 0% 15%;
     --sidebar-ring: 25 95% 53%;
   }
 }
