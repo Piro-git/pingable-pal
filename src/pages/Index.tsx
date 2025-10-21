@@ -325,21 +325,28 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src={flowzenLogo} alt="FlowZen" className="h-6 w-auto" />
-            <span className="text-sm text-muted-foreground">© 2025 FlowZen. All rights reserved.</span>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col items-center gap-8 mb-8">
+            <a href="https://www.superlaun.ch/products/934" target="_blank" rel="noopener">
+              <img src="https://www.superlaun.ch/badge.png" alt="Featured on Super Launch" width="200" height="200" className="opacity-80 hover:opacity-100 transition-opacity" />
+            </a>
           </div>
-          <div className="flex gap-6">
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Privacy
-            </Link>
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Terms
-            </Link>
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Contact
-            </Link>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <img src={flowzenLogo} alt="FlowZen" className="h-6 w-auto" />
+              <span className="text-sm text-muted-foreground">© 2025 FlowZen. All rights reserved.</span>
+            </div>
+            <div className="flex gap-6">
+              <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Terms
+              </Link>
+              <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Contact
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
