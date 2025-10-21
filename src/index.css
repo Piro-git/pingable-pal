@@ -8,124 +8,104 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Orange Tech Design System - Pure Black with Orange Accents */
-    --background: 0 0% 3%;           /* Nearly pure black (#080808) */
-    --foreground: 0 0% 98%;          /* White text */
+    /* FlowZen Premium Design System - Teal & Purple */
+    --background: 0 0% 100%;         /* Pure white */
+    --foreground: 217 33% 17%;       /* Gray 900 #1F2937 */
 
-    /* Depth & Layering System */
-    --bg-base: 0 0% 6%;              /* Base layer for cards */
-    --bg-lighter: 0 0% 9%;           /* Elevated interactive elements */
-    --bg-darker: 0 0% 2%;            /* Recessed backgrounds */
+    /* Layering */
+    --card: 210 20% 98%;             /* Gray 100 #F3F4F6 */
+    --card-foreground: 217 33% 17%;
 
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 33% 17%;
 
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 98%;
-
-    /* Orange accent - used sparingly for high impact */
-    --primary: 25 95% 53%;           /* Vibrant orange #FF6B00 */
+    /* Teal Primary */
+    --primary: 173 80% 40%;          /* Teal #14B8A6 */
+    --primary-hover: 172 66% 50%;    /* Teal hover #0D9488 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 85%;
+    /* Purple Secondary */
+    --secondary: 258 90% 66%;        /* Purple #7C3AED */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 25 95% 53%;            /* Orange accent */
+    /* Coral Accent */
+    --accent: 27 96% 61%;            /* Coral #FB923C */
     --accent-foreground: 0 0% 100%;
 
-    /* Success green for "up" status */
-    --success: 142 76% 36%;          /* Calm green #16A34A */
-    --success-foreground: 0 0% 100%;
+    /* Muted */
+    --muted: 214 32% 91%;            /* Gray 200 */
+    --muted-foreground: 215 16% 47%; /* Gray 500 #6B7280 */
 
-    --destructive: 25 95% 53%;       /* Orange for critical alerts */
+    /* Success/Warning/Error */
+    --success: 142 71% 45%;          /* Green #10B981 */
+    --warning: 38 92% 50%;           /* Warning #F59E0B */
+    --destructive: 0 72% 51%;        /* Error #EF4444 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 9%;
-    --ring: 25 95% 53%;
+    /* Borders & Inputs */
+    --border: 214 32% 91%;           /* Gray 300 #D1D5DB */
+    --input: 0 0% 100%;
+    --ring: 173 80% 40%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Glassmorphism - Liquid Glass Effect */
-    --glass-bg: 0 0% 6%;
-    --glass-blur: 20px;
-    --glass-border: 0 0% 100%;
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 3%) 0%, hsl(0 0% 2%) 100%);
-
-    /* Subtle Shadow System */
-    --shadow-realistic: 
-      0 1px 3px 0 rgba(0, 0, 0, 0.5);
-    
-    --shadow-realistic-lg: 
-      0 4px 12px 0 rgba(0, 0, 0, 0.6);
-    
-    --shadow-inset-deep:
-      inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-
-    --sidebar-background: 0 0% 9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 25 95% 53%;
+    /* Text Colors */
+    --text-primary: 217 33% 17%;     /* Gray 900 */
+    --text-secondary: 215 20% 27%;   /* Gray 700 #374151 */
+    --text-muted: 215 16% 47%;       /* Gray 500 */
   }
 
   .dark {
-    /* Dark mode uses same Orange Tech palette */
-    --background: 0 0% 3%;
+    --background: 217 33% 17%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 6%;
+    --card: 215 28% 17%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 6%;
+    --popover: 215 28% 17%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 25 95% 53%;
+    --primary: 173 80% 40%;
+    --primary-hover: 172 66% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 85%;
+    --secondary: 258 90% 66%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 25 95% 53%;
+    --accent: 27 96% 61%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 25 95% 53%;
+    --muted: 215 28% 25%;
+    --muted-foreground: 215 16% 60%;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 9%;
-    --ring: 25 95% 53%;
-    --sidebar-background: 0 0% 6%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 25 95% 53%;
+    --border: 215 28% 25%;
+    --input: 215 28% 17%;
+    --ring: 173 80% 40%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    margin: 0;
+    padding: 0;
+    border: 0 solid transparent;
   }
 
   body {
-    @apply bg-background text-foreground;
-    background: var(--gradient-bg);
-    min-height: 100vh;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   /* Liquid Glass Effect - Panels and Cards */
