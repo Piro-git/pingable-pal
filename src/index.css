@@ -9,11 +9,11 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* FlowZen Premium Design System - Teal & Purple */
-    --background: 0 0% 100%;         /* Pure white */
+    --background: 210 20% 98%;       /* Soft gray background */
     --foreground: 217 33% 17%;       /* Gray 900 #1F2937 */
 
     /* Layering */
-    --card: 210 20% 98%;             /* Gray 100 #F3F4F6 */
+    --card: 0 0% 100%;               /* Pure white for cards */
     --card-foreground: 217 33% 17%;
 
     --popover: 0 0% 100%;
@@ -33,8 +33,8 @@ All colors MUST be HSL.
     --accent-foreground: 0 0% 100%;
 
     /* Muted */
-    --muted: 214 32% 91%;            /* Gray 200 */
-    --muted-foreground: 215 16% 47%; /* Gray 500 #6B7280 */
+    --muted: 214 32% 95%;            /* Lighter gray */
+    --muted-foreground: 215 20% 35%; /* Darker for better contrast */
 
     /* Success/Warning/Error */
     --success: 142 71% 45%;          /* Green #10B981 */
@@ -43,7 +43,7 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 100%;
 
     /* Borders & Inputs */
-    --border: 214 32% 91%;           /* Gray 300 #D1D5DB */
+    --border: 214 20% 85%;           /* More visible border */
     --input: 0 0% 100%;
     --ring: 173 80% 40%;
 

@@ -58,10 +58,10 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-background">
       <div className="h-[calc(100vh)] flex">
         {/* Persistent Left Sidebar */}
-        <div className="w-64 bg-card border-r border-border p-6 overflow-y-auto">
+        <div className="w-64 bg-card border-r border-border p-6 overflow-y-auto shadow-lg">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-primary tracking-tight">FlowZen</h1>
-            <p className="text-muted-foreground text-sm mt-1">Workflow Peace of Mind</p>
+            <p className="text-muted-foreground text-sm mt-1 font-medium">Workflow Peace of Mind</p>
           </div>
 
           <nav className="space-y-2">
@@ -89,10 +89,10 @@ export function AppLayout({ children }: AppLayoutProps) {
           </nav>
 
           <div className="mt-auto pt-6">
-            <div className="bg-muted rounded-xl p-4 mb-3">
-              <p className="text-muted-foreground text-xs">Signed in as:</p>
-              <p className="text-foreground text-sm font-medium truncate mt-1">{user?.email}</p>
-              <p className="text-muted-foreground text-xs mt-1 capitalize">{role}</p>
+            <div className="bg-muted/50 rounded-xl p-4 mb-3 border border-border">
+              <p className="text-muted-foreground text-xs font-medium">Signed in as:</p>
+              <p className="text-foreground text-sm font-semibold truncate mt-1">{user?.email}</p>
+              <p className="text-muted-foreground text-xs mt-1 capitalize font-medium">{role}</p>
             </div>
             <Button 
               variant="outline" 
