@@ -120,11 +120,11 @@ export default function Dashboard() {
   return (
     <div className="h-full flex flex-col gap-6">
       {/* Header */}
-      <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-4 flex-shrink-0 shadow-realistic">
+      <div className="bg-card border border-border rounded-2xl p-4 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white">Monitoring Dashboard</h2>
-            <p className="text-sm text-white/70">Manage your service health checks</p>
+            <h2 className="text-xl font-bold text-foreground">Monitoring Dashboard</h2>
+            <p className="text-sm text-muted-foreground">Manage your service health checks</p>
           </div>
           
           <div className="flex flex-col items-center gap-2">
@@ -139,7 +139,7 @@ export default function Dashboard() {
             
             <div className="flex items-center gap-2">
               {lastCheckedTimestamp && (
-                <p className="text-white/60 text-xs">
+                <p className="text-muted-foreground text-xs">
                   Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
                 </p>
               )}
@@ -169,17 +169,17 @@ export default function Dashboard() {
               { label: 'Checks Down', value: checksDown.toString() },
               { label: 'Uptime %', value: `${uptimePercentage}%` },
             ].map((stat, index) => (
-              <div key={index} className="bg-bg-lighter/60 backdrop-blur-xl rounded-xl p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
-                <p className="text-white/70 text-xs">{stat.label}</p>
-                <p className="text-white text-xl font-bold mt-0.5">{stat.value}</p>
+              <div key={index} className="bg-card border border-border rounded-xl p-3 hover:shadow-md transition-all duration-200">
+                <p className="text-muted-foreground text-xs">{stat.label}</p>
+                <p className="text-foreground text-xl font-bold mt-0.5">{stat.value}</p>
               </div>
             ))}
           </div>
 
           {/* Groups Filter Bar */}
-          <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-3 shadow-realistic">
+          <div className="bg-card border border-border rounded-2xl p-3">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-white">Filter by Group</h3>
+              <h3 className="text-sm font-semibold text-foreground">Filter by Group</h3>
               <Button
                 size="sm"
                 variant="outline"
@@ -196,8 +196,8 @@ export default function Dashboard() {
                 onClick={() => setSelectedGroup(null)}
                 className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
                   selectedGroup === null 
-                    ? 'bg-bg-lighter/80 backdrop-blur-xl text-white shadow-realistic' 
-                    : 'text-white/70 hover:text-white hover:bg-bg-base/40 border border-white/10'
+                    ? 'bg-primary/10 text-primary border border-primary/20' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-border'
                 }`}
               >
                 Ungrouped ({checks.filter(c => !c.group_id).length})
@@ -209,8 +209,8 @@ export default function Dashboard() {
                   onClick={() => setSelectedGroup(group.id)}
                   className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
                     selectedGroup === group.id 
-                      ? 'bg-bg-lighter/80 backdrop-blur-xl text-white shadow-realistic' 
-                      : 'text-white/70 hover:text-white hover:bg-bg-base/40 border border-white/10'
+                      ? 'bg-primary/10 text-primary border border-primary/20' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-border'
                   }`}
                 >
                   {group.name} ({checks.filter(c => c.group_id === group.id).length})
@@ -223,8 +223,8 @@ export default function Dashboard() {
         {/* Bottom Section */}
         <div className="flex-1 min-h-0 overflow-hidden">
           {/* Checks List */}
-          <div className="bg-bg-base/50 backdrop-blur-xl rounded-2xl p-6 h-full flex flex-col shadow-realistic">
-            <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
+          <div className="bg-card border border-border rounded-2xl p-6 h-full flex flex-col">
+            <h3 className="text-xl font-semibold text-foreground mb-4 flex-shrink-0">
               {selectedGroup 
                 ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
                 : 'Ungrouped Checks'
@@ -234,11 +234,11 @@ export default function Dashboard() {
             <ScrollArea className="flex-1">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-white/70">Loading checks...</p>
+                  <p className="text-muted-foreground">Loading checks...</p>
                 </div>
               ) : filteredChecks.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-white/70 mb-4">No health checks in this group yet</p>
+                  <p className="text-muted-foreground mb-4">No health checks in this group yet</p>
                   <Button 
                     variant="outline"
                     onClick={() => setCreateModalOpen(true)}
@@ -250,22 +250,22 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3 pr-4">
                   {filteredChecks.map((check) => (
-                    <div key={check.id} className="bg-bg-lighter/60 backdrop-blur-xl rounded-xl p-4 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
+                    <div key={check.id} className="bg-muted rounded-xl p-4 hover:bg-muted/80 transition-all duration-200">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full shadow-realistic ${
-                            check.status === 'up' ? 'bg-success' : 'bg-primary'
+                          <div className={`w-3 h-3 rounded-full ${
+                            check.status === 'up' ? 'bg-success' : 'bg-accent'
                           }`} />
                           <div>
-                            <h4 className="text-white font-medium">{check.name}</h4>
-                            <p className="text-white/70 text-sm">
+                            <h4 className="text-foreground font-medium">{check.name}</h4>
+                            <p className="text-muted-foreground text-sm">
                               Status: {check.status} • Every {check.interval_minutes}min
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
-                            <p className="text-white/70 text-sm">
+                            <p className="text-muted-foreground text-sm">
                               {check.last_pinged_at 
                                 ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
                                 : 'Never pinged'

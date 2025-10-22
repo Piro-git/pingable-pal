@@ -63,35 +63,33 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="glass rounded-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="bg-card border border-border rounded-2xl p-8 w-full max-w-md shadow-lg">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">StatusPing</h1>
-          <p className="text-white/70">Sign in to your account</p>
+          <h1 className="text-3xl font-bold text-primary mb-2 tracking-tight">FlowZen</h1>
+          <p className="text-muted-foreground">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">Email</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="glass-input"
               placeholder="Enter your email"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-white">Password</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="glass-input"
               placeholder="Enter your password"
               required
             />
@@ -100,16 +98,16 @@ export default function Login() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full glass-button"
+            className="w-full"
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-white/70">
+          <p className="text-muted-foreground">
             Don't have an account?{' '}
-            <Link to="/register" className="text-white hover:underline font-medium">
+            <Link to="/register" className="text-primary hover:underline font-medium">
               Sign up
             </Link>
           </p>

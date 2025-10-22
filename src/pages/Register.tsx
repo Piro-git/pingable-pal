@@ -142,15 +142,15 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="glass rounded-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="bg-card border border-border rounded-2xl p-8 w-full max-w-md shadow-lg">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">StatusPing</h1>
-          <p className="text-white/70">
+          <h1 className="text-3xl font-bold text-primary mb-2 tracking-tight">FlowZen</h1>
+          <p className="text-muted-foreground">
             {inviteToken ? `Join ${inviteEmail}'s team` : 'Create your account'}
           </p>
           {inviteToken && (
-            <p className="text-white/50 text-sm mt-2">
+            <p className="text-muted-foreground text-sm mt-2">
               Role: {inviteRole}
             </p>
           )}
@@ -158,13 +158,12 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">Email</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="glass-input"
               placeholder="Enter your email"
               disabled={!!inviteToken}
               required
@@ -172,26 +171,24 @@ export default function Register() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-white">Password</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="glass-input"
               placeholder="Enter your password"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-white">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
               id="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="glass-input"
               placeholder="Confirm your password"
               required
             />
@@ -200,16 +197,16 @@ export default function Register() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full glass-button"
+            className="w-full"
           >
             {isLoading ? 'Creating account...' : 'Sign Up'}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-white/70">
+          <p className="text-muted-foreground">
             Already have an account?{' '}
-            <Link to="/login" className="text-white hover:underline font-medium">
+            <Link to="/login" className="text-primary hover:underline font-medium">
               Sign in
             </Link>
           </p>

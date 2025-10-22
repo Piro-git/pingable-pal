@@ -55,13 +55,13 @@ export function AppLayout({ children }: AppLayoutProps) {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <div className="h-[calc(100vh)] flex">
         {/* Persistent Left Sidebar */}
-        <div className="w-64 bg-bg-base/60 backdrop-blur-xl rounded-2xl p-6 m-4 mr-2 overflow-y-auto shadow-realistic">
+        <div className="w-64 bg-card border-r border-border p-6 overflow-y-auto">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">StatusPing</h1>
-            <p className="text-white/70 text-sm mt-1">Monitoring Dashboard</p>
+            <h1 className="text-2xl font-bold text-primary tracking-tight">FlowZen</h1>
+            <p className="text-muted-foreground text-sm mt-1">Workflow Peace of Mind</p>
           </div>
 
           <nav className="space-y-2">
@@ -72,15 +72,15 @@ export function AppLayout({ children }: AppLayoutProps) {
               return (
                 <div
                   key={item.name}
-                  className={`px-4 py-2.5 cursor-pointer transition-all duration-200 rounded-lg ${
+                  className={`px-4 py-3 cursor-pointer transition-all duration-200 rounded-xl ${
                     isActive 
-                      ? 'bg-bg-lighter/90 backdrop-blur-xl text-white shadow-realistic' 
-                      : 'text-white/70 hover:text-white hover:bg-bg-lighter/50'
+                      ? 'bg-primary/10 text-primary border border-primary/20' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                   onClick={() => navigate(item.path)}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-5 h-5" />
                     <span className="font-medium">{item.name}</span>
                   </div>
                 </div>
@@ -89,10 +89,10 @@ export function AppLayout({ children }: AppLayoutProps) {
           </nav>
 
           <div className="mt-auto pt-6">
-            <div className="bg-bg-lighter/40 backdrop-blur-xl rounded-lg p-3 mb-3 shadow-inset-deep">
-              <p className="text-white/70 text-sm">Signed in as:</p>
-              <p className="text-white text-sm font-medium truncate">{user?.email}</p>
-              <p className="text-white/60 text-xs mt-1 capitalize">{role}</p>
+            <div className="bg-muted rounded-xl p-4 mb-3">
+              <p className="text-muted-foreground text-xs">Signed in as:</p>
+              <p className="text-foreground text-sm font-medium truncate mt-1">{user?.email}</p>
+              <p className="text-muted-foreground text-xs mt-1 capitalize">{role}</p>
             </div>
             <Button 
               variant="outline" 
@@ -106,7 +106,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-4 pl-2">
+        <div className="flex-1 p-6 overflow-auto">
           {children}
         </div>
       </div>

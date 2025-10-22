@@ -145,14 +145,14 @@ export default function Dashboard() {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'check_down':
-        return <AlertTriangle className="w-4 h-4 text-primary" />;
+        return <AlertTriangle className="w-4 h-4 text-accent" />;
       case 'check_up':
         return <Activity className="w-4 h-4 text-success" />;
       case 'prompt_created':
       case 'check_created':
-        return <Plus className="w-4 h-4 text-accent" />;
+        return <Plus className="w-4 h-4 text-secondary" />;
       default:
-        return <Activity className="w-4 h-4 text-white/60" />;
+        return <Activity className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -169,32 +169,32 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="bg-bg-lighter/60 backdrop-blur-xl rounded-2xl p-8 h-full flex items-center justify-center shadow-realistic">
-        <div className="text-white/70">Loading dashboard...</div>
+      <div className="bg-card rounded-2xl p-8 h-full flex items-center justify-center border border-border">
+        <div className="text-muted-foreground">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-bg-base/50 backdrop-blur-xl rounded-2xl p-8 h-full overflow-y-auto shadow-realistic">
+    <div className="bg-card rounded-2xl p-8 h-full overflow-y-auto border border-border">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-white/70">Complete overview of your monitoring and prompts</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">Complete overview of your monitoring and prompts</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Critical System Status */}
-        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
+        <Card className="p-6 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
-            <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-primary' : 'text-success'}`} />
-            <h2 className="text-xl font-semibold text-white">Critical Status</h2>
+            <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`} />
+            <h2 className="text-xl font-semibold text-foreground">Critical Status</h2>
           </div>
 
           <div className="mb-4">
-            <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-primary' : 'text-success'}`}>
+            <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`}>
               {downChecks.length}
             </div>
-            <div className="text-white/70 text-sm mt-1">
+            <div className="text-muted-foreground text-sm mt-1">
               {downChecks.length === 1 ? 'Check Down' : 'Checks Down'}
             </div>
           </div>
@@ -202,10 +202,10 @@ export default function Dashboard() {
           {downChecks.length > 0 ? (
             <div className="space-y-2">
               {downChecks.map(check => (
-                <div key={check.id} className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
+                <div key={check.id} className="bg-muted rounded-lg p-3 hover:bg-muted/80 transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-white font-medium">{check.name}</span>
-                    <span className="text-primary text-sm">
+                    <span className="text-foreground font-medium">{check.name}</span>
+                    <span className="text-accent text-sm">
                       {getDowntimeDuration(check.last_pinged_at, check.interval_minutes, check.grace_period_minutes)}
                     </span>
                   </div>
@@ -213,28 +213,28 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-4 text-center shadow-realistic">
+            <div className="bg-success/10 border border-success/20 rounded-lg p-4 text-center">
               <p className="text-success font-medium">All systems operational!</p>
-              <p className="text-white/60 text-sm mt-1">No issues detected</p>
+              <p className="text-muted-foreground text-sm mt-1">No issues detected</p>
             </div>
           )}
         </Card>
 
         {/* Quick Actions */}
-        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
+        <Card className="p-6 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
-            <Plus className="w-6 h-6 text-white" />
-            <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
+            <Plus className="w-6 h-6 text-foreground" />
+            <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
           </div>
 
-          <p className="text-white/70 text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-6">
             Create new monitoring checks or prompts
           </p>
 
           <div className="space-y-3">
             <Button
               onClick={() => navigate('/monitoring')}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
+              className="w-full h-14 text-lg hover:-translate-y-0.5 transition-transform"
             >
               <Activity className="w-5 h-5 mr-2" />
               New Monitoring Check
@@ -243,7 +243,7 @@ export default function Dashboard() {
             <Button
               onClick={() => navigate('/prompts')}
               variant="secondary"
-              className="w-full h-14 text-lg shadow-realistic-lg hover:-translate-y-1"
+              className="w-full h-14 text-lg hover:-translate-y-0.5 transition-transform"
             >
               <Plus className="w-5 h-5 mr-2" />
               New Prompt
@@ -251,13 +251,13 @@ export default function Dashboard() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 text-center shadow-realistic">
-              <div className="text-2xl font-bold text-white">{checks.length}</div>
-              <div className="text-white/60 text-xs">Total Checks</div>
+            <div className="bg-muted rounded-lg p-3 text-center">
+              <div className="text-2xl font-bold text-foreground">{checks.length}</div>
+              <div className="text-muted-foreground text-xs">Total Checks</div>
             </div>
-            <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 text-center shadow-realistic">
+            <div className="bg-muted rounded-lg p-3 text-center">
               <div className="text-2xl font-bold text-success">{currentUptime}%</div>
-              <div className="text-white/60 text-xs">Current Uptime</div>
+              <div className="text-muted-foreground text-xs">Current Uptime</div>
             </div>
           </div>
         </Card>
@@ -265,10 +265,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Uptime History */}
-        <Card className="p-6 bg-bg-darker/50 backdrop-blur-xl shadow-inset-deep hover:bg-bg-darker/60 transition-all duration-300">
+        <Card className="p-6 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
-            <TrendingUp className="w-6 h-6 text-white" />
-            <h2 className="text-xl font-semibold text-white">7-Day Uptime</h2>
+            <TrendingUp className="w-6 h-6 text-foreground" />
+            <h2 className="text-xl font-semibold text-foreground">7-Day Uptime</h2>
           </div>
 
           <ChartContainer
@@ -306,21 +306,21 @@ export default function Dashboard() {
         </Card>
 
         {/* Recent Activities */}
-        <Card className="p-6 hover:shadow-realistic-lg transition-all duration-300">
+        <Card className="p-6 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center gap-3 mb-4">
-            <Activity className="w-6 h-6 text-white" />
-            <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
+            <Activity className="w-6 h-6 text-foreground" />
+            <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
           </div>
 
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {activities.length > 0 ? (
               activities.map(activity => (
-                <div key={activity.id} className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-3 shadow-realistic hover:shadow-realistic-lg transition-all duration-200">
+                <div key={activity.id} className="bg-muted rounded-lg p-3 hover:bg-muted/80 transition-all duration-200">
                   <div className="flex items-start gap-3">
                     {getActivityIcon(activity.type)}
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm">{activity.message}</p>
-                      <p className="text-white/50 text-xs mt-1">
+                      <p className="text-foreground text-sm">{activity.message}</p>
+                      <p className="text-muted-foreground text-xs mt-1">
                         {getRelativeTime(activity.timestamp)}
                       </p>
                     </div>
@@ -328,8 +328,8 @@ export default function Dashboard() {
                 </div>
               ))
             ) : (
-              <div className="bg-bg-lighter/80 backdrop-blur-xl rounded-lg p-4 text-center shadow-realistic">
-                <p className="text-white/60 text-sm">No recent activity</p>
+              <div className="bg-muted rounded-lg p-4 text-center">
+                <p className="text-muted-foreground text-sm">No recent activity</p>
               </div>
             )}
           </div>
