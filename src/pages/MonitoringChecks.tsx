@@ -118,19 +118,18 @@ export default function Dashboard() {
   const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
 
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-6 p-6">
       {/* Header */}
-      <div className="bg-card rounded-2xl p-6 flex-shrink-0 shadow-card">
+      <div className="bg-gradient-card rounded-2xl p-6 flex-shrink-0 shadow-card border border-white/5">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Monitoring Dashboard</h2>
-            <p className="text-sm text-muted-foreground font-medium">Manage your service health checks</p>
+            <h2 className="text-3xl font-bold text-white">Monitoring Dashboard</h2>
+            <p className="text-sm text-white/60 mt-1">Manage your service health checks</p>
           </div>
           
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-end gap-2">
             <Button 
-              variant="outline"
-              className="h-9"
+              className="h-10 bg-primary hover:bg-primary-hover text-white shadow-glow-primary"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -139,14 +138,14 @@ export default function Dashboard() {
             
             <div className="flex items-center gap-2">
               {lastCheckedTimestamp && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-white/40 text-xs">
                   Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
                 </p>
               )}
               <Button
                 size="sm"
                 variant="ghost"
-                className="p-1.5 h-7 w-7"
+                className="p-1.5 h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
                 onClick={handleManualRefresh}
                 disabled={isRefreshing}
               >
@@ -164,26 +163,25 @@ export default function Dashboard() {
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-4 mb-4">
             {[
-              { label: 'Total Checks', value: totalChecks.toString() },
-              { label: 'Checks Up', value: checksUp.toString() },
-              { label: 'Checks Down', value: checksDown.toString() },
-              { label: 'Uptime %', value: `${uptimePercentage}%` },
+              { label: 'Total Checks', value: totalChecks.toString(), gradient: 'bg-gradient-accent' },
+              { label: 'Checks Up', value: checksUp.toString(), gradient: 'bg-gradient-primary' },
+              { label: 'Checks Down', value: checksDown.toString(), gradient: 'bg-gradient-secondary' },
+              { label: 'Uptime %', value: `${uptimePercentage}%`, gradient: 'bg-gradient-card' },
             ].map((stat, index) => (
-              <div key={index} className="bg-card rounded-xl p-4 shadow-card hover:shadow-card-hover transition-all duration-200">
-                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">{stat.label}</p>
-                <p className="text-foreground text-2xl font-bold mt-1">{stat.value}</p>
+              <div key={index} className={`${stat.gradient} rounded-xl p-5 shadow-card hover:shadow-card-hover transition-all duration-200 border border-white/10`}>
+                <p className="text-white/60 text-xs font-semibold uppercase tracking-wide">{stat.label}</p>
+                <p className="text-white text-3xl font-bold mt-2">{stat.value}</p>
               </div>
             ))}
           </div>
 
           {/* Groups Filter Bar */}
-          <div className="bg-card rounded-2xl p-4 shadow-card">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-semibold text-foreground">Filter by Group</h3>
+          <div className="bg-gradient-card rounded-2xl p-5 shadow-card border border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Filter by Group</h3>
               <Button
                 size="sm"
-                variant="outline"
-                className="h-9 shadow-sm"
+                className="h-9 bg-secondary hover:bg-secondary/90 text-white shadow-glow-secondary"
                 onClick={() => setCreateGroupModalOpen(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -194,10 +192,10 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedGroup(null)}
-                className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
+                className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                   selectedGroup === null 
-                    ? 'bg-primary/10 text-primary border border-primary/20' 
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-border'
+                    ? 'bg-primary text-white shadow-glow-primary' 
+                    : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
                 }`}
               >
                 Ungrouped ({checks.filter(c => !c.group_id).length})
@@ -207,10 +205,10 @@ export default function Dashboard() {
                 <button
                   key={group.id}
                   onClick={() => setSelectedGroup(group.id)}
-                  className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm ${
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                     selectedGroup === group.id 
-                      ? 'bg-primary/10 text-primary border border-primary/20' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-border'
+                      ? 'bg-primary text-white shadow-glow-primary' 
+                      : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
                   }`}
                 >
                   {group.name} ({checks.filter(c => c.group_id === group.id).length})
@@ -223,8 +221,8 @@ export default function Dashboard() {
         {/* Bottom Section */}
         <div className="flex-1 min-h-0 overflow-hidden">
           {/* Checks List */}
-          <div className="bg-card rounded-2xl p-6 h-full flex flex-col shadow-card">
-            <h3 className="text-xl font-bold text-foreground mb-4 flex-shrink-0">
+          <div className="bg-gradient-card rounded-2xl p-6 h-full flex flex-col shadow-card border border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-4 flex-shrink-0">
               {selectedGroup 
                 ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
                 : 'Ungrouped Checks'
@@ -234,15 +232,14 @@ export default function Dashboard() {
             <ScrollArea className="flex-1">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground font-medium">Loading checks...</p>
+                  <p className="text-white/60 font-medium">Loading checks...</p>
                 </div>
               ) : filteredChecks.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground mb-4 font-medium">No health checks in this group yet</p>
+                  <p className="text-white/60 mb-4 font-medium">No health checks in this group yet</p>
                   <Button 
-                    variant="outline"
+                    className="bg-primary hover:bg-primary-hover text-white shadow-glow-primary"
                     onClick={() => setCreateModalOpen(true)}
-                    className="shadow-sm"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Your First Check
@@ -251,22 +248,22 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3 pr-4">
                   {filteredChecks.map((check) => (
-                    <div key={check.id} className="bg-muted/50 border border-border rounded-xl p-4 hover:shadow-md transition-all duration-200">
+                    <div key={check.id} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:shadow-card-hover hover:bg-white/8 transition-all duration-200">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full shadow-sm ${
-                            check.status === 'up' ? 'bg-success' : 'bg-accent'
+                        <div className="flex items-center gap-4">
+                          <div className={`w-4 h-4 rounded-full ${
+                            check.status === 'up' ? 'bg-success shadow-glow-primary' : 'bg-accent shadow-glow-accent'
                           }`} />
                           <div>
-                            <h4 className="text-foreground font-semibold">{check.name}</h4>
-                            <p className="text-muted-foreground text-sm font-medium">
+                            <h4 className="text-white font-semibold text-lg">{check.name}</h4>
+                            <p className="text-white/60 text-sm font-medium mt-0.5">
                               Status: {check.status} • Every {check.interval_minutes}min
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
-                            <p className="text-muted-foreground text-sm font-medium">
+                            <p className="text-white/50 text-sm">
                               {check.last_pinged_at 
                                 ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
                                 : 'Never pinged'
@@ -275,18 +272,16 @@ export default function Dashboard() {
                           </div>
                           <Button
                             size="sm"
-                            variant="outline"
+                            className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
                             onClick={() => copyPingUrl(check.heartbeat_uuid)}
-                            className="mr-2 shadow-sm"
                           >
                             <Copy className="w-4 h-4 mr-2" />
                             Copy URL
                           </Button>
                           <Button
                             size="sm"
-                            variant="outline"
+                            className="bg-secondary hover:bg-secondary/90 text-white shadow-glow-secondary"
                             onClick={() => showInstructions(check)}
-                            className="shadow-sm"
                           >
                             <Info className="w-4 h-4 mr-2" />
                             Instructions
