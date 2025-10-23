@@ -176,115 +176,130 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-full overflow-y-auto space-y-6">
-      <div className="bg-card rounded-2xl p-6 shadow-card">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-        <p className="text-muted-foreground font-medium">Complete overview of your monitoring and prompts</p>
+    <div className="h-full overflow-y-auto space-y-6 p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">Complete overview of your monitoring and prompts</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Critical System Status */}
-        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`} />
-              <h2 className="text-xl font-semibold text-foreground">Critical Status</h2>
+      {/* Top Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Critical Status Card */}
+        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-accent border-accent/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Critical Alerts</p>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-4xl font-bold ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`}>
+                    {downChecks.length}
+                  </span>
+                  <span className="text-muted-foreground text-sm">
+                    {downChecks.length === 1 ? 'down' : 'down'}
+                  </span>
+                </div>
+              </div>
+              <div className={`p-3 rounded-xl ${downChecks.length > 0 ? 'bg-accent/20' : 'bg-success/20'}`}>
+                <AlertTriangle className={`w-6 h-6 ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`} />
+              </div>
             </div>
           </CardHeader>
-          <CardContent>
-
-            <div className="mb-6">
-              <div className={`text-5xl font-bold ${downChecks.length > 0 ? 'text-accent' : 'text-success'}`}>
-                {downChecks.length}
-              </div>
-              <div className="text-muted-foreground text-sm mt-1 font-medium">
-                {downChecks.length === 1 ? 'Check Down' : 'Checks Down'}
-              </div>
-            </div>
-
-            {downChecks.length > 0 ? (
+          {downChecks.length > 0 && (
+            <CardContent className="relative">
               <div className="space-y-2">
-                {downChecks.map(check => (
-                  <div key={check.id} className="bg-muted/50 border border-border rounded-lg p-3 hover:shadow-md transition-all duration-200">
+                {downChecks.slice(0, 2).map(check => (
+                  <div key={check.id} className="bg-background/50 backdrop-blur-sm border border-border rounded-lg p-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-foreground font-semibold">{check.name}</span>
-                      <span className="text-accent text-sm font-medium">
+                      <span className="text-foreground text-sm font-medium truncate">{check.name}</span>
+                      <span className="text-accent text-xs font-medium ml-2">
                         {getDowntimeDuration(check.last_pinged_at, check.interval_minutes, check.grace_period_minutes)}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="bg-success/10 border border-success/20 rounded-lg p-4 text-center shadow-sm">
-                <p className="text-success font-semibold">All systems operational!</p>
-                <p className="text-muted-foreground text-sm mt-1 font-medium">No issues detected</p>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Total Checks Card */}
+        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-primary border-primary/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Total Checks</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-foreground">{checks.length}</span>
+                  <span className="text-muted-foreground text-sm">active</span>
+                </div>
               </div>
-            )}
+              <div className="p-3 rounded-xl bg-primary/20">
+                <Activity className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="relative">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-background/50 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full bg-primary transition-all duration-500"
+                  style={{ width: `${currentUptime}%` }}
+                />
+              </div>
+              <span className="text-primary text-sm font-semibold">{currentUptime}%</span>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Plus className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
+        {/* Uptime Card */}
+        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-secondary border-secondary/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent" />
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Current Uptime</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-success">{currentUptime}%</span>
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-success/20">
+                <TrendingUp className="w-6 h-6 text-success" />
+              </div>
             </div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Create new monitoring checks or prompts
-            </p>
           </CardHeader>
-          <CardContent>
-
-            <div className="space-y-3">
-              <Button
-                onClick={() => navigate('/monitoring')}
-                className="w-full h-14 text-lg font-semibold hover:-translate-y-0.5 transition-transform shadow-md hover:shadow-lg"
-              >
-                <Activity className="w-5 h-5 mr-2" />
-                New Monitoring Check
-              </Button>
-
-              <Button
-                onClick={() => navigate('/prompts')}
-                variant="secondary"
-                className="w-full h-14 text-lg font-semibold hover:-translate-y-0.5 transition-transform shadow-md hover:shadow-lg"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                New Prompt
-              </Button>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="bg-muted/50 border border-border rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-foreground">{checks.length}</div>
-                <div className="text-muted-foreground text-xs font-medium mt-1">Total Checks</div>
-              </div>
-              <div className="bg-success/5 border border-success/20 rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-success">{currentUptime}%</div>
-                <div className="text-muted-foreground text-xs font-medium mt-1">Current Uptime</div>
-              </div>
-            </div>
+          <CardContent className="relative">
+            <p className="text-muted-foreground text-sm">
+              {upChecks.length} of {checks.length} checks operational
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Uptime History */}
-        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300">
+      {/* Charts and Activity Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Uptime History - Takes 2 columns */}
+        <Card className="lg:col-span-2 shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-card border-border/50">
           <CardHeader>
-            <div className="flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">7-Day Uptime</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/20">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">7-Day Uptime</h2>
+                  <p className="text-muted-foreground text-sm">Performance over the last week</p>
+                </div>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-
             <ChartContainer
               config={{
                 uptime: {
-                  label: "Uptime",
+                  label: "Uptime %",
                   color: "hsl(var(--primary))",
                 },
               }}
@@ -316,39 +331,95 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Activities */}
-        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300">
+        {/* Quick Actions */}
+        <Card className="shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-card border-border/50">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Activity className="w-6 h-6 text-secondary" />
-              <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
+              <div className="p-2 rounded-lg bg-secondary/20">
+                <Plus className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
+                <p className="text-muted-foreground text-sm">Create new resources</p>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {activities.length > 0 ? (
-                activities.map(activity => (
-                  <div key={activity.id} className="bg-muted/50 border border-border rounded-lg p-3 hover:shadow-md transition-all duration-200">
-                    <div className="flex items-start gap-3">
-                      {getActivityIcon(activity.type)}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-foreground text-sm font-medium">{activity.message}</p>
-                        <p className="text-muted-foreground text-xs mt-1 font-medium">
-                          {getRelativeTime(activity.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="bg-muted/50 border border-border rounded-lg p-4 text-center">
-                  <p className="text-muted-foreground text-sm font-medium">No recent activity</p>
-                </div>
-              )}
+            <div className="space-y-3">
+              <Button
+                onClick={() => navigate('/monitoring')}
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md hover:shadow-glow-primary"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                New Check
+              </Button>
+
+              <Button
+                onClick={() => navigate('/prompts')}
+                variant="secondary"
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md hover:shadow-glow-secondary"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Prompt
+              </Button>
+
+              <Button
+                onClick={() => navigate('/team')}
+                variant="outline"
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all"
+              >
+                Manage Team
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Activity */}
+      <Card className="shadow-card hover:shadow-card-hover transition-all duration-300 bg-gradient-card border-border/50">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-accent/20">
+              <Activity className="w-5 h-5 text-accent" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
+              <p className="text-muted-foreground text-sm">Latest events across your monitors</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 max-h-80 overflow-y-auto">
+            {activities.length > 0 ? (
+              activities.map(activity => (
+                <div key={activity.id} className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-background/50 transition-all duration-200">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${
+                      activity.type === 'check_down' ? 'bg-accent/20' :
+                      activity.type === 'check_up' ? 'bg-success/20' :
+                      'bg-secondary/20'
+                    }`}>
+                      {getActivityIcon(activity.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-foreground font-medium">{activity.message}</p>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        {getRelativeTime(activity.timestamp)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-8 text-center">
+                <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+                <p className="text-muted-foreground font-medium">No recent activity</p>
+                <p className="text-muted-foreground text-sm mt-1">Activity will appear here once your checks start reporting</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
