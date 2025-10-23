@@ -119,7 +119,8 @@ export default function Dashboard() {
   const uptimePercentage = totalChecks > 0 ? Math.round((checksUp / totalChecks) * 100) : 100;
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="min-h-screen bg-background">
+      <div className="space-y-6 p-6">
       {/* Header */}
       <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-shadow">
         <CardHeader className="pb-3">
@@ -325,6 +326,7 @@ export default function Dashboard() {
           checkType={selectedCheck.type}
         />
       )}
+      </div>
     </div>
   );
 }
