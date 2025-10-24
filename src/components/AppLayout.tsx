@@ -60,7 +60,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <div className="h-[calc(100vh)] flex">
         {/* Persistent Left Sidebar */}
         <div className="w-64 bg-card border-r border-border p-6 overflow-y-auto shadow-lg">
-          <div className="mb-8">
+          <div className="mb-8 flex flex-col items-center text-center">
             <img 
               src={flowzenLogo} 
               alt="FlowZen" 
