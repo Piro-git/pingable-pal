@@ -114,158 +114,218 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass rounded-2xl border border-white/25 max-w-md">
-        <div className="flex items-center justify-between mb-4">
+      <DialogContent className="bg-card border-border max-w-2xl p-0 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 border-b border-border">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-white">
+            <DialogTitle className="text-2xl font-bold text-foreground">
               Create New Check
             </DialogTitle>
-            <DialogDescription className="text-white/70">
-              Set up a new service monitoring check.
+            <DialogDescription className="text-muted-foreground mt-2">
+              Set up a new service monitoring check to track your workflows
             </DialogDescription>
           </DialogHeader>
-          <Button
-            onClick={handleClose}
-            variant="ghost"
-            size="icon"
-            className="text-white/70 hover:text-white hover:bg-white/10"
-          >
-            <X className="w-4 h-4" />
-          </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Check Name */}
           <div className="space-y-2">
-            <Label htmlFor="check-name" className="text-white/90 text-sm font-medium">
-              Check Name
+            <Label htmlFor="check-name" className="text-foreground font-semibold">
+              Check Name <span className="text-destructive">*</span>
             </Label>
             <Input
               id="check-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="My Website"
-              className="glass-input"
+              placeholder="e.g., Production API, Customer Portal"
+              className="bg-background border-border text-foreground"
               disabled={loading}
             />
+            <p className="text-xs text-muted-foreground">
+              Give your check a descriptive name
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="interval" className="text-white/90 text-sm font-medium">
-              Interval (minutes)
+          {/* Check Type */}
+          <div className="space-y-3">
+            <Label className="text-foreground font-semibold">
+              Check Type <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="interval"
-              type="number"
-              min="1"
-              value={interval}
-              onChange={(e) => setInterval(e.target.value)}
-              placeholder="5"
-              className="glass-input"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-white/90 text-sm font-medium">Check Type</Label>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setType('simple_ping')}
                 disabled={loading}
-                className={`glass border-2 rounded-lg p-4 text-left transition-all ${
+                className={`group relative overflow-hidden rounded-xl p-5 text-left transition-all border-2 ${
                   type === 'simple_ping'
-                    ? 'border-primary bg-primary/10'
-                    : 'border-white/20 hover:border-white/40'
+                    ? 'border-primary bg-primary/5 shadow-lg'
+                    : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  <Radio className={`w-5 h-5 mt-0.5 ${type === 'simple_ping' ? 'text-primary' : 'text-white/50'}`} />
+                <div className="flex items-start gap-4">
+                  <div className={`p-2.5 rounded-lg ${
+                    type === 'simple_ping' ? 'bg-primary/20' : 'bg-muted'
+                  }`}>
+                    <Radio className={`w-6 h-6 ${
+                      type === 'simple_ping' ? 'text-primary' : 'text-muted-foreground'
+                    }`} />
+                  </div>
                   <div className="flex-1">
-                    <div className="text-white font-medium mb-1">Simple Ping (GET)</div>
-                    <div className="text-white/60 text-sm">
-                      A basic heartbeat to confirm your service is online.
+                    <div className={`font-semibold mb-1.5 ${
+                      type === 'simple_ping' ? 'text-foreground' : 'text-foreground'
+                    }`}>
+                      Simple Ping (GET)
+                    </div>
+                    <div className="text-sm text-muted-foreground leading-relaxed">
+                      Basic heartbeat monitoring to confirm service availability
                     </div>
                   </div>
                 </div>
+                {type === 'simple_ping' && (
+                  <div className="absolute top-3 right-3">
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+                  </div>
+                )}
               </button>
               
               <button
                 type="button"
                 onClick={() => setType('api_report')}
                 disabled={loading}
-                className={`glass border-2 rounded-lg p-4 text-left transition-all ${
+                className={`group relative overflow-hidden rounded-xl p-5 text-left transition-all border-2 ${
                   type === 'api_report'
-                    ? 'border-primary bg-primary/10'
-                    : 'border-white/20 hover:border-white/40'
+                    ? 'border-primary bg-primary/5 shadow-lg'
+                    : 'border-border bg-card hover:border-primary/50 hover:bg-muted/50'
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  <Send className={`w-5 h-5 mt-0.5 ${type === 'api_report' ? 'text-primary' : 'text-white/50'}`} />
+                <div className="flex items-start gap-4">
+                  <div className={`p-2.5 rounded-lg ${
+                    type === 'api_report' ? 'bg-primary/20' : 'bg-muted'
+                  }`}>
+                    <Send className={`w-6 h-6 ${
+                      type === 'api_report' ? 'text-primary' : 'text-muted-foreground'
+                    }`} />
+                  </div>
                   <div className="flex-1">
-                    <div className="text-white font-medium mb-1">API Report (POST)</div>
-                    <div className="text-white/60 text-sm">
-                      Send detailed reports with KPIs and error messages.
+                    <div className={`font-semibold mb-1.5 ${
+                      type === 'api_report' ? 'text-foreground' : 'text-foreground'
+                    }`}>
+                      API Report (POST)
+                    </div>
+                    <div className="text-sm text-muted-foreground leading-relaxed">
+                      Advanced reporting with KPIs, metrics, and error details
                     </div>
                   </div>
                 </div>
+                {type === 'api_report' && (
+                  <div className="absolute top-3 right-3">
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+                  </div>
+                )}
               </button>
             </div>
           </div>
 
-          {groups.length > 0 && (
+          {/* Interval & Group Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Interval */}
             <div className="space-y-2">
-              <Label htmlFor="group" className="text-white/90 text-sm font-medium">
-                Group (optional)
+              <Label htmlFor="interval" className="text-foreground font-semibold">
+                Check Interval <span className="text-destructive">*</span>
               </Label>
-              <Select value={groupId} onValueChange={setGroupId}>
-                <SelectTrigger className="glass border-white/20 text-white">
-                  <SelectValue placeholder="Select a group..." />
-                </SelectTrigger>
-                <SelectContent className="glass border-white/20">
-                  <SelectItem value="none" className="text-white">No group</SelectItem>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id} className="text-white">
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="relative">
+                <Input
+                  id="interval"
+                  type="number"
+                  min="1"
+                  value={interval}
+                  onChange={(e) => setInterval(e.target.value)}
+                  placeholder="5"
+                  className="bg-background border-border text-foreground pr-20"
+                  disabled={loading}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">
+                  minutes
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                How often to check (minimum 1 minute)
+              </p>
             </div>
-          )}
 
-          <div className="space-y-2">
-            <Label className="text-white/90 text-sm font-medium">Choose Color</Label>
-            <div className="grid grid-cols-8 gap-2">
+            {/* Group */}
+            {groups.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="group" className="text-foreground font-semibold">
+                  Group
+                </Label>
+                <Select value={groupId} onValueChange={setGroupId} disabled={loading}>
+                  <SelectTrigger className="bg-background border-border text-foreground">
+                    <SelectValue placeholder="Select group..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="none">No group</SelectItem>
+                    {groups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Optional: organize your checks
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Color Picker */}
+          <div className="space-y-3">
+            <Label className="text-foreground font-semibold">
+              Visual Indicator Color
+            </Label>
+            <div className="flex flex-wrap gap-2.5">
               {CHECK_COLORS.map((color) => (
                 <button
                   key={color}
                   type="button"
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                  className={`relative w-11 h-11 rounded-lg transition-all hover:scale-110 ${
                     selectedColor === color 
-                      ? 'border-white scale-110' 
-                      : 'border-white/30 hover:border-white/60'
+                      ? 'ring-2 ring-primary ring-offset-2 ring-offset-card scale-110' 
+                      : 'hover:ring-2 hover:ring-muted-foreground/30'
                   }`}
                   style={{ backgroundColor: color }}
                   onClick={() => setSelectedColor(color)}
-                />
+                  aria-label={`Select color ${color}`}
+                >
+                  {selectedColor === color && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-white shadow-lg"></div>
+                    </div>
+                  )}
+                </button>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground">
+              Choose a color to identify this check at a glance
+            </p>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          {/* Actions */}
+          <div className="flex gap-3 pt-4 border-t border-border">
             <Button
               type="button"
               onClick={handleClose}
               variant="outline"
-              className="flex-1 glass-button-secondary"
+              className="flex-1"
               disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 glass-button"
+              className="flex-1 bg-primary hover:bg-primary-hover text-primary-foreground"
               disabled={loading}
             >
               {loading ? "Creating..." : "Create Check"}
