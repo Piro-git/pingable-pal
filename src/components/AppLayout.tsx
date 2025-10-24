@@ -64,7 +64,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <img 
               src={flowzenLogo} 
               alt="FlowZen" 
-              className="h-20 w-auto object-contain"
+              className="h-28 w-auto object-contain"
             />
             <p className="text-muted-foreground text-sm mt-2 font-medium">Workflow Peace of Mind</p>
           </div>
