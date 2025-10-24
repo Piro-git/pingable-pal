@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import MonitoringChecks from "./pages/MonitoringChecks";
 import PromptArchive from "./pages/PromptArchive";
 import TeamManagement from "./pages/TeamManagement";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const ProtectedPages = () => {
         <Route path="/monitoring" element={<MonitoringChecks />} />
         <Route path="/prompts" element={<PromptArchive />} />
         <Route path="/team" element={<TeamManagement />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </AppLayout>
   );
