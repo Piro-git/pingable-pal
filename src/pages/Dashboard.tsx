@@ -7,7 +7,7 @@ import { Activity, AlertTriangle, Plus, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { Line, LineChart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import type { Database } from '@/integrations/supabase/types';
 
 type Check = Database['public']['Tables']['checks']['Row'];
@@ -305,7 +305,12 @@ export default function Dashboard() {
               }}
               className="h-64 w-full"
             >
-              <BarChart data={uptimeData}>
+              <LineChart data={uptimeData}>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="hsl(var(--border))"
+                  opacity={0.3}
+                />
                 <XAxis 
                   dataKey="date" 
                   stroke="hsl(var(--muted-foreground))"
@@ -321,12 +326,24 @@ export default function Dashboard() {
                   axisLine={false}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar 
+                <Line 
+                  type="monotone"
                   dataKey="uptime" 
-                  fill="hsl(var(--primary))"
-                  radius={[8, 8, 0, 0]}
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={3}
+                  dot={{ 
+                    fill: "hsl(var(--primary))", 
+                    strokeWidth: 2,
+                    r: 4 
+                  }}
+                  activeDot={{ 
+                    r: 6,
+                    fill: "hsl(var(--primary))",
+                    strokeWidth: 2,
+                    stroke: "hsl(var(--background))"
+                  }}
                 />
-              </BarChart>
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>
