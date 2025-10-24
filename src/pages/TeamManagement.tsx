@@ -54,34 +54,36 @@ export default function TeamManagement() {
     if (!user || role !== 'admin') return;
 
     try {
-      // Fetch team members with their roles
-      const { data: members, error: membersError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name, created_at')
-        .order('created_at', { ascending: false });
-
-      if (membersError) throw membersError;
-      
-      // Fetch roles for all members
+      // Fetch roles first (this is what we have permission for as admin)
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id, role');
       
       if (rolesError) throw rolesError;
-      
-      // Combine members with their roles
-      setTeamMembers((members || []).map(member => {
-        const userRole = rolesData?.find(r => r.user_id === member.id);
-        return {
-          ...member,
-          role: (userRole?.role || 'viewer') as 'admin' | 'editor' | 'viewer'
-        };
-      }));
 
-      // Fetch pending invitations
+      // For each role, fetch the profile
+      const profilePromises = (rolesData || []).map(async (roleEntry) => {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, email, full_name, created_at')
+          .eq('id', roleEntry.user_id)
+          .single();
+        
+        if (profileError || !profile) return null;
+        
+        return {
+          ...profile,
+          role: roleEntry.role as 'admin' | 'editor' | 'viewer'
+        };
+      });
+
+      const profiles = await Promise.all(profilePromises);
+      setTeamMembers(profiles.filter(Boolean) as UserProfile[]);
+
+      // Fetch pending invitations  
       const { data: invites, error: invitesError } = await supabase
         .from('invitations')
-        .select('*')
+        .select('id, email, role, status, created_at')
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
@@ -242,87 +244,100 @@ export default function TeamManagement() {
 
   if (role !== 'admin') {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-          <p className="text-white/70">Only administrators can access team management.</p>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="bg-gradient-accent shadow-card border-accent/20 max-w-md">
+          <CardContent className="p-8 text-center">
+            <Shield className="w-16 h-16 text-accent mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">Access Denied</h2>
+            <p className="text-muted-foreground">Only administrators can access team management.</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-      <div className="space-y-6">
+      <div className="min-h-screen bg-background">
+        <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="glass rounded-2xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-white">Team Management</h2>
-              <p className="text-white/70">Manage your team members and invitations</p>
+        <Card className="bg-gradient-primary shadow-card hover:shadow-card-hover transition-all duration-300 border-primary/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+          <CardHeader className="pb-3 relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-3xl font-bold text-foreground">Team Management</CardTitle>
+                <p className="text-sm text-muted-foreground mt-2">Manage your team members and invitations</p>
+              </div>
+              <Badge variant="secondary" className="shadow-glow-primary">
+                <span>{teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}</span>
+              </Badge>
             </div>
-            <Badge variant="secondary" className="glass text-white border-white/20">
-              <span>{teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}</span>
-            </Badge>
-          </div>
-        </div>
+          </CardHeader>
+        </Card>
 
         <Tabs defaultValue="members" className="space-y-6">
-        <TabsList className="glass border-white/20">
-          <TabsTrigger value="members" className="text-white data-[state=active]:glass-button">
-            Team Members
-          </TabsTrigger>
-          <TabsTrigger value="invite" className="text-white data-[state=active]:glass-button">
-            Send Invitations
-          </TabsTrigger>
-          <TabsTrigger value="pending" className="text-white data-[state=active]:glass-button">
-            Pending Invitations
-            {invitations.length > 0 && (
-              <Badge variant="secondary" className="ml-2 text-xs">
-                <span>{invitations.length}</span>
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
+        <Card className="bg-gradient-card shadow-card border-border/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-background/5 to-transparent" />
+          <CardContent className="p-4 relative">
+            <TabsList className="bg-background/30 border border-border">
+              <TabsTrigger value="members" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Team Members
+              </TabsTrigger>
+              <TabsTrigger value="invite" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Send Invitations
+              </TabsTrigger>
+              <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Pending Invitations
+                {invitations.length > 0 && (
+                  <Badge variant="secondary" className="ml-2 text-xs">
+                    <span>{invitations.length}</span>
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+          </CardContent>
+        </Card>
 
         {/* Team Members Tab */}
         <TabsContent value="members">
-          <Card className="glass border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Active Team Members</CardTitle>
-              <CardDescription className="text-white/70">
+          <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-all duration-300 border-border/50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-background/5 to-transparent" />
+            <CardHeader className="relative">
+              <CardTitle className="text-foreground">Active Team Members</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 Manage roles and permissions for your team members
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
               {loading ? (
                 <div className="text-center py-8">
-                  <p className="text-white/70">Loading team members...</p>
+                  <p className="text-muted-foreground">Loading team members...</p>
                 </div>
               ) : teamMembers.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-white/70">No team members found.</p>
+                  <p className="text-muted-foreground">No team members found.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {teamMembers.map((member) => (
                     <div 
                       key={member.id} 
-                      className="glass rounded-lg p-4 flex items-center justify-between"
+                      className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4 flex items-center justify-between hover:bg-background/50 transition-all duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full glass-button flex items-center justify-center">
-                          <span className="text-white font-medium">
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                          <span className="text-primary font-medium">
                             {member.email.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="text-white font-medium">
+                          <p className="text-foreground font-medium">
                             {member.full_name || member.email}
                             {member.id === user?.id && (
                               <Badge variant="secondary" className="ml-2 text-xs">You</Badge>
                             )}
                           </p>
-                          <p className="text-white/70 text-sm">{member.email}</p>
+                          <p className="text-muted-foreground text-sm">{member.email}</p>
                         </div>
                       </div>
                       
@@ -331,7 +346,7 @@ export default function TeamManagement() {
                           {member.role === 'admin' && <Crown className="w-4 h-4 text-primary" />}
                           {member.role === 'editor' && <Edit className="w-4 h-4 text-accent" />}
                           {member.role === 'viewer' && <Eye className="w-4 h-4 text-muted-foreground" />}
-                          <span className="text-white capitalize">{member.role}</span>
+                          <span className="text-foreground capitalize">{member.role}</span>
                         </div>
                         
                         {member.id !== user?.id && (
@@ -342,13 +357,13 @@ export default function TeamManagement() {
                                 handleRoleChange(member.id, newRole)
                               }
                             >
-                              <SelectTrigger className="w-32 glass border-white/20 text-white">
+                              <SelectTrigger className="w-32">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="glass border-white/20">
-                                <SelectItem value="admin" className="text-white">Admin</SelectItem>
-                                <SelectItem value="editor" className="text-white">Editor</SelectItem>
-                                <SelectItem value="viewer" className="text-white">Viewer</SelectItem>
+                              <SelectContent>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="editor">Editor</SelectItem>
+                                <SelectItem value="viewer">Viewer</SelectItem>
                               </SelectContent>
                             </Select>
                             
@@ -357,25 +372,25 @@ export default function TeamManagement() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="glass border-primary/50 text-primary hover:bg-primary/20"
+                                  className="border-accent/50 text-accent hover:bg-accent/20"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </AlertDialogTrigger>
-                              <AlertDialogContent className="glass border-white/20">
+                              <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-white">Remove Team Member</AlertDialogTitle>
-                                  <AlertDialogDescription className="text-white/70">
+                                  <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
+                                  <AlertDialogDescription>
                                     Are you sure you want to remove {member.email} from the team? This action cannot be undone.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel className="glass border-white/20 text-white">
+                                  <AlertDialogCancel>
                                     Cancel
                                   </AlertDialogCancel>
                                   <AlertDialogAction 
                                     onClick={() => handleRemoveUser(member.id)}
-                                    className="bg-primary hover:bg-primary/90"
+                                    className="bg-accent hover:bg-accent/90"
                                   >
                                     Remove
                                   </AlertDialogAction>
@@ -395,21 +410,22 @@ export default function TeamManagement() {
 
         {/* Send Invitations Tab */}
         <TabsContent value="invite">
-          <Card className="glass border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+          <Card className="bg-gradient-secondary shadow-card hover:shadow-card-hover transition-all duration-300 border-secondary/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent" />
+            <CardHeader className="relative">
+              <CardTitle className="text-foreground flex items-center gap-2">
                 <UserPlus className="w-5 h-5" />
                 Invite New Team Members
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 Send email invitations to add new members to your team
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
               <form onSubmit={handleSendInvitation} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="invite-email" className="text-white">
+                    <Label htmlFor="invite-email">
                       Email Address
                     </Label>
                     <Input
@@ -418,22 +434,21 @@ export default function TeamManagement() {
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="Enter email address..."
-                      className="glass border-white/20 text-white placeholder:text-white/50"
                       required
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="invite-role" className="text-white">
+                    <Label htmlFor="invite-role">
                       Role
                     </Label>
                     <Select value={inviteRole} onValueChange={(value) => setInviteRole(value as 'editor' | 'viewer')}>
-                      <SelectTrigger className="glass border-white/20 text-white">
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="glass border-white/20">
-                        <SelectItem value="editor" className="text-white">Editor</SelectItem>
-                        <SelectItem value="viewer" className="text-white">Viewer</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="editor">Editor</SelectItem>
+                        <SelectItem value="viewer">Viewer</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -442,7 +457,7 @@ export default function TeamManagement() {
                 <Button 
                   type="submit" 
                   disabled={!inviteEmail.trim() || inviteLoading}
-                  className="glass-button"
+                  className="shadow-glow-primary"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   {inviteLoading ? 'Sending...' : 'Send Invitation'}
@@ -451,23 +466,23 @@ export default function TeamManagement() {
               
               {/* Role Information */}
               <div className="mt-8 space-y-4">
-                <h4 className="text-white font-medium">Role Permissions:</h4>
+                <h4 className="text-foreground font-medium">Role Permissions:</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="glass rounded-lg p-3">
+                  <div className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Edit className="w-4 h-4 text-accent" />
-                      <span className="text-white font-medium">Editor</span>
+                      <span className="text-foreground font-medium">Editor</span>
                     </div>
-                    <p className="text-white/70 text-sm">
+                    <p className="text-muted-foreground text-sm">
                       Can create and edit prompts, but cannot delete or manage users.
                     </p>
                   </div>
-                  <div className="glass rounded-lg p-3">
+                  <div className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Eye className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-white font-medium">Viewer</span>
+                      <span className="text-foreground font-medium">Viewer</span>
                     </div>
-                    <p className="text-white/70 text-sm">
+                    <p className="text-muted-foreground text-sm">
                       Read-only access: can view and use prompts but not modify them.
                     </p>
                   </div>
@@ -479,40 +494,41 @@ export default function TeamManagement() {
 
         {/* Pending Invitations Tab */}
         <TabsContent value="pending">
-          <Card className="glass border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Pending Invitations</CardTitle>
-              <CardDescription className="text-white/70">
+          <Card className="bg-gradient-accent shadow-card hover:shadow-card-hover transition-all duration-300 border-accent/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
+            <CardHeader className="relative">
+              <CardTitle className="text-foreground">Pending Invitations</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 Manage invitations that haven't been accepted yet
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
               {loading ? (
                 <div className="text-center py-8">
-                  <p className="text-white/70">Loading invitations...</p>
+                  <p className="text-muted-foreground">Loading invitations...</p>
                 </div>
               ) : invitations.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-white/70">No pending invitations.</p>
+                  <p className="text-muted-foreground">No pending invitations.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {invitations.map((invitation) => (
                     <div 
                       key={invitation.id} 
-                      className="glass rounded-lg p-4 flex items-center justify-between"
+                      className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4 flex items-center justify-between hover:bg-background/50 transition-all duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full glass-button flex items-center justify-center">
-                          <Mail className="w-4 h-4 text-white" />
+                        <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center border border-accent/30">
+                          <Mail className="w-4 h-4 text-accent" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">{invitation.email}</p>
+                          <p className="text-foreground font-medium">{invitation.email}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs capitalize glass">
+                            <Badge variant="secondary" className="text-xs capitalize">
                               {invitation.role}
                             </Badge>
-                            <span className="text-white/50 text-xs">
+                            <span className="text-muted-foreground text-xs">
                               Sent {new Date(invitation.created_at).toLocaleDateString()}
                             </span>
                           </div>
@@ -524,7 +540,6 @@ export default function TeamManagement() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleResendInvitation(invitation.email, invitation.role)}
-                          className="glass border-white/20 text-white hover:glass-button"
                         >
                           <RefreshCw className="w-4 h-4 mr-1" />
                           Resend
@@ -535,25 +550,25 @@ export default function TeamManagement() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="glass border-primary/50 text-primary hover:bg-primary/20"
+                              className="border-accent/50 text-accent hover:bg-accent/20"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className="glass border-white/20">
+                          <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-white">Revoke Invitation</AlertDialogTitle>
-                              <AlertDialogDescription className="text-white/70">
+                              <AlertDialogTitle>Revoke Invitation</AlertDialogTitle>
+                              <AlertDialogDescription>
                                 Are you sure you want to revoke the invitation for {invitation.email}?
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel className="glass border-white/20 text-white">
+                              <AlertDialogCancel>
                                 Cancel
                               </AlertDialogCancel>
                               <AlertDialogAction 
                                 onClick={() => handleRevokeInvitation(invitation.id)}
-                                className="bg-primary hover:bg-primary/90"
+                                className="bg-accent hover:bg-accent/90"
                               >
                                 Revoke
                               </AlertDialogAction>
@@ -569,6 +584,7 @@ export default function TeamManagement() {
           </Card>
         </TabsContent>
         </Tabs>
+        </div>
       </div>
   );
 }
