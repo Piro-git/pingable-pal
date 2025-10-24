@@ -122,17 +122,18 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <div className="space-y-6 p-6">
       {/* Header */}
-      <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-shadow">
-        <CardHeader className="pb-3">
+      <Card className="bg-gradient-primary shadow-card hover:shadow-card-hover transition-all duration-300 border-primary/20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+        <CardHeader className="pb-3 relative">
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="text-3xl font-bold text-white">Monitoring Dashboard</CardTitle>
-              <p className="text-sm text-white/60 mt-2">Manage your service health checks</p>
+              <CardTitle className="text-3xl font-bold text-foreground">Monitoring Dashboard</CardTitle>
+              <p className="text-sm text-muted-foreground mt-2">Manage your service health checks</p>
             </div>
             
             <div className="flex flex-col items-end gap-3">
               <Button 
-                className="bg-primary hover:bg-primary-hover text-white shadow-glow-primary"
+                className="shadow-glow-primary"
                 onClick={() => setCreateModalOpen(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -141,14 +142,14 @@ export default function Dashboard() {
               
               <div className="flex items-center gap-2">
                 {lastCheckedTimestamp && (
-                  <p className="text-white/40 text-xs">
+                  <p className="text-muted-foreground text-xs">
                     Last updated: {lastCheckedTimestamp.toLocaleTimeString()}
                   </p>
                 )}
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 w-8 p-0 text-white/60 hover:text-white hover:bg-white/10"
+                  className="h-8 w-8 p-0"
                   onClick={handleManualRefresh}
                   disabled={isRefreshing}
                 >
@@ -163,28 +164,31 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: 'Total Checks', value: totalChecks.toString(), gradient: 'bg-gradient-accent' },
-          { label: 'Checks Up', value: checksUp.toString(), gradient: 'bg-gradient-primary' },
-          { label: 'Checks Down', value: checksDown.toString(), gradient: 'bg-gradient-secondary' },
-          { label: 'Uptime %', value: `${uptimePercentage}%`, gradient: 'bg-gradient-card' },
+          { label: 'Total Checks', value: totalChecks.toString(), gradient: 'bg-gradient-accent', border: 'border-accent/20' },
+          { label: 'Checks Up', value: checksUp.toString(), gradient: 'bg-gradient-primary', border: 'border-primary/20' },
+          { label: 'Checks Down', value: checksDown.toString(), gradient: 'bg-gradient-secondary', border: 'border-secondary/20' },
+          { label: 'Uptime %', value: `${uptimePercentage}%`, gradient: 'bg-gradient-card', border: 'border-border/50' },
         ].map((stat, index) => (
-          <Card key={index} className={`${stat.gradient} shadow-card hover:shadow-card-hover transition-all`}>
-            <CardContent className="p-6">
-              <p className="text-white/60 text-xs font-semibold uppercase tracking-wider">{stat.label}</p>
-              <p className="text-white text-3xl font-bold mt-3">{stat.value}</p>
+          <Card key={index} className={`${stat.gradient} ${stat.border} shadow-card hover:shadow-card-hover transition-all duration-300 relative overflow-hidden`}>
+            <div className="absolute inset-0 bg-gradient-to-br from-background/5 to-transparent" />
+            <CardContent className="p-6 relative">
+              <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">{stat.label}</p>
+              <p className="text-foreground text-3xl font-bold mt-3">{stat.value}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       {/* Groups Filter Bar */}
-      <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-shadow">
-        <CardHeader className="pb-4">
+      <Card className="bg-gradient-secondary shadow-card hover:shadow-card-hover transition-all duration-300 border-secondary/20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent" />
+        <CardHeader className="pb-4 relative">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl text-white">Filter by Group</CardTitle>
+            <CardTitle className="text-xl text-foreground">Filter by Group</CardTitle>
             <Button
               size="sm"
-              className="bg-secondary hover:bg-secondary/90 text-white shadow-glow-secondary"
+              variant="secondary"
+              className="shadow-glow-secondary"
               onClick={() => setCreateGroupModalOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -192,14 +196,14 @@ export default function Dashboard() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 relative">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedGroup(null)}
               className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                 selectedGroup === null 
-                  ? 'bg-primary text-white shadow-glow-primary' 
-                  : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
+                  ? 'bg-primary text-primary-foreground shadow-glow-primary' 
+                  : 'text-muted-foreground hover:text-foreground bg-background/30 hover:bg-background/50 border border-border'
               }`}
             >
               Ungrouped ({checks.filter(c => !c.group_id).length})
@@ -211,8 +215,8 @@ export default function Dashboard() {
                 onClick={() => setSelectedGroup(group.id)}
                 className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                   selectedGroup === group.id 
-                    ? 'bg-primary text-white shadow-glow-primary' 
-                    : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
+                    ? 'bg-primary text-primary-foreground shadow-glow-primary' 
+                    : 'text-muted-foreground hover:text-foreground bg-background/30 hover:bg-background/50 border border-border'
                 }`}
               >
                 {group.name} ({checks.filter(c => c.group_id === group.id).length})
@@ -223,26 +227,27 @@ export default function Dashboard() {
       </Card>
 
       {/* Checks List */}
-      <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-shadow">
-        <CardHeader>
-          <CardTitle className="text-2xl text-white">
+      <Card className="bg-gradient-card shadow-card hover:shadow-card-hover transition-all duration-300 border-border/50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-background/5 to-transparent" />
+        <CardHeader className="relative">
+          <CardTitle className="text-2xl text-foreground">
             {selectedGroup 
               ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
               : 'Ungrouped Checks'
             }
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[400px] pr-4">
+        <CardContent className="relative">
+          <ScrollArea className="h-[500px] pr-4">
             {loading ? (
               <div className="text-center py-12">
-                <p className="text-white/60">Loading checks...</p>
+                <p className="text-muted-foreground">Loading checks...</p>
               </div>
             ) : filteredChecks.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-white/60 mb-4">No health checks in this group yet</p>
+                <p className="text-muted-foreground mb-4">No health checks in this group yet</p>
                 <Button 
-                  className="bg-primary hover:bg-primary-hover text-white shadow-glow-primary"
+                  className="shadow-glow-primary"
                   onClick={() => setCreateModalOpen(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -254,7 +259,7 @@ export default function Dashboard() {
                 {filteredChecks.map((check) => (
                   <div 
                     key={check.id} 
-                    className="bg-white/5 border border-white/10 rounded-xl p-5 hover:shadow-card hover:bg-white/8 transition-all duration-200"
+                    className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-5 hover:shadow-card hover:bg-background/50 transition-all duration-200"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -262,15 +267,15 @@ export default function Dashboard() {
                           check.status === 'up' ? 'bg-success shadow-glow-primary' : 'bg-accent shadow-glow-accent'
                         }`} />
                         <div>
-                          <h4 className="text-white font-semibold text-base">{check.name}</h4>
-                          <p className="text-white/60 text-sm mt-1">
-                            Status: <span className="text-white/80">{check.status}</span> • Every {check.interval_minutes}min
+                          <h4 className="text-foreground font-semibold text-base">{check.name}</h4>
+                          <p className="text-muted-foreground text-sm mt-1">
+                            Status: <span className="text-foreground/80">{check.status}</span> • Every {check.interval_minutes}min
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="text-right mr-2">
-                          <p className="text-white/50 text-xs">
+                          <p className="text-muted-foreground text-xs">
                             {check.last_pinged_at 
                               ? `Last seen ${new Date(check.last_pinged_at).toLocaleString()}`
                               : 'Never pinged'
@@ -280,7 +285,6 @@ export default function Dashboard() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30"
                           onClick={() => copyPingUrl(check.heartbeat_uuid)}
                         >
                           <Copy className="w-4 h-4 mr-2" />
@@ -288,7 +292,8 @@ export default function Dashboard() {
                         </Button>
                         <Button
                           size="sm"
-                          className="bg-secondary hover:bg-secondary/90 text-white shadow-glow-secondary"
+                          variant="secondary"
+                          className="shadow-glow-secondary"
                           onClick={() => showInstructions(check)}
                         >
                           <Info className="w-4 h-4 mr-2" />
