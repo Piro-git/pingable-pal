@@ -2,6 +2,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Archive, BarChart3, Users, Settings, LogOut, Activity } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import flowzenLogo from '@/assets/flowzen-logo.png';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -60,8 +61,12 @@ export function AppLayout({ children }: AppLayoutProps) {
         {/* Persistent Left Sidebar */}
         <div className="w-64 bg-card border-r border-border p-6 overflow-y-auto shadow-lg">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-primary tracking-tight">FlowZen</h1>
-            <p className="text-muted-foreground text-sm mt-1 font-medium">Workflow Peace of Mind</p>
+            <img 
+              src={flowzenLogo} 
+              alt="FlowZen" 
+              className="h-12 w-auto object-contain"
+            />
+            <p className="text-muted-foreground text-sm mt-2 font-medium">Workflow Peace of Mind</p>
           </div>
 
           <nav className="space-y-2">
