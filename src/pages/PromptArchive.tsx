@@ -352,7 +352,6 @@ export default function PromptArchive() {
                 </CardTitle>
                 {(role === 'admin' || role === 'editor') && (
                   <Button
-                    className="shadow-glow-secondary"
                     variant="secondary"
                     onClick={() => setCreatePromptModalOpen(true)}
                   >
