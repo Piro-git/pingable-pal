@@ -110,7 +110,9 @@ export default function Dashboard() {
     setInstructionsModalOpen(true);
   };
 
-  const filteredChecks = selectedGroup 
+  const filteredChecks = selectedGroup === 'all'
+    ? checks
+    : selectedGroup 
     ? checks.filter(check => check.group_id === selectedGroup)
     : checks.filter(check => !check.group_id);
 
@@ -200,6 +202,17 @@ export default function Dashboard() {
         <CardContent className="pt-0 relative">
           <div className="flex flex-wrap gap-2">
             <button
+              onClick={() => setSelectedGroup('all')}
+              className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
+                selectedGroup === 'all' 
+                  ? 'bg-primary text-primary-foreground shadow-glow-primary' 
+                  : 'text-muted-foreground hover:text-foreground bg-background/30 hover:bg-background/50 border border-border'
+              }`}
+            >
+              All Checks ({checks.length})
+            </button>
+            
+            <button
               onClick={() => setSelectedGroup(null)}
               className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                 selectedGroup === null 
@@ -232,7 +245,9 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-gradient-to-br from-background/5 to-transparent" />
         <CardHeader className="relative">
           <CardTitle className="text-2xl text-foreground">
-            {selectedGroup 
+            {selectedGroup === 'all'
+              ? 'All Checks'
+              : selectedGroup 
               ? `${groups.find(g => g.id === selectedGroup)?.name || 'Group'} Checks`
               : 'Ungrouped Checks'
             }
