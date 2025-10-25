@@ -293,7 +293,7 @@ export default function Dashboard() {
                         </div>
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="secondary"
                           onClick={() => copyPingUrl(check.heartbeat_uuid)}
                         >
                           <Copy className="w-4 h-4 mr-2" />
@@ -301,8 +301,7 @@ export default function Dashboard() {
                         </Button>
                         <Button
                           size="sm"
-                          variant="secondary"
-                          className="shadow-glow-secondary"
+                          className="shadow-glow-primary"
                           onClick={() => showInstructions(check)}
                         >
                           <Info className="w-4 h-4 mr-2" />
