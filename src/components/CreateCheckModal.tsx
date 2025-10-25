@@ -3,11 +3,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, Radio, Send } from 'lucide-react';
+import { X, Radio, Send, MessageSquare } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const CHECK_COLORS = [
   '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16',
@@ -28,6 +29,8 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const [groupId, setGroupId] = useState<string>('none');
   const [selectedColor, setSelectedColor] = useState(CHECK_COLORS[0]);
   const [type, setType] = useState<'simple_ping' | 'api_report'>('simple_ping');
+  const [slackWebhookUrl, setSlackWebhookUrl] = useState('');
+  const [slackAdvancedOpen, setSlackAdvancedOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +64,16 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       return;
     }
 
+    // Validate Slack webhook URL format if provided
+    if (slackWebhookUrl.trim() && !slackWebhookUrl.startsWith('https://hooks.slack.com/services/')) {
+      toast({
+        title: "Invalid Slack Webhook",
+        description: "Slack webhook URL must start with https://hooks.slack.com/services/",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -73,6 +86,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           group_id: groupId === 'none' ? null : groupId,
           color: selectedColor,
           type: type,
+          slack_webhook_url: slackWebhookUrl.trim() || null,
         });
 
       if (error) {
@@ -90,6 +104,8 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       setGroupId('none');
       setSelectedColor(CHECK_COLORS[0]);
       setType('simple_ping');
+      setSlackWebhookUrl('');
+      setSlackAdvancedOpen(false);
       onClose();
       onSuccess?.();
     } catch (error: any) {
@@ -109,6 +125,8 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
     setGroupId('none');
     setSelectedColor(CHECK_COLORS[0]);
     setType('simple_ping');
+    setSlackWebhookUrl('');
+    setSlackAdvancedOpen(false);
     onClose();
   };
 
@@ -311,6 +329,60 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
               Choose a color to identify this check at a glance
             </p>
           </div>
+
+          {/* Slack Notifications */}
+          <Collapsible open={slackAdvancedOpen} onOpenChange={setSlackAdvancedOpen}>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-between"
+                disabled={loading}
+              >
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Slack Notifications</span>
+                  {slackWebhookUrl && (
+                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">
+                      Configured
+                    </span>
+                  )}
+                </div>
+                <span className="text-muted-foreground text-xs">
+                  {slackAdvancedOpen ? '▼' : '▶'}
+                </span>
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4 space-y-3 border border-border rounded-lg p-4 bg-muted/30">
+              <div className="space-y-2">
+                <Label htmlFor="slack-webhook" className="text-foreground font-semibold">
+                  Slack Webhook URL
+                </Label>
+                <Input
+                  id="slack-webhook"
+                  type="text"
+                  value={slackWebhookUrl}
+                  onChange={(e) => setSlackWebhookUrl(e.target.value)}
+                  placeholder="https://hooks.slack.com/services/T00/B00/XXX"
+                  className="bg-background border-border text-foreground font-mono text-sm"
+                  disabled={loading}
+                />
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>Optional: Get notified in Slack when this check goes down</p>
+                  <p>
+                    <a 
+                      href="https://api.slack.com/messaging/webhooks" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Learn how to create a Slack webhook →
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           {/* Actions */}
           <div className="flex gap-3 pt-4 border-t border-border">

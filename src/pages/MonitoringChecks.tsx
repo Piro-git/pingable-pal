@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Plus, Copy, RefreshCw, Info } from 'lucide-react';
+import { Plus, Copy, RefreshCw, Info, MessageSquare } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
@@ -28,6 +28,7 @@ interface Check {
   created_at: string;
   group_id: string | null;
   type: 'simple_ping' | 'api_report';
+  slack_webhook_url: string | null;
 }
 
 export default function Dashboard() {
@@ -267,7 +268,15 @@ export default function Dashboard() {
                           check.status === 'up' ? 'bg-success shadow-glow-primary' : 'bg-accent shadow-glow-accent'
                         }`} />
                         <div>
-                          <h4 className="text-foreground font-semibold text-base">{check.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-foreground font-semibold text-base">{check.name}</h4>
+                            {check.slack_webhook_url && (
+                              <div className="flex items-center gap-1 bg-primary/20 text-primary px-2 py-0.5 rounded text-xs font-medium">
+                                <MessageSquare className="w-3 h-3" />
+                                <span>Slack</span>
+                              </div>
+                            )}
+                          </div>
                           <p className="text-muted-foreground text-sm mt-1">
                             Status: <span className="text-foreground/80">{check.status}</span> • Every {check.interval_minutes}min
                           </p>
