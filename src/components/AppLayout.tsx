@@ -100,8 +100,8 @@ export function AppLayout({ children }: AppLayoutProps) {
               <p className="text-muted-foreground text-xs mt-1 capitalize font-medium">{role}</p>
             </div>
             <Button 
-              variant="outline" 
-              className="w-full"
+              variant="destructive" 
+              className="w-full shadow-glow-accent"
               onClick={handleSignOut}
             >
               <LogOut className="w-4 h-4 mr-2" />
