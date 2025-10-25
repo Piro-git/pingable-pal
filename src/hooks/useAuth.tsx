@@ -6,6 +6,12 @@ interface UserProfile {
   id: string;
   email: string;
   full_name: string;
+  subscription_status: string;
+  subscription_tier: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  stripe_product_id: string | null;
+  subscription_end_date: string | null;
 }
 
 interface UserRole {
@@ -18,6 +24,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   role: 'admin' | 'editor' | 'viewer' | null;
   loading: boolean;
+  refreshSubscription: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -31,6 +38,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [role, setRole] = useState<'admin' | 'editor' | 'viewer' | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const refreshSubscription = async () => {
+    if (!session?.user) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+      
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+      
+      // Refetch profile after subscription check
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .maybeSingle();
+      
+      if (profileData) {
+        setProfile(profileData as UserProfile);
+      }
+    } catch (error) {
+      console.error('Error refreshing subscription:', error);
+    }
+  };
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -68,6 +105,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setRole(roleData.role);
       } else {
         setRole(null);
+      }
+      
+      // Check subscription status after fetching profile
+      if (session) {
+        setTimeout(() => {
+          refreshSubscription();
+        }, 0);
       }
     } catch (error) {
       console.error('Error fetching profile and role');
@@ -140,6 +184,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     profile,
     role,
     loading,
+    refreshSubscription,
     signUp,
     signIn,
     signOut,

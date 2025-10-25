@@ -193,6 +193,12 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          stripe_customer_id: string | null
+          stripe_product_id: string | null
+          stripe_subscription_id: string | null
+          subscription_end_date: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
           updated_at: string
         }
         Insert: {
@@ -200,6 +206,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          stripe_customer_id?: string | null
+          stripe_product_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
           updated_at?: string
         }
         Update: {
@@ -207,6 +219,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          stripe_customer_id?: string | null
+          stripe_product_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -468,6 +486,10 @@ export type Database = {
     }
     Functions: {
       bytea_to_text: { Args: { data: string }; Returns: string }
+      check_subscription_limit: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       get_user_role: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {

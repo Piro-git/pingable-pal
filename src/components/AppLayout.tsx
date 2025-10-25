@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Archive, BarChart3, Users, Settings, LogOut, Activity } from 'lucide-react';
+import { Archive, BarChart3, Users, Settings, LogOut, Activity, CreditCard } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import flowzenLogo from '@/assets/flowzen-logo.png';
 
@@ -42,6 +42,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       icon: Users,
       path: '/team',
       roles: ['admin']
+    },
+    {
+      name: 'Pricing',
+      icon: CreditCard,
+      path: '/pricing',
+      roles: ['admin', 'editor', 'viewer']
     },
     {
       name: 'Settings',

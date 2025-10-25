@@ -1,14 +1,17 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Plus, Copy, RefreshCw, Info, MessageSquare } from 'lucide-react';
+import { Plus, Copy, RefreshCw, Info, MessageSquare, Crown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
 import { CheckInstructionsModal } from '@/components/CheckInstructionsModal';
+import { UpgradeModal } from '@/components/UpgradeModal';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
 
 interface Group {
@@ -32,7 +35,7 @@ interface Check {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [checks, setChecks] = useState<Check[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -40,9 +43,15 @@ export default function Dashboard() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
   const [instructionsModalOpen, setInstructionsModalOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<Check | null>(null);
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const isFreeUser = profile?.subscription_tier === 'free';
+  const checkLimit = isFreeUser ? 3 : null;
+  const currentUsage = checks.length;
+  const atLimit = isFreeUser && currentUsage >= 3;
 
   const fetchData = async () => {
     if (!user) return;
@@ -129,15 +138,46 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
         <CardHeader className="pb-3 relative">
           <div className="flex items-start justify-between">
-            <div>
+            <div className="flex-1">
               <CardTitle className="text-3xl font-bold text-foreground">Monitoring Dashboard</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">Manage your service health checks</p>
+              
+              {/* Usage Indicator for Free Users */}
+              {isFreeUser && (
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Check Usage</span>
+                    <span className={`font-medium ${atLimit ? 'text-destructive' : 'text-foreground'}`}>
+                      {currentUsage} / {checkLimit} checks used
+                    </span>
+                  </div>
+                  <Progress value={(currentUsage / 3) * 100} className="h-2" />
+                  {atLimit && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="destructive" className="text-xs">Limit Reached</Badge>
+                      <button 
+                        onClick={() => setUpgradeModalOpen(true)}
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
+                        <Crown className="w-3 h-3" />
+                        Upgrade for unlimited checks
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="flex flex-col items-end gap-3">
               <Button 
                 className="shadow-glow-primary"
-                onClick={() => setCreateModalOpen(true)}
+                onClick={() => {
+                  if (atLimit) {
+                    setUpgradeModalOpen(true);
+                  } else {
+                    setCreateModalOpen(true);
+                  }
+                }}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Create New Check
@@ -354,6 +394,13 @@ export default function Dashboard() {
           checkType={selectedCheck.type}
         />
       )}
+      
+      <UpgradeModal
+        open={upgradeModalOpen}
+        onOpenChange={setUpgradeModalOpen}
+        currentUsage={currentUsage}
+        limit={3}
+      />
       </div>
     </div>
   );

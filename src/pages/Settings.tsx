@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { User, Lock, Bell, Key, Shield, Trash2, Save, Copy, CheckCircle2 } from 'lucide-react';
+import { User, Lock, Bell, Key, Shield, Trash2, Save, Copy, CheckCircle2, CreditCard } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Settings() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, session } = useAuth();
   const [loading, setLoading] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
 
@@ -143,6 +143,33 @@ export default function Settings() {
     setTimeout(() => setCopiedKey(false), 2000);
   };
 
+  const handleManageSubscription = async () => {
+    if (!user || !session) return;
+    
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to open billing portal",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -164,6 +191,10 @@ export default function Settings() {
           <TabsTrigger value="notifications" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Bell className="w-4 h-4 mr-2" />
             Notifications
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <CreditCard className="w-4 h-4 mr-2" />
+            Billing
           </TabsTrigger>
           <TabsTrigger value="api" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Key className="w-4 h-4 mr-2" />
@@ -342,6 +373,95 @@ export default function Settings() {
                 <Save className="w-4 h-4 mr-2" />
                 Save Preferences
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Billing */}
+        <TabsContent value="billing" className="space-y-6 mt-6">
+          <Card className="bg-gradient-primary border-primary/20 shadow-card hover:shadow-card-hover transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-2xl text-foreground flex items-center gap-2">
+                <CreditCard className="w-6 h-6 text-primary" />
+                Subscription & Billing
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between py-3 border-b border-border/50">
+                  <div className="space-y-1">
+                    <Label className="text-foreground font-medium">Current Plan</Label>
+                    <p className="text-sm text-muted-foreground capitalize">
+                      {profile?.subscription_tier === 'pro' ? 'Pro' : 'Free'} Plan
+                    </p>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    profile?.subscription_tier === 'pro' 
+                      ? 'bg-primary/20 text-primary' 
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {profile?.subscription_tier === 'pro' ? 'Active' : 'Free Tier'}
+                  </div>
+                </div>
+
+                {profile?.subscription_tier === 'pro' && profile?.subscription_end_date && (
+                  <div className="flex items-center justify-between py-3 border-b border-border/50">
+                    <div className="space-y-1">
+                      <Label className="text-foreground font-medium">Renewal Date</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(profile.subscription_end_date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between py-3">
+                  <div className="space-y-1">
+                    <Label className="text-foreground font-medium">Check Limit</Label>
+                    <p className="text-sm text-muted-foreground">
+                      {profile?.subscription_tier === 'pro' ? 'Unlimited' : '3 checks maximum'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                {profile?.subscription_tier === 'pro' ? (
+                  <Button 
+                    onClick={handleManageSubscription}
+                    disabled={loading}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow-primary"
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Manage Subscription
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => window.location.href = '/pricing'}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow-primary"
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Upgrade to Pro
+                  </Button>
+                )}
+              </div>
+
+              <div className="bg-muted/30 rounded-lg p-4 border border-border/50 space-y-2">
+                <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  Billing Information
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {profile?.subscription_tier === 'pro' 
+                    ? 'Your subscription is managed through Stripe. Click "Manage Subscription" to update payment methods, view invoices, or cancel your subscription.'
+                    : 'Upgrade to Pro for unlimited monitoring checks, Slack notifications, and priority support.'
+                  }
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
