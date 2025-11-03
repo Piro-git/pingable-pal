@@ -55,12 +55,12 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card/98 backdrop-blur-lg border border-border shadow-2xl max-w-4xl h-[80vh] flex flex-col p-0">
-        <div className="p-6 border-b border-border bg-card/50">
+      <DialogContent className="bg-card backdrop-blur-lg border border-accent/20 shadow-2xl max-w-4xl h-[80vh] flex flex-col p-0">
+        <div className="p-6 border-b border-border bg-gradient-to-br from-accent/5 to-transparent">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-xl font-semibold text-card-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   {prompt.title}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground">
@@ -81,14 +81,14 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             {/* Tags */}
             {prompt.tags && prompt.tags.length > 0 && (
               <div>
-                <label className="text-card-foreground font-semibold text-sm">Tags:</label>
+                <label className="text-foreground font-semibold text-sm">Tags:</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {prompt.tags.map((tag) => (
                     <Badge
                       key={tag.id}
                       variant="secondary"
-                      className="bg-secondary text-secondary-foreground border border-border font-medium shadow-sm"
-                      style={{ backgroundColor: tag.color ? `${tag.color}60` : undefined }}
+                      className="bg-background/50 backdrop-blur-sm text-foreground border border-border font-medium shadow-sm"
+                      style={{ backgroundColor: tag.color ? `${tag.color}30` : undefined }}
                     >
                       {tag.name}
                     </Badge>
@@ -98,11 +98,11 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             )}
             
             <div className="space-y-3">
-              <label className="text-card-foreground font-semibold">Prompt Content:</label>
+              <label className="text-foreground font-semibold">Prompt Content:</label>
               <Textarea
                 value={prompt.content}
                 readOnly
-                className="min-h-[300px] bg-secondary/50 text-card-foreground border border-border resize-none font-medium focus:ring-2 focus:ring-primary"
+                className="min-h-[300px] bg-background/50 backdrop-blur-sm text-foreground border border-border resize-none font-medium focus:ring-2 focus:ring-accent/50"
                 placeholder="Prompt content..."
               />
             </div>
@@ -111,13 +111,13 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="bg-background border border-border text-foreground hover:bg-accent hover:text-accent-foreground font-medium shadow-sm"
+                className="bg-background/50 backdrop-blur-sm border border-border text-foreground hover:bg-background/80 hover:border-accent/30 font-medium shadow-sm transition-all"
               >
                 Close
               </Button>
               <Button
                 onClick={handleCopyPrompt}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-md"
+                className="bg-accent text-white hover:bg-accent/90 font-medium shadow-md transition-all"
               >
                 <Copy className="w-4 h-4 mr-2" />
                 Copy Prompt
