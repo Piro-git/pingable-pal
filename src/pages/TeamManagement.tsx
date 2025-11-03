@@ -341,12 +341,12 @@ export default function TeamManagement() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           {member.role === 'admin' && <Crown className="w-4 h-4 text-primary" />}
                           {member.role === 'editor' && <Edit className="w-4 h-4 text-accent" />}
                           {member.role === 'viewer' && <Eye className="w-4 h-4 text-muted-foreground" />}
-                          <span className="text-foreground capitalize">{member.role}</span>
+                          <span className="text-foreground font-medium capitalize">{member.role}</span>
                         </div>
                         
                         {member.id !== user?.id && (
@@ -357,7 +357,7 @@ export default function TeamManagement() {
                                 handleRoleChange(member.id, newRole)
                               }
                             >
-                              <SelectTrigger className="w-32">
+                              <SelectTrigger className="w-32 bg-background/50 border-border/70 text-foreground hover:bg-background/70 font-medium">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -372,7 +372,7 @@ export default function TeamManagement() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="border-accent/50 text-accent hover:bg-accent/20"
+                                  className="border-destructive/50 text-destructive hover:bg-destructive/20 hover:border-destructive font-medium"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
