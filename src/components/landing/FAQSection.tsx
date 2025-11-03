@@ -29,7 +29,7 @@ const faqs = [
 
 export const FAQSection = () => {
   return (
-    <section id="faq" className="relative py-40 overflow-hidden">
+    <section id="faq" className="relative py-24 overflow-hidden">
       {/* Calm Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
       <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-gray-200/35 to-gray-100/20 blur-3xl" />

@@ -20,7 +20,7 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="relative py-40 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       {/* Soft Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
       <div className="absolute top-20 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-gray-100/40 to-gray-200/20 blur-3xl" />

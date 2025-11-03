@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 export const CTASection = () => {
   return (
-    <section className="relative py-40 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       {/* Premium Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full bg-gradient-to-br from-gray-200/30 via-gray-100/20 to-gray-300/20 blur-3xl" />

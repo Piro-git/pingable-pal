@@ -20,12 +20,12 @@ const problems = [
 
 export const ProblemSection = () => {
   return (
-    <section className="relative py-40 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       {/* Subtle Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="relative max-w-5xl mx-auto mb-32">
+        <div className="relative max-w-5xl mx-auto mb-20">
           {/* Ambient Glass Bubbles */}
           <motion.div 
             initial={{ opacity: 0, scale: 0 }}

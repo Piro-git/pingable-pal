@@ -43,7 +43,7 @@ const plans = [
 
 export const PricingSection = () => {
   return (
-    <section id="pricing" className="relative py-40 overflow-hidden">
+    <section id="pricing" className="relative py-24 overflow-hidden">
       {/* Elegant Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
       <div className="absolute -top-20 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-gray-200/35 to-transparent blur-3xl" />

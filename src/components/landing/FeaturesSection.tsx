@@ -29,13 +29,13 @@ const features = [
 
 export const FeaturesSection = () => {
   return (
-    <section className="relative py-40 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       {/* Elegant Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50/50 to-white" />
       <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-gradient-to-br from-gray-200/40 to-transparent blur-3xl" />
       <div className="absolute bottom-20 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-gray-100/30 to-gray-200/20 blur-3xl" />
       
-      <div className="max-w-7xl mx-auto px-6 space-y-32 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 space-y-24 relative z-10">
         {features.map((feature, index) => (
           <div key={index} className={`grid md:grid-cols-2 gap-16 items-center ${feature.imagePosition === "right" ? "md:flex-row-reverse" : ""}`}>
             <motion.div
