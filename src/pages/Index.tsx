@@ -484,9 +484,11 @@ const Index = () => {
                   <span className="text-gray-700">Email alerts</span>
                 </li>
               </ul>
-              <Button variant="outline" className="w-full border-2 border-gray-300 hover:border-[#14B8A6]">
-                Get Started
-              </Button>
+              <Link to="/register">
+                <Button variant="outline" className="w-full border-2 border-gray-300 hover:border-[#14B8A6]">
+                  Get Started
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Zen Flow - Popular */}
@@ -520,9 +522,11 @@ const Index = () => {
                   <span className="text-gray-700">ZenScore</span>
                 </li>
               </ul>
-              <Button className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white">
-                Try Free <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link to="/register">
+                <Button className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white">
+                  Try Free <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Zen Master */}
@@ -553,9 +557,11 @@ const Index = () => {
                   <span className="text-gray-700">White-label</span>
                 </li>
               </ul>
-              <Button variant="outline" className="w-full border-2 border-gray-300 hover:border-[#14B8A6]">
-                Contact Sales
-              </Button>
+              <Link to="/register">
+                <Button variant="outline" className="w-full border-2 border-gray-300 hover:border-[#14B8A6]">
+                  Contact Sales
+                </Button>
+              </Link>
             </motion.div>
           </div>
 
