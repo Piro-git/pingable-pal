@@ -55,22 +55,24 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-background/95 backdrop-blur-md border-border/70 shadow-xl max-w-4xl max-h-[80vh] flex flex-col">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle className="text-xl font-semibold text-foreground">
-                {prompt.title}
-              </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
-                View prompt details and feedback.
-              </DialogDescription>
+      <DialogContent className="bg-background/95 backdrop-blur-md border-border/70 shadow-xl max-w-4xl h-[80vh] flex flex-col p-0">
+        <div className="p-6 border-b border-border/70">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-xl font-semibold text-foreground">
+                  {prompt.title}
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  View prompt details and feedback.
+                </DialogDescription>
+              </div>
+              <span className="text-muted-foreground text-sm font-medium">v{prompt.version}</span>
             </div>
-            <span className="text-muted-foreground text-sm font-medium">v{prompt.version}</span>
-          </div>
-        </DialogHeader>
+          </DialogHeader>
+        </div>
         
-        <ScrollArea className="flex-1 pr-4">
+        <ScrollArea className="flex-1 px-6">
           <div className="space-y-4">
             <div className="text-muted-foreground text-sm">
               Created {new Date(prompt.created_at).toLocaleDateString()}
@@ -105,7 +107,7 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
               />
             </div>
             
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-4 pb-6">
               <Button
                 variant="outline"
                 onClick={onClose}
