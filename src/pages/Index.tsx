@@ -18,6 +18,7 @@ import {
   Bell,
   Shield
 } from "lucide-react";
+import dashboardPreview from "@/assets/dashboard-preview.png";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -146,64 +147,37 @@ const Index = () => {
             Monitor 3 workflows forever · No credit card required
           </p>
 
-          {/* Hero Image Placeholder */}
+          {/* Real Dashboard Preview */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
-            style={{ perspective: "1000px" }}
+            style={{ perspective: "1500px" }}
           >
             <div
-              className="bg-gray-100 rounded-2xl shadow-2xl border border-gray-200 p-8"
-              style={{ transform: "rotateX(5deg)" }}
+              className="relative rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-200/50"
+              style={{ 
+                transform: "rotateX(4deg) rotateY(0deg)",
+                transformStyle: "preserve-3d"
+              }}
             >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-gray-700">Customer Onboarding</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-[#10B981]"></div>
-                      <span className="text-xs text-gray-500">Healthy</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">Last run: 2 minutes ago</p>
-                </div>
-                
-                <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-gray-700">Payment Processing</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-[#10B981]"></div>
-                      <span className="text-xs text-gray-500">Healthy</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">Last run: 5 minutes ago</p>
-                </div>
-                
-                <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-gray-700">Weekly Reports</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-[#10B981]"></div>
-                      <span className="text-xs text-gray-500">Healthy</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">Last run: 12 minutes ago</p>
-                </div>
-                
-                <div className="bg-[#FEF3C7] rounded-lg p-6 border border-[#FB923C] shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-gray-700">Lead Sync</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-[#FB923C]"></div>
-                      <span className="text-xs text-[#FB923C] font-medium">Alert</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-700 font-medium">Google Sheets auth expired - Step 3</p>
-                </div>
-              </div>
+              {/* Subtle gradient overlay for premium effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/5 pointer-events-none z-10" />
+              
+              {/* Dashboard Screenshot */}
+              <img 
+                src={dashboardPreview} 
+                alt="FlowZen Dashboard - Real-time workflow monitoring interface"
+                className="w-full h-auto"
+              />
+              
+              {/* Subtle inner shadow for depth */}
+              <div className="absolute inset-0 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] pointer-events-none" />
             </div>
+            
+            {/* Ambient glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#14B8A6]/10 via-transparent to-transparent blur-3xl -z-10 scale-110" />
           </motion.div>
         </motion.div>
       </section>
