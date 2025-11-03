@@ -374,7 +374,7 @@ export default function Dashboard() {
               <Button
                 onClick={() => navigate('/prompts')}
                 variant="secondary"
-                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md hover:shadow-glow-secondary"
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md hover:shadow-glow-accent text-foreground"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 New Prompt
@@ -383,7 +383,7 @@ export default function Dashboard() {
               <Button
                 onClick={() => navigate('/team')}
                 variant="outline"
-                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all"
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all border-border/70 hover:border-primary/50 text-foreground hover:text-foreground"
               >
                 Manage Team
               </Button>
