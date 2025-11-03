@@ -213,28 +213,67 @@ they still work.</span>
       {/* Problem Section */}
       <section className="py-32">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.h2 initial={{
-          opacity: 0,
-          y: 40
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          duration: 0.6
-        }} className="text-5xl font-bold text-gray-900 text-center leading-tight mb-24">
-            You built automations
-            <br />
-            to save time.
-            <br />
-            <br />
-            Now you waste 10 hours
-            <br />
-            a week checking if
-            <br />
-            they still work.
-          </motion.h2>
+          <div className="relative max-w-5xl mx-auto mb-24">
+            {/* Liquid Glass Bubbles */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-br from-[#14B8A6]/20 to-[#0D9488]/10 backdrop-blur-3xl border border-white/20 shadow-[0_8px_32px_0_rgba(20,184,166,0.2)]"
+              style={{ filter: 'blur(2px)' }}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-[#14B8A6]/15 to-[#0D9488]/5 backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_0_rgba(20,184,166,0.15)]"
+              style={{ filter: 'blur(3px)' }}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="absolute top-1/2 -translate-y-1/2 left-1/4 w-40 h-40 rounded-full bg-gradient-to-br from-white/30 to-[#14B8A6]/20 backdrop-blur-2xl border border-white/30 shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
+              style={{ filter: 'blur(1px)' }}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="absolute top-20 right-1/4 w-52 h-52 rounded-full bg-gradient-to-br from-[#0D9488]/10 to-white/20 backdrop-blur-3xl border border-white/20 shadow-[0_8px_32px_0_rgba(13,148,136,0.15)]"
+              style={{ filter: 'blur(2px)' }}
+            />
+            
+            {/* Premium Heading with Glass Effect */}
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative z-10 bg-white/40 backdrop-blur-xl rounded-3xl p-12 border border-white/60 shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]"
+            >
+              <h2 className="text-6xl font-black text-gray-900 text-center leading-tight tracking-tight">
+                <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                  You built automations
+                  <br />
+                  to save time.
+                </span>
+                <br />
+                <br />
+                <span className="bg-gradient-to-r from-[#14B8A6] via-[#0D9488] to-[#14B8A6] bg-clip-text text-transparent">
+                  Now you waste 10 hours
+                  <br />
+                  a week checking if
+                  <br />
+                  they still work.
+                </span>
+              </h2>
+            </motion.div>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[{
