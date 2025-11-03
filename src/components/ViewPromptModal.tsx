@@ -55,37 +55,37 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="glass max-w-4xl max-h-[80vh] flex flex-col">
+      <DialogContent className="bg-background/95 backdrop-blur-md border-border/70 shadow-xl max-w-4xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-xl font-semibold text-white">
+              <DialogTitle className="text-xl font-semibold text-foreground">
                 {prompt.title}
               </DialogTitle>
-              <DialogDescription className="text-white/70">
+              <DialogDescription className="text-muted-foreground">
                 View prompt details and feedback.
               </DialogDescription>
             </div>
-            <span className="text-white/60 text-sm">v{prompt.version}</span>
+            <span className="text-muted-foreground text-sm font-medium">v{prompt.version}</span>
           </div>
         </DialogHeader>
         
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-4">
-            <div className="text-white/70 text-sm">
+            <div className="text-muted-foreground text-sm">
               Created {new Date(prompt.created_at).toLocaleDateString()}
             </div>
             
             {/* Tags */}
             {prompt.tags && prompt.tags.length > 0 && (
               <div>
-                <label className="text-white font-medium text-sm">Tags:</label>
+                <label className="text-foreground font-medium text-sm">Tags:</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {prompt.tags.map((tag) => (
                     <Badge
                       key={tag.id}
                       variant="secondary"
-                      className="glass text-white border-white/20"
+                      className="bg-background/60 backdrop-blur-sm text-foreground border-border/70 font-medium"
                       style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
                     >
                       {tag.name}
@@ -96,11 +96,11 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             )}
             
             <div className="space-y-3">
-              <label className="text-white font-medium">Prompt Content:</label>
+              <label className="text-foreground font-medium">Prompt Content:</label>
               <Textarea
                 value={prompt.content}
                 readOnly
-                className="min-h-[300px] glass text-white resize-none"
+                className="min-h-[300px] bg-background/50 backdrop-blur-sm text-foreground border-border/70 resize-none font-medium"
                 placeholder="Prompt content..."
               />
             </div>
@@ -109,13 +109,13 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="glass-button-secondary"
+                className="bg-background/50 border-border/70 text-foreground hover:bg-background/80 font-medium"
               >
                 Close
               </Button>
               <Button
                 onClick={handleCopyPrompt}
-                className="glass-button"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
               >
                 <Copy className="w-4 h-4 mr-2" />
                 Copy Prompt
@@ -124,7 +124,7 @@ const ViewPromptModal: React.FC<ViewPromptModalProps> = ({ open, onClose, prompt
             
             {/* Feedback Section */}
             {promptId && (
-              <div className="border-t border-white/20 pt-6 mt-6">
+              <div className="border-t border-border/70 pt-6 mt-6">
                 <FeedbackSection promptId={promptId} />
               </div>
             )}
