@@ -56,18 +56,14 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Email and role are required');
     }
 
-    // Check if user already exists
+    // Check if user already exists or invitation is pending
+    // Using generic error message to prevent email enumeration attacks
     const { data: existingUser } = await supabase
       .from('profiles')
       .select('id')
       .eq('email', email)
       .single();
 
-    if (existingUser) {
-      throw new Error('User with this email already exists');
-    }
-
-    // Check if invitation already exists
     const { data: existingInvitation } = await supabase
       .from('invitations')
       .select('id')
@@ -75,8 +71,9 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('status', 'pending')
       .single();
 
-    if (existingInvitation) {
-      throw new Error('Invitation already sent to this email');
+    if (existingUser || existingInvitation) {
+      // Generic message that doesn't reveal whether user exists or invitation is pending
+      throw new Error('Unable to send invitation to this email address');
     }
 
     // Create invitation record
