@@ -220,12 +220,12 @@ export function EditPromptModal({
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="glass border-white/20 max-w-2xl">
+        <DialogContent className="bg-card backdrop-blur-lg border border-accent/20 shadow-2xl max-w-2xl">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-white">Edit Prompt</DialogTitle>
-                <DialogDescription className="text-white/70">
+                <DialogTitle className="text-foreground">Edit Prompt</DialogTitle>
+                <DialogDescription className="text-muted-foreground">
                   Make changes to your prompt template.
                 </DialogDescription>
               </div>
@@ -234,7 +234,7 @@ export function EditPromptModal({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowVersionHistory(true)}
-                className="glass border-white/20 text-white hover:bg-white/10"
+                className="bg-background/50 border-border text-foreground hover:bg-background/80 font-medium"
               >
                 <History className="w-4 h-4 mr-2" />
                 History
@@ -244,7 +244,7 @@ export function EditPromptModal({
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="prompt-title" className="text-white">
+              <Label htmlFor="prompt-title" className="text-foreground font-medium">
                 Prompt Title
               </Label>
               <Input
@@ -252,23 +252,23 @@ export function EditPromptModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Email Response Template"
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+                className="bg-background/50 backdrop-blur-sm border-border text-foreground placeholder:text-muted-foreground focus:border-accent/50"
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="folder" className="text-white">
+              <Label htmlFor="folder" className="text-foreground font-medium">
                 Folder (Optional)
               </Label>
               <Select value={folderId} onValueChange={setFolderId}>
-                <SelectTrigger className="bg-white/10 border-white/20 text-white focus:bg-white/15 focus:border-white/30">
+                <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border text-foreground hover:bg-background/80 font-medium">
                   <SelectValue placeholder="Select a folder (optional)" />
                 </SelectTrigger>
-                <SelectContent className="glass border-white/20">
+                <SelectContent className="bg-card backdrop-blur-lg border border-border">
                   <SelectItem 
                     value="none"
-                    className="text-white hover:bg-white/10 focus:bg-white/10"
+                    className="text-foreground hover:bg-accent/20 focus:bg-accent/20 font-medium"
                   >
                     No folder
                   </SelectItem>
@@ -276,7 +276,7 @@ export function EditPromptModal({
                     <SelectItem 
                       key={folder.id} 
                       value={folder.id}
-                      className="text-white hover:bg-white/10 focus:bg-white/10"
+                      className="text-foreground hover:bg-accent/20 focus:bg-accent/20 font-medium"
                     >
                       {folder.name}
                     </SelectItem>
@@ -286,7 +286,7 @@ export function EditPromptModal({
             </div>
 
             <div>
-              <Label className="text-white">
+              <Label className="text-foreground font-medium">
                 Tags (Optional)
               </Label>
               <TagInput 
@@ -298,28 +298,28 @@ export function EditPromptModal({
             {/* Detected Variables Section */}
             {detectedVariables.length > 0 && (
               <div className="space-y-2">
-                <Label className="text-white">
+                <Label className="text-foreground font-medium">
                   Detected Variables ({detectedVariables.length})
                 </Label>
-                <div className="flex flex-wrap gap-2 p-3 glass rounded-lg">
+                <div className="flex flex-wrap gap-2 p-3 bg-background/50 backdrop-blur-sm border border-border rounded-lg">
                   {detectedVariables.map((variable) => (
                     <Badge
                       key={variable}
                       variant="secondary"
-                      className="glass-button text-white border-white/30 bg-blue-500/20"
+                      className="bg-accent/20 text-foreground border border-accent/30 font-medium"
                     >
                       {"{{" + variable + "}}"}
                     </Badge>
                   ))}
                 </div>
-                <p className="text-white/60 text-xs">
+                <p className="text-muted-foreground text-xs font-medium">
                   These variables can be filled in when using this template.
                 </p>
               </div>
             )}
 
             <div>
-              <Label htmlFor="prompt-content" className="text-white">
+              <Label htmlFor="prompt-content" className="text-foreground font-medium">
                 Prompt Content
               </Label>
               <Textarea
@@ -327,10 +327,10 @@ export function EditPromptModal({
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Enter your AI prompt here..."
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30 min-h-[200px]"
+                className="bg-background/50 backdrop-blur-sm border-border text-foreground placeholder:text-muted-foreground focus:border-accent/50 min-h-[200px] font-medium"
                 required
               />
-              <p className="text-white/60 text-sm mt-1">
+              <p className="text-muted-foreground text-sm mt-1 font-medium">
                 {content.length} characters
               </p>
             </div>
@@ -340,14 +340,14 @@ export function EditPromptModal({
                 type="button"
                 variant="outline"
                 onClick={handleClose}
-                className="glass border-white/20 text-white hover:bg-white/10"
+                className="bg-background/50 border-border text-foreground hover:bg-background/80 hover:border-accent/30 font-medium"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!title.trim() || !content.trim() || loading}
-                className="glass-button"
+                className="bg-accent text-white hover:bg-accent/90 font-medium shadow-md"
               >
                 {loading ? 'Saving...' : 'Save New Version'}
               </Button>
