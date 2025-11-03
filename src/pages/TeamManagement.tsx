@@ -269,7 +269,7 @@ export default function TeamManagement() {
                 <p className="text-sm text-muted-foreground mt-2">Manage your team members and invitations</p>
               </div>
               <Badge variant="secondary" className="shadow-glow-primary">
-                <span>{teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}</span>
+                <span className="text-foreground font-medium">{teamMembers.length} member{teamMembers.length !== 1 ? 's' : ''}</span>
               </Badge>
             </div>
           </CardHeader>
