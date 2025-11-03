@@ -105,16 +105,45 @@ export default function Register() {
           variant: "destructive",
         });
       } else {
-        // If this is an invite signup, update the invitation status
+        // If this is an invite signup, accept the invitation with authenticated user
         if (inviteToken) {
           try {
+            // Sign in the user to get auth token
+            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+              email: validated.email,
+              password: validated.password,
+            });
+
+            if (signInError || !signInData.session) {
+              console.error('Error signing in after registration:', signInError);
+              toast({
+                title: "Warning",
+                description: "Registration successful but failed to process invitation. Please sign in and contact support.",
+                variant: "destructive",
+              });
+              navigate('/login');
+              return;
+            }
+
+            // Accept invitation with authentication token
             const { error: inviteError } = await supabase.functions.invoke('accept-invitation', {
-              body: { token: inviteToken }
+              body: { token: inviteToken },
+              headers: {
+                Authorization: `Bearer ${signInData.session.access_token}`
+              }
             });
 
             if (inviteError) {
-              console.error('Error updating invitation status:', inviteError);
+              console.error('Error accepting invitation:', inviteError);
+              toast({
+                title: "Warning",
+                description: "Registration successful but failed to process invitation. Please contact an admin.",
+                variant: "destructive",
+              });
             }
+
+            // Sign out after accepting invitation (user needs to verify email)
+            await supabase.auth.signOut();
           } catch (error) {
             console.error('Error processing invitation:', error);
           }

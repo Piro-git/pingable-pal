@@ -76,13 +76,17 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       return;
     }
 
-    if (slackEnabled && slackWebhookUrl.trim() && !slackWebhookUrl.startsWith('https://hooks.slack.com/services/')) {
-      toast({
-        title: "Invalid Slack Webhook",
-        description: "Slack webhook URL must start with https://hooks.slack.com/services/",
-        variant: "destructive",
-      });
-      return;
+    // Strict Slack webhook URL validation to prevent SSRF attacks
+    if (slackEnabled && slackWebhookUrl.trim()) {
+      const slackWebhookPattern = /^https:\/\/hooks\.slack\.com\/services\/[A-Z0-9]+\/[A-Z0-9]+\/[a-zA-Z0-9]+$/;
+      if (!slackWebhookPattern.test(slackWebhookUrl.trim())) {
+        toast({
+          title: "Invalid Slack Webhook",
+          description: "Slack webhook URL must be in format: https://hooks.slack.com/services/XXX/YYY/ZZZ",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setLoading(true);

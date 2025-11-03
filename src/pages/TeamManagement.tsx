@@ -145,31 +145,38 @@ export default function TeamManagement() {
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'editor' | 'viewer') => {
     try {
-      // First delete existing role
-      await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-      
-      // Then insert new role
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({ user_id: userId, role: newRole });
+      setLoading(true);
 
-      if (error) throw error;
+      // Use secure edge function that prevents self-assignment and logs changes
+      const { data, error } = await supabase.functions.invoke('assign-user-role', {
+        body: {
+          userId: userId,
+          role: newRole,
+          reason: 'Role changed via Team Management UI'
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
 
       toast({
         title: "Success",
-        description: "Role updated successfully!",
+        description: `User role updated to ${newRole}`,
       });
 
+      // Refresh team data
       fetchTeamData();
     } catch (error: any) {
+      const errorMessage = error.message || error.error || "Failed to update user role";
+      
       toast({
         title: "Error",
-        description: error.message || "Failed to update role.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 

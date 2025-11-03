@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Create Supabase client with service role to bypass RLS
+    // Create Supabase admin client with service role
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -27,6 +27,35 @@ Deno.serve(async (req) => {
         }
       }
     );
+
+    // Get the authenticated user from the request
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('No authorization header provided');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Verify the user's JWT token
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
+    if (authError || !user) {
+      console.error('Invalid authentication:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     // Parse request body
     const { token }: AcceptInvitationRequest = await req.json();
@@ -42,29 +71,93 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('Accepting invitation with token');
+    console.log('Validating invitation with token for user:', user.email);
 
-    // Use service role to update invitation status (bypasses RLS)
-    const { data, error } = await supabaseAdmin
+    // Fetch the invitation to verify it exists and get details
+    const { data: invitation, error: fetchError } = await supabaseAdmin
       .from('invitations')
-      .update({ status: 'accepted' })
+      .select('*')
       .eq('token', token)
       .eq('status', 'pending')
-      .select()
       .single();
 
-    if (error || !data) {
-      console.error('Failed to accept invitation:', error);
+    if (fetchError || !invitation) {
+      console.error('Invalid or expired invitation:', fetchError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired invitation' }),
+        {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // CRITICAL SECURITY CHECK: Verify email match
+    if (user.email !== invitation.email) {
+      console.error(`Email mismatch: User email ${user.email} does not match invitation email ${invitation.email}`);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Email mismatch. This invitation was sent to a different email address.' 
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    console.log(`Email verified. Accepting invitation for: ${user.email}`);
+
+    // Update invitation status and link to user
+    const { error: updateError } = await supabaseAdmin
+      .from('invitations')
+      .update({ 
+        status: 'accepted',
+        accepted_by: user.id,
+        accepted_at: new Date().toISOString()
+      })
+      .eq('token', token)
+      .eq('status', 'pending');
+
+    if (updateError) {
+      console.error('Failed to update invitation:', updateError);
       return new Response(
         JSON.stringify({ error: 'Failed to accept invitation' }),
-        { 
+        {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
     }
 
-    console.log(`Invitation accepted for email: ${data.email}`);
+    // Assign the role to the user
+    const { error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .upsert({ 
+        user_id: user.id, 
+        role: invitation.role 
+      }, {
+        onConflict: 'user_id'
+      });
+
+    if (roleError) {
+      console.error('Failed to assign role:', roleError);
+      // Rollback invitation acceptance
+      await supabaseAdmin
+        .from('invitations')
+        .update({ status: 'pending', accepted_by: null, accepted_at: null })
+        .eq('token', token);
+        
+      return new Response(
+        JSON.stringify({ error: 'Failed to assign role' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    console.log(`Invitation accepted and role ${invitation.role} assigned to: ${user.email}`);
 
     return new Response(
       JSON.stringify({ success: true }),

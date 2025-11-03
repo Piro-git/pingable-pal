@@ -156,6 +156,8 @@ export type Database = {
       }
       invitations: {
         Row: {
+          accepted_at: string | null
+          accepted_by: string | null
           created_at: string
           email: string
           id: string
@@ -166,6 +168,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
           created_at?: string
           email: string
           id?: string
@@ -176,6 +180,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -435,6 +441,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_role_audit: {
+        Row: {
+          change_reason: string | null
+          changed_by: string
+          created_at: string
+          id: string
+          new_role: Database["public"]["Enums"]["app_role"]
+          old_role: Database["public"]["Enums"]["app_role"] | null
+          target_user_id: string
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by: string
+          created_at?: string
+          id?: string
+          new_role: Database["public"]["Enums"]["app_role"]
+          old_role?: Database["public"]["Enums"]["app_role"] | null
+          target_user_id: string
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string
+          created_at?: string
+          id?: string
+          new_role?: Database["public"]["Enums"]["app_role"]
+          old_role?: Database["public"]["Enums"]["app_role"] | null
+          target_user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -485,6 +521,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_user_role: {
+        Args: {
+          change_reason?: string
+          new_role: Database["public"]["Enums"]["app_role"]
+          target_user_id: string
+        }
+        Returns: undefined
+      }
       bytea_to_text: { Args: { data: string }; Returns: string }
       check_subscription_limit: {
         Args: { user_id_param: string }

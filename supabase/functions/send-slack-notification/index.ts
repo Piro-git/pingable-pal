@@ -34,9 +34,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Sending Slack notification for check: ${check_name} (${check_id})`);
 
-    // Validate webhook URL format
-    if (!slack_webhook_url || !slack_webhook_url.startsWith('https://hooks.slack.com/services/')) {
-      console.error('Invalid Slack webhook URL format');
+    // Strict webhook URL validation to prevent SSRF attacks
+    const ALLOWED_WEBHOOK_PATTERN = /^https:\/\/hooks\.slack\.com\/services\/[A-Z0-9]+\/[A-Z0-9]+\/[a-zA-Z0-9]+$/;
+    
+    if (!slack_webhook_url || !ALLOWED_WEBHOOK_PATTERN.test(slack_webhook_url)) {
+      console.error('Invalid Slack webhook URL format:', slack_webhook_url);
       return new Response(
         JSON.stringify({ error: 'Invalid Slack webhook URL format' }),
         {

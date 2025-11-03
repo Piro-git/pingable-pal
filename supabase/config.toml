@@ -3,9 +3,6 @@ project_id = "mrtovhqequmhdgccwffs"
 [functions.validate-invitation]
 verify_jwt = false  # Allow anonymous users to validate invitation tokens
 
-[functions.accept-invitation]
-verify_jwt = false  # Allow anonymous users to accept invitations after registration
-
 [functions.ping-handler]
 verify_jwt = false
 
