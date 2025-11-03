@@ -45,9 +45,9 @@ export const PricingSection = () => {
   return (
     <section id="pricing" className="relative py-40 overflow-hidden">
       {/* Elegant Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white" />
-      <div className="absolute -top-20 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#14B8A6]/8 to-transparent blur-3xl" />
-      <div className="absolute -bottom-20 right-0 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-white/30 to-[#0D9488]/5 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
+      <div className="absolute -top-20 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-gray-200/35 to-transparent blur-3xl" />
+      <div className="absolute -bottom-20 right-0 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-100/25 to-gray-200/15 blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <h2 className="text-6xl font-black text-gray-900 text-center mb-24 tracking-tight">

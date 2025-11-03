@@ -22,7 +22,7 @@ export const ProblemSection = () => {
   return (
     <section className="relative py-40 overflow-hidden">
       {/* Subtle Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="relative max-w-5xl mx-auto mb-32">
@@ -32,7 +32,7 @@ export const ProblemSection = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-br from-[#14B8A6]/15 to-[#0D9488]/5 backdrop-blur-3xl border border-white/20 -z-10"
+            className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-br from-gray-200/50 to-gray-100/20 backdrop-blur-3xl border border-white/20 -z-10"
             style={{ filter: 'blur(25px)' }}
           />
           <motion.div 
@@ -40,7 +40,7 @@ export const ProblemSection = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-[#14B8A6]/10 to-transparent backdrop-blur-3xl border border-white/10 -z-10"
+            className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-gray-300/40 to-transparent backdrop-blur-3xl border border-white/10 -z-10"
             style={{ filter: 'blur(30px)' }}
           />
           

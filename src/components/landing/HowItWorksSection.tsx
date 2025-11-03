@@ -25,8 +25,8 @@ export const HowItWorksSection = () => {
   return (
     <section className="relative py-40 overflow-hidden">
       {/* Soft Background Glow */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#14B8A6]/8 to-transparent blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-gray-200/30 to-transparent blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.h2 

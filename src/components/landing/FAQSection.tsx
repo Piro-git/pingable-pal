@@ -31,9 +31,9 @@ export const FAQSection = () => {
   return (
     <section id="faq" className="relative py-40 overflow-hidden">
       {/* Calm Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
-      <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-[#14B8A6]/10 to-white/20 blur-3xl" />
-      <div className="absolute bottom-1/4 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-white/35 to-[#0D9488]/8 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
+      <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-gray-200/35 to-gray-100/20 blur-3xl" />
+      <div className="absolute bottom-1/4 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-gray-100/30 to-gray-200/25 blur-3xl" />
       
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <h2 className="text-5xl font-black text-gray-900 text-center mb-20 tracking-tight">

@@ -7,8 +7,8 @@ export const CTASection = () => {
   return (
     <section className="relative py-40 overflow-hidden">
       {/* Premium Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full bg-gradient-to-br from-[#14B8A6]/10 via-white/20 to-[#0D9488]/5 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full bg-gradient-to-br from-gray-200/30 via-gray-100/20 to-gray-300/20 blur-3xl" />
       
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         <motion.div

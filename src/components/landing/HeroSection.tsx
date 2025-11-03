@@ -8,9 +8,9 @@ export const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 overflow-hidden">
       {/* Elegant Background Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50" />
-      <div className="absolute top-20 left-10 w-96 h-96 rounded-full bg-gradient-to-br from-[#14B8A6]/8 to-transparent blur-3xl" />
-      <div className="absolute bottom-40 right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#0D9488]/6 to-transparent blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-100/30 via-white to-gray-100/30" />
+      <div className="absolute top-20 left-10 w-96 h-96 rounded-full bg-gradient-to-br from-gray-200/40 to-transparent blur-3xl" />
+      <div className="absolute bottom-40 right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-300/30 to-transparent blur-3xl" />
       
       <motion.div 
         initial={{ opacity: 0, y: 40 }}
@@ -69,7 +69,7 @@ export const HeroSection = () => {
           </div>
           
           {/* Floating Glass Accent */}
-          <div className="absolute -bottom-8 -right-8 w-64 h-64 rounded-full bg-gradient-to-br from-[#14B8A6]/10 to-transparent backdrop-blur-3xl border border-white/20 -z-10" style={{ filter: 'blur(20px)' }} />
+          <div className="absolute -bottom-8 -right-8 w-64 h-64 rounded-full bg-gradient-to-br from-gray-200/30 to-transparent backdrop-blur-3xl border border-white/20 -z-10" style={{ filter: 'blur(20px)' }} />
         </motion.div>
       </motion.div>
     </section>

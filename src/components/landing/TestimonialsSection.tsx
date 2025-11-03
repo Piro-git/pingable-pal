@@ -22,9 +22,9 @@ export const TestimonialsSection = () => {
   return (
     <section className="relative py-40 overflow-hidden">
       {/* Soft Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
-      <div className="absolute top-20 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-white/50 to-[#14B8A6]/8 blur-3xl" />
-      <div className="absolute bottom-40 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-[#0D9488]/10 to-white/40 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50/50" />
+      <div className="absolute top-20 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-gray-100/40 to-gray-200/20 blur-3xl" />
+      <div className="absolute bottom-40 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-gray-200/30 to-gray-100/30 blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <h2 className="text-5xl font-black text-gray-900 text-center mb-20 tracking-tight">
