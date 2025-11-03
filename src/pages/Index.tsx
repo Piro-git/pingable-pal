@@ -96,7 +96,11 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24">
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 overflow-hidden">
+        {/* Hero Background Bubbles */}
+        <div className="absolute top-20 left-10 w-96 h-96 rounded-full bg-gradient-to-br from-[#14B8A6]/10 to-transparent backdrop-blur-3xl border border-white/10" style={{ filter: 'blur(40px)' }} />
+        <div className="absolute bottom-40 right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#0D9488]/8 to-transparent backdrop-blur-3xl" style={{ filter: 'blur(50px)' }} />
+        
         <motion.div initial={{
         opacity: 0,
         y: 40
@@ -105,7 +109,7 @@ const Index = () => {
         y: 0
       }} transition={{
         duration: 0.6
-      }} className="text-center max-w-5xl">
+      }} className="text-center max-w-5xl relative z-10">
           <h1 className="text-7xl font-black text-gray-900 tracking-tight leading-[1.1] mb-6">
             Never Miss a Broken
             <br />
@@ -299,7 +303,7 @@ they still work.</span>
           }} transition={{
             duration: 0.6,
             delay: index * 0.1
-          }} className="bg-white border border-gray-300 rounded-2xl p-10 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+          }} className="relative bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl p-10 hover:shadow-[0_8px_32px_0_rgba(20,184,166,0.15)] hover:-translate-y-2 transition-all duration-300 shadow-[0_4px_16px_0_rgba(0,0,0,0.06)]">
                 <div className="text-5xl mb-6">{item.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
                 <p className="text-gray-600">{item.desc}</p>
@@ -309,8 +313,12 @@ they still work.</span>
       </section>
 
       {/* Solution Features */}
-      <section className="py-32 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 space-y-32">
+      <section className="relative py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+        {/* Floating Glass Bubbles */}
+        <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-gradient-to-br from-[#14B8A6]/15 to-white/30 backdrop-blur-3xl border border-white/20" style={{ filter: 'blur(30px)' }} />
+        <div className="absolute bottom-20 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-white/40 to-[#0D9488]/10 backdrop-blur-3xl border border-white/10" style={{ filter: 'blur(35px)' }} />
+        
+        <div className="max-w-7xl mx-auto px-6 space-y-32 relative z-10">
           {/* Feature 1 */}
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div initial={{
@@ -433,8 +441,11 @@ they still work.</span>
       </section>
 
       {/* How It Works */}
-      <section className="py-32">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative py-32 overflow-hidden">
+        {/* Background Glass Effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#14B8A6]/5 to-transparent backdrop-blur-3xl" style={{ filter: 'blur(60px)' }} />
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.h2 initial={{
           opacity: 0,
           y: 40
@@ -494,8 +505,12 @@ they still work.</span>
       </section>
 
       {/* Testimonials */}
-      <section className="py-32 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+        {/* Testimonial Bubbles */}
+        <div className="absolute top-20 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-white/50 to-[#14B8A6]/10 backdrop-blur-3xl border border-white/30" style={{ filter: 'blur(25px)' }} />
+        <div className="absolute bottom-40 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-[#0D9488]/15 to-white/40 backdrop-blur-3xl border border-white/20" style={{ filter: 'blur(30px)' }} />
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <h2 className="text-4xl font-bold text-gray-900 text-center mb-20">
             Don't take our word for it
           </h2>
@@ -535,8 +550,12 @@ they still work.</span>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-32">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="pricing" className="relative py-32 overflow-hidden">
+        {/* Pricing Glass Orbs */}
+        <div className="absolute -top-20 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#14B8A6]/8 to-transparent backdrop-blur-3xl" style={{ filter: 'blur(50px)' }} />
+        <div className="absolute -bottom-20 right-0 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-white/30 to-[#0D9488]/5 backdrop-blur-3xl" style={{ filter: 'blur(45px)' }} />
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <h2 className="text-5xl font-bold text-gray-900 text-center mb-24">
             Simple, honest pricing
           </h2>
@@ -664,8 +683,12 @@ they still work.</span>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-32 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-6">
+      <section id="faq" className="relative py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+        {/* FAQ Glass Elements */}
+        <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-[#14B8A6]/12 to-white/20 backdrop-blur-3xl border border-white/20" style={{ filter: 'blur(35px)' }} />
+        <div className="absolute bottom-1/4 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-white/35 to-[#0D9488]/8 backdrop-blur-3xl" style={{ filter: 'blur(30px)' }} />
+        
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
           <h2 className="text-4xl font-bold text-gray-900 text-center mb-20">
             Questions?
           </h2>
@@ -708,8 +731,11 @@ they still work.</span>
       </section>
 
       {/* Final CTA */}
-      <section className="py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section className="relative py-32 overflow-hidden">
+        {/* CTA Glass Background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full bg-gradient-to-br from-[#14B8A6]/10 via-white/20 to-[#0D9488]/5 backdrop-blur-3xl border border-white/10" style={{ filter: 'blur(50px)' }} />
+        
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.div initial={{
           opacity: 0,
           y: 40
