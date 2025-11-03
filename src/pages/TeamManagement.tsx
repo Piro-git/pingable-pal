@@ -322,7 +322,7 @@ export default function TeamManagement() {
                   {teamMembers.map((member) => (
                     <div 
                       key={member.id} 
-                      className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-4 flex items-center justify-between hover:bg-background/50 transition-all duration-200"
+                      className="bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-4 flex items-center justify-between hover:bg-background/80 hover:border-border transition-all duration-200 shadow-md"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
