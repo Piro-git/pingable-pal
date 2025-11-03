@@ -144,11 +144,11 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h3 className="text-white font-semibold flex items-center gap-2">
+        <h3 className="text-foreground font-semibold flex items-center gap-2">
           <MessageCircle className="w-5 h-5" />
           Feedback & Discussion
         </h3>
-        <div className="text-white/60">Loading feedback...</div>
+        <div className="text-muted-foreground">Loading feedback...</div>
       </div>
     );
   }
@@ -156,14 +156,14 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-white font-semibold flex items-center gap-2">
-          <MessageCircle className="w-5 h-5" />
+        <h3 className="text-foreground font-semibold flex items-center gap-2">
+          <MessageCircle className="w-5 h-5 text-accent" />
           Feedback & Discussion
         </h3>
         {feedbacks.length > 0 && (
           <div className="flex items-center gap-2">
             <StarRating rating={averageRating} readonly showValue />
-            <span className="text-white/60 text-sm">
+            <span className="text-muted-foreground text-sm font-medium">
               ({feedbacks.length} review{feedbacks.length !== 1 ? 's' : ''})
             </span>
           </div>
@@ -171,14 +171,14 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
       </div>
 
       {/* User's feedback form */}
-      <div className="glass p-4 rounded-lg space-y-4">
-        <Label className="text-white">
+      <div className="bg-background/50 backdrop-blur-sm border border-border rounded-lg p-4 space-y-4 shadow-sm">
+        <Label className="text-foreground font-medium">
           {userFeedback ? 'Update your review' : 'Leave a review'}
         </Label>
         
         <div className="space-y-3">
           <div>
-            <Label className="text-white/80 text-sm">Rating</Label>
+            <Label className="text-muted-foreground text-sm">Rating</Label>
             <StarRating 
               rating={newRating} 
               onRatingChange={setNewRating}
@@ -187,12 +187,12 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
           </div>
           
           <div>
-            <Label className="text-white/80 text-sm">Comment (optional)</Label>
+            <Label className="text-muted-foreground text-sm">Comment (optional)</Label>
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Share your thoughts about this prompt..."
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+              className="bg-background/50 backdrop-blur-sm border-border text-foreground placeholder:text-muted-foreground focus:border-accent/50 focus:ring-accent/30"
               rows={3}
             />
           </div>
@@ -200,7 +200,7 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
           <Button
             onClick={handleSubmitFeedback}
             disabled={newRating === 0 || submitting}
-            className="glass-button"
+            className="bg-accent text-white hover:bg-accent/90 font-medium shadow-sm"
           >
             <Send className="w-4 h-4 mr-2" />
             {submitting 
@@ -216,29 +216,29 @@ export function FeedbackSection({ promptId }: FeedbackSectionProps) {
       {/* Existing feedback */}
       {feedbacks.length > 0 && (
         <div className="space-y-3">
-          <Label className="text-white">Reviews</Label>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
+          <Label className="text-foreground font-medium">Reviews</Label>
+          <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
             {feedbacks.map((feedback) => (
-              <div key={feedback.id} className="glass p-4 rounded-lg">
+              <div key={feedback.id} className="bg-background/50 backdrop-blur-sm border border-border rounded-lg p-4 shadow-sm">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                    <div className="w-8 h-8 bg-gradient-to-br from-accent/80 to-accent rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                       {feedback.profiles?.full_name?.charAt(0) || feedback.profiles?.email?.charAt(0) || '?'}
                     </div>
                     <div>
-                      <div className="text-white font-medium text-sm">
+                      <div className="text-foreground font-medium text-sm">
                         {feedback.profiles?.full_name || feedback.profiles?.email || 'Anonymous'}
                       </div>
                       <StarRating rating={feedback.rating} readonly size="sm" />
                     </div>
                   </div>
-                  <div className="text-white/60 text-xs">
+                  <div className="text-muted-foreground text-xs font-medium">
                     {new Date(feedback.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 
                 {feedback.comment && (
-                  <div className="text-white/80 text-sm mt-2">
+                  <div className="text-foreground text-sm mt-2">
                     {feedback.comment}
                   </div>
                 )}
