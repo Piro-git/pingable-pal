@@ -50,15 +50,6 @@ const Index = () => {
       {/* Navigation */}
       <LandingNav navBackground={navBackground} />
 
-      {/* Social Proof */}
-      <section className="py-16 border-t border-gray-200 mt-20">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-xs uppercase tracking-[2px] text-gray-400">
-            Join 500+ automation users who sleep better
-          </p>
-        </div>
-      </section>
-
       {/* All Sections */}
       <HeroSection />
       <ProblemSection />
