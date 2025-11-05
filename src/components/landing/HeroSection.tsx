@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import dashboardPreview from "@/assets/dashboard-preview.png";
 
 export const HeroSection = () => {
@@ -29,15 +29,12 @@ export const HeroSection = () => {
           Monitor your N8N, Make, and Zapier workflows with intelligent alerts—no alert fatigue.
         </p>
         
-        <div className="flex items-center justify-center gap-4 mb-6">
+        <div className="flex items-center justify-center mb-6">
           <Link to="/register">
             <Button className="bg-[#14B8A6] hover:bg-[#0D9488] text-white h-14 px-10 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all">
               Start Monitoring Free <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-          <Button variant="outline" className="h-14 px-10 text-base font-semibold rounded-xl border-2 border-gray-200 hover:border-[#14B8A6] hover:text-[#14B8A6] hover:bg-gray-50 transition-all">
-            <Play className="mr-2 h-5 w-5" /> Watch Demo
-          </Button>
         </div>
         
         <p className="text-sm text-gray-500 mb-24">
