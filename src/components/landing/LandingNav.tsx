@@ -13,7 +13,7 @@ export const LandingNav = ({ navBackground }: LandingNavProps) => {
         <img 
           src={flowzenLogo} 
           alt="FlowZen" 
-          className="h-12 w-auto object-contain"
+          className="h-16 w-auto object-contain"
         />
         <div className="flex items-center gap-8">
           <a href="#pricing" className="text-sm font-medium text-gray-700 hover:text-[#14B8A6] transition-colors">
