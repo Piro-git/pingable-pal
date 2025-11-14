@@ -26,6 +26,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [interval, setInterval] = useState('5');
+  const [gracePeriod, setGracePeriod] = useState('5');
   const [groupId, setGroupId] = useState<string>('none');
   const [selectedColor, setSelectedColor] = useState(CHECK_COLORS[0]);
   const [type, setType] = useState<'simple_ping' | 'api_report'>('simple_ping');
@@ -66,6 +67,16 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
       return;
     }
 
+    const gracePeriodNum = parseInt(gracePeriod);
+    if (isNaN(gracePeriodNum) || gracePeriodNum < 0 || gracePeriodNum > 120) {
+      toast({
+        title: "Error",
+        description: "Grace period must be between 0 and 120 minutes.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validate Slack webhook URL if Slack is enabled
     if (slackEnabled && !slackWebhookUrl.trim()) {
       toast({
@@ -98,6 +109,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
           user_id: user.id,
           name: name.trim(),
           interval_minutes: intervalNum,
+          grace_period_minutes: gracePeriodNum,
           group_id: groupId === 'none' ? null : groupId,
           color: selectedColor,
           type: type,
@@ -139,6 +151,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
   const handleClose = () => {
     setName('');
     setInterval('5');
+    setGracePeriod('5');
     setGroupId('none');
     setSelectedColor(CHECK_COLORS[0]);
     setType('simple_ping');
@@ -264,7 +277,7 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
             </div>
           </div>
 
-          {/* Interval & Group Row */}
+          {/* Interval & Grace Period Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Interval */}
             <div className="space-y-2">
@@ -287,35 +300,61 @@ const CreateCheckModal: React.FC<CreateCheckModalProps> = ({ open, onClose, onSu
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                How often to check (minimum 1 minute)
+                How often FlowZen should expect a ping from your service
               </p>
             </div>
 
-            {/* Group */}
-            {groups.length > 0 && (
-              <div className="space-y-2">
-                <Label htmlFor="group" className="text-foreground font-semibold">
-                  Group
-                </Label>
-                <Select value={groupId} onValueChange={setGroupId} disabled={loading}>
-                  <SelectTrigger className="bg-background border-border text-foreground">
-                    <SelectValue placeholder="Select group..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="none">No group</SelectItem>
-                    {groups.map((group) => (
-                      <SelectItem key={group.id} value={group.id}>
-                        {group.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  Optional: organize your checks
-                </p>
+            {/* Grace Period */}
+            <div className="space-y-2">
+              <Label htmlFor="grace-period" className="text-foreground font-semibold">
+                Grace Period
+              </Label>
+              <div className="relative">
+                <Input
+                  id="grace-period"
+                  type="number"
+                  min="0"
+                  max="120"
+                  value={gracePeriod}
+                  onChange={(e) => setGracePeriod(e.target.value)}
+                  placeholder="5"
+                  className="bg-background border-border text-foreground pr-20"
+                  disabled={loading}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">
+                  minutes
+                </span>
               </div>
-            )}
+              <p className="text-xs text-muted-foreground">
+                Extra time before marking as down (interval + grace)
+              </p>
+            </div>
           </div>
+
+          {/* Group */}
+          {groups.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="group" className="text-foreground font-semibold">
+                Group
+              </Label>
+              <Select value={groupId} onValueChange={setGroupId} disabled={loading}>
+                <SelectTrigger className="bg-background border-border text-foreground">
+                  <SelectValue placeholder="Select group..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="none">No group</SelectItem>
+                  {groups.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      {group.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Optional: organize your checks
+              </p>
+            </div>
+          )}
 
           {/* Color Picker */}
           <div className="space-y-3">
