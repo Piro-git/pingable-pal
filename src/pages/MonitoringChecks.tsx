@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Plus, Copy, RefreshCw, Info, MessageSquare, Crown } from 'lucide-react';
+import { Plus, Copy, RefreshCw, Info, MessageSquare, Crown, Mail } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
@@ -117,6 +117,41 @@ export default function Dashboard() {
   const showInstructions = (check: Check) => {
     setSelectedCheck(check);
     setInstructionsModalOpen(true);
+  };
+
+  const sendTestEmail = async (check: Check) => {
+    if (!user?.email) {
+      toast({
+        title: "Error",
+        description: "User email not found.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-test-email', {
+        body: {
+          check_id: check.id,
+          check_name: check.name,
+          user_email: user.email,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Test Email Sent",
+        description: `A test notification has been sent to ${user.email}`,
+      });
+    } catch (error: any) {
+      console.error('Error sending test email:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send test email.",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredChecks = selectedGroup === 'all'
@@ -346,6 +381,15 @@ export default function Dashboard() {
                             }
                           </p>
                         </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="shadow-glow-accent"
+                          onClick={() => sendTestEmail(check)}
+                        >
+                          <Mail className="w-4 h-4 mr-2" />
+                          Test Email
+                        </Button>
                         <Button
                           size="sm"
                           className="shadow-glow-secondary"
