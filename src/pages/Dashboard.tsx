@@ -51,9 +51,9 @@ export default function Dashboard() {
       if (checksError) throw checksError;
       setChecks(checksData || []);
 
-      // Generate mock uptime data for last 7 days
-      const mockUptimeData = generateMockUptimeData(checksData || []);
-      setUptimeData(mockUptimeData);
+      // Fetch real uptime data for last 7 days
+      const realUptimeData = await fetchRealUptimeData(checksData || []);
+      setUptimeData(realUptimeData);
 
       // Generate mock activities
       const mockActivities = generateMockActivities(checksData || []);
@@ -65,28 +65,54 @@ export default function Dashboard() {
     }
   };
 
-  const generateMockUptimeData = (checks: Check[]): UptimeData[] => {
+  const fetchRealUptimeData = async (checks: Check[]): Promise<UptimeData[]> => {
+    if (checks.length === 0) {
+      return [];
+    }
+
     const data: UptimeData[] = [];
     const today = new Date();
     
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+      
       const dateStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric' });
       
-      // Calculate uptime based on current checks status
-      const totalChecks = checks.length || 1;
-      const upChecks = checks.filter(c => c.status === 'up').length;
-      const baseUptime = (upChecks / totalChecks) * 100;
-      
-      // Add some variation for older days
-      const variation = Math.random() * 5 - 2.5;
-      const uptime = Math.min(100, Math.max(85, baseUptime + variation));
-      
-      data.push({
-        date: dateStr,
-        uptime: Math.round(uptime * 10) / 10
-      });
+      // Fetch check runs for this day
+      const { data: runsData, error } = await supabase
+        .from('check_runs')
+        .select('status, check_id')
+        .gte('created_at', date.toISOString())
+        .lt('created_at', nextDate.toISOString())
+        .in('check_id', checks.map(c => c.id));
+
+      if (error) {
+        console.error('Error fetching check runs:', error);
+        // Fallback to current status if no historical data
+        const totalChecks = checks.length;
+        const upChecks = checks.filter(c => c.status === 'up').length;
+        const uptime = (upChecks / totalChecks) * 100;
+        data.push({ date: dateStr, uptime: Math.round(uptime * 10) / 10 });
+        continue;
+      }
+
+      // Calculate uptime percentage for the day
+      if (runsData && runsData.length > 0) {
+        const successfulRuns = runsData.filter(r => r.status === 'success').length;
+        const uptime = (successfulRuns / runsData.length) * 100;
+        data.push({ date: dateStr, uptime: Math.round(uptime * 10) / 10 });
+      } else {
+        // No runs for this day, use current check status as fallback
+        const totalChecks = checks.length;
+        const upChecks = checks.filter(c => c.status === 'up').length;
+        const uptime = (upChecks / totalChecks) * 100;
+        data.push({ date: dateStr, uptime: Math.round(uptime * 10) / 10 });
+      }
     }
     
     return data;
