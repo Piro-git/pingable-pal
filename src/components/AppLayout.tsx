@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Archive, BarChart3, Users, Settings, LogOut, Activity, CreditCard } from 'lucide-react';
+import { Archive, BarChart3, Users, Settings, LogOut, Activity, CreditCard, FileText } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import flowzenLogo from '@/assets/flowzen-logo.png';
 
@@ -29,6 +29,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       name: 'Monitoring Checks',
       icon: Activity,
       path: '/monitoring',
+      roles: ['admin', 'editor', 'viewer']
+    },
+    {
+      name: 'Uptime Reports',
+      icon: FileText,
+      path: '/reports',
       roles: ['admin', 'editor', 'viewer']
     },
     {
