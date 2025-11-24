@@ -3,12 +3,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FolderOpen, Palette } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
 const FOLDER_COLORS = [
-  '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16',
+  '#FB923C', '#10B981', '#3B82F6', '#EF4444', '#8B5CF6', '#F59E0B', '#06B6D4', '#84CC16',
   '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#D4BAFF', '#FFB3D4'
 ];
 
@@ -66,62 +67,103 @@ export function CreateFolderModal({ open, onClose, onSuccess }: CreateFolderModa
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass border-white/20">
-        <DialogHeader>
-          <DialogTitle className="text-white">Create New Folder</DialogTitle>
-          <DialogDescription className="text-white/70">
-            Create a new folder to organize your prompts.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="folder-name" className="text-white">
-              Folder Name
+      <DialogContent className="bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_0_50px_rgba(251,146,60,0.15)] max-w-lg overflow-hidden">
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+        
+        {/* Header */}
+        <div className="relative">
+          <DialogHeader>
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl">
+                <FolderOpen className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold text-foreground">
+                  Create New Folder
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground mt-1">
+                  Organize your prompts with a custom folder
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-5 relative mt-4">
+          {/* Folder Name */}
+          <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:border-primary/30 transition-colors">
+            <Label htmlFor="folder-name" className="text-foreground font-semibold mb-2 block flex items-center gap-2">
+              <span className="text-primary">●</span> Folder Name
             </Label>
             <Input
               id="folder-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter folder name..."
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+              placeholder="e.g., Marketing Templates"
+              className="bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-primary/20 font-medium"
               required
             />
           </div>
           
-          <div>
-            <Label className="text-white mb-3 block">Choose Color</Label>
-            <div className="grid grid-cols-8 gap-2">
+          {/* Color Picker */}
+          <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:border-primary/30 transition-colors">
+            <Label className="text-foreground font-semibold mb-3 block flex items-center gap-2">
+              <Palette className="w-4 h-4 text-primary" />
+              Choose Color
+            </Label>
+            <div className="grid grid-cols-8 gap-3">
               {FOLDER_COLORS.map((color) => (
                 <button
                   key={color}
                   type="button"
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                  className={`group w-10 h-10 rounded-xl border-2 transition-all hover:scale-110 ${
                     selectedColor === color 
-                      ? 'border-white scale-110' 
-                      : 'border-white/30 hover:border-white/60'
+                      ? 'border-primary ring-4 ring-primary/30 scale-110' 
+                      : 'border-border/50 hover:border-primary/50'
                   }`}
-                  style={{ backgroundColor: color }}
+                  style={{ 
+                    backgroundColor: color,
+                    boxShadow: selectedColor === color ? `0 0 20px ${color}40` : 'none'
+                  }}
                   onClick={() => setSelectedColor(color)}
-                />
+                >
+                  {selectedColor === color && (
+                    <div className="w-full h-full rounded-lg flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full" />
+                    </div>
+                  )}
+                </button>
               ))}
             </div>
           </div>
           
-          <div className="flex justify-end gap-3">
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-border/30">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="glass border-white/20 text-white hover:bg-white/10"
+              className="bg-background/50 border-border/50 text-foreground hover:bg-background/80 hover:border-primary/30 font-medium"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!name.trim() || loading}
-              className="glass-button"
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-glow-primary font-medium"
             >
-              {loading ? 'Creating...' : 'Create Folder'}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Create Folder
+                </>
+              )}
             </Button>
           </div>
         </form>
