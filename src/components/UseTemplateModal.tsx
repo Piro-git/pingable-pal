@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Copy, Play, Sparkles, Zap, FileText } from 'lucide-react';
+import { Copy, Play } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { replaceVariables, validateVariables } from '@/utils/templateUtils';
 
@@ -97,58 +97,42 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_0_50px_rgba(251,146,60,0.15)] max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
-        {/* Animated gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-        
-        {/* Header */}
-        <div className="relative flex-shrink-0">
-          <DialogHeader>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1">
-                <div className="p-2.5 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex-shrink-0">
-                  <Play className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
-                    {prompt.title}
-                  </DialogTitle>
-                  <DialogDescription className="text-muted-foreground mt-1">
-                    Fill in the variables to generate your custom prompt
-                  </DialogDescription>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Badge className="bg-primary/20 text-primary border-primary/30">
-                  v{prompt.version}
-                </Badge>
-                {prompt.tags && prompt.tags.length > 0 && (
-                  <div className="flex gap-1">
-                    {prompt.tags.slice(0, 2).map((tag) => (
-                      <Badge
-                        key={tag.id}
-                        variant="secondary"
-                        className="bg-background/50 text-foreground border-border/50 text-xs"
-                        style={{ backgroundColor: tag.color ? `${tag.color}30` : undefined }}
-                      >
-                        {tag.name}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
+      <DialogContent className="glass border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-xl font-semibold text-white">
+                Use Template: {prompt.title}
+              </DialogTitle>
+              <DialogDescription className="text-white/70">
+                Fill in the variables to use this prompt template.
+              </DialogDescription>
             </div>
-          </DialogHeader>
-        </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/60 text-sm">v{prompt.version}</span>
+              {prompt.tags && prompt.tags.length > 0 && (
+                <div className="flex gap-1">
+                  {prompt.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant="secondary"
+                      className="glass text-white border-white/20 text-xs"
+                      style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto space-y-6 mt-6 relative pr-2">
+        <div className="space-y-6">
           {/* Original Template Preview */}
-          <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
-            <Label className="text-foreground font-semibold mb-2 block flex items-center gap-2">
-              <FileText className="w-4 h-4 text-primary" />
-              Original Template
-            </Label>
-            <div className="bg-background/80 backdrop-blur-sm rounded-lg p-4 text-foreground/80 text-sm max-h-40 overflow-y-auto border border-border/30 font-mono leading-relaxed">
+          <div className="space-y-2">
+            <Label className="text-white font-medium">Original Template:</Label>
+            <div className="glass rounded-lg p-3 text-white/80 text-sm max-h-32 overflow-y-auto">
               {prompt.content}
             </div>
           </div>
@@ -156,32 +140,29 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
           {/* Variable Inputs */}
           {variables.length > 0 ? (
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-accent/10 to-accent/5 backdrop-blur-sm border border-accent/30 rounded-xl p-4">
-                <Label className="text-foreground font-semibold mb-4 block flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-accent" />
-                  Fill in Variables ({variables.length} detected)
-                </Label>
-                <div className="grid gap-4 max-h-80 overflow-y-auto pr-2">
-                  {variables.map((variable) => (
-                    <div key={variable} className="bg-background/30 backdrop-blur-sm rounded-lg p-3 border border-border/30">
-                      <Label className="text-foreground/90 text-sm mb-2 block font-mono">
-                        {"{{" + variable + "}}"}
-                      </Label>
-                      <Input
-                        value={variableValues[variable] || ''}
-                        onChange={(e) => handleVariableChange(variable, e.target.value)}
-                        placeholder={`Enter value for ${variable}`}
-                        className="bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-accent/50 focus:ring-2 focus:ring-accent/20"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <Label className="text-white font-medium">
+                Fill in Variables ({variables.length} detected):
+              </Label>
+              <div className="grid gap-4 max-h-60 overflow-y-auto">
+                {variables.map((variable) => (
+                  <div key={variable} className="space-y-2">
+                    <Label className="text-white/80 text-sm">
+                      {variable}
+                    </Label>
+                    <Input
+                      value={variableValues[variable] || ''}
+                      onChange={(e) => handleVariableChange(variable, e.target.value)}
+                      placeholder={`Enter value for {{${variable}}}`}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+                    />
+                  </div>
+                ))}
               </div>
               
               <div className="flex justify-center">
                 <Button
                   onClick={handleGeneratePreview}
-                  className="bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90 text-white shadow-glow-accent font-medium"
+                  className="glass-button"
                   disabled={variables.length === 0}
                 >
                   <Play className="w-4 h-4 mr-2" />
@@ -190,45 +171,37 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
               </div>
             </div>
           ) : (
-            <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-8 text-center">
-              <div className="inline-flex p-4 bg-muted/30 rounded-full mb-4">
-                <Sparkles className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <p className="text-foreground/70 font-medium mb-2">
-                No variables in this prompt
+            <div className="text-center py-8">
+              <p className="text-white/70">
+                This prompt doesn't contain any variables.
               </p>
-              <p className="text-muted-foreground text-sm">
-                This prompt is ready to use as-is, or add {"{{variables}}"} to make it dynamic
+              <p className="text-white/50 text-sm mt-1">
+                Add variables like {"{{variable_name}}"} to make it a template.
               </p>
             </div>
           )}
 
           {/* Generated Prompt Preview */}
           {showPreview && generatedPrompt && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/30 rounded-xl p-4">
-                <Label className="text-foreground font-semibold mb-2 block flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  Generated Prompt
-                </Label>
-                <Textarea
-                  value={generatedPrompt}
-                  readOnly
-                  className="min-h-[250px] bg-background/80 text-foreground border-border/50 resize-none font-mono text-sm leading-relaxed"
-                />
-              </div>
+            <div className="space-y-4">
+              <Label className="text-white font-medium">Generated Prompt:</Label>
+              <Textarea
+                value={generatedPrompt}
+                readOnly
+                className="min-h-[200px] glass text-white resize-none"
+              />
               
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setShowPreview(false)}
-                  className="bg-background/50 border-border/50 text-foreground hover:bg-background/80 hover:border-primary/30"
+                  className="glass border-white/20 text-white hover:bg-white/10"
                 >
                   Edit Variables
                 </Button>
                 <Button
                   onClick={handleCopyToClipboard}
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-glow-primary"
+                  className="glass-button"
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copy to Clipboard
@@ -239,11 +212,11 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
 
           {/* Close button when no variables */}
           {variables.length === 0 && (
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end">
               <Button
                 variant="outline"
                 onClick={handleClose}
-                className="bg-background/50 border-border/50 text-foreground hover:bg-background/80 hover:border-primary/30"
+                className="glass border-white/20 text-white hover:bg-white/10"
               >
                 Close
               </Button>
