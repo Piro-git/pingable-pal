@@ -10,6 +10,7 @@ import { CreatePromptModal } from '@/components/CreatePromptModal';
 import { ViewPromptModal } from '@/components/ViewPromptModal';
 import { UseTemplateModal } from '@/components/UseTemplateModal';
 import { EditPromptModal } from '@/components/EditPromptModal';
+import { PromptDetailsModal } from '@/components/PromptDetailsModal';
 import { useNavigate } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/badge';
@@ -65,6 +66,7 @@ export default function PromptArchive() {
   const [viewPromptModalOpen, setViewPromptModalOpen] = useState(false);
   const [useTemplateModalOpen, setUseTemplateModalOpen] = useState(false);
   const [editPromptModalOpen, setEditPromptModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
 
   const fetchFolders = async () => {
@@ -211,6 +213,11 @@ export default function PromptArchive() {
   const handleEditPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
     setEditPromptModalOpen(true);
+  };
+
+  const handleShowDetails = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setDetailsModalOpen(true);
   };
 
   return (
@@ -398,7 +405,7 @@ export default function PromptArchive() {
                           <div
                             key={prompt.id}
                             className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-5 cursor-pointer hover:shadow-card hover:bg-background/50 transition-all duration-200"
-                            onClick={() => handleViewPrompt(prompt)}
+                            onClick={() => handleShowDetails(prompt)}
                           >
                             <div className="flex items-start justify-between mb-2">
                               <h4 className="text-foreground font-semibold text-lg leading-tight break-words flex-1 mr-4">
@@ -516,6 +523,20 @@ export default function PromptArchive() {
         promptId={selectedPrompt?.id || ''}
         currentVersionId={selectedPrompt?.current_version?.id || ''}
       />
+
+      {selectedPrompt && (
+        <PromptDetailsModal
+          open={detailsModalOpen}
+          onClose={() => {
+            setDetailsModalOpen(false);
+            setSelectedPrompt(null);
+          }}
+          promptId={selectedPrompt.id}
+          currentVersionId={selectedPrompt.current_version?.id || ''}
+          folders={folders}
+          onSuccess={fetchPrompts}
+        />
+      )}
     </>
   );
 }
