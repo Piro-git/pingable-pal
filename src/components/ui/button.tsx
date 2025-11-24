@@ -9,11 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-realistic hover:bg-primary/90 hover:shadow-realistic-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-inset-deep",
+        default: "bg-primary text-primary-foreground shadow-realistic hover:bg-primary-hover hover:shadow-realistic-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-inset-deep",
         destructive: "bg-destructive text-destructive-foreground shadow-realistic hover:bg-destructive/90 hover:shadow-realistic-lg hover:-translate-y-0.5",
-        outline: "border border-white/20 bg-bg-lighter/80 backdrop-blur-xl text-white shadow-realistic hover:bg-bg-lighter/95 hover:shadow-realistic-lg hover:-translate-y-0.5",
-        secondary: "bg-bg-base/60 backdrop-blur-xl text-secondary-foreground shadow-realistic hover:bg-bg-lighter/70 hover:shadow-realistic-lg",
-        ghost: "hover:bg-bg-lighter/50 hover:text-accent-foreground",
+        outline: "border-2 border-primary/30 bg-card/50 backdrop-blur-xl text-foreground shadow-realistic hover:bg-primary/10 hover:border-primary/50 hover:shadow-realistic-lg hover:-translate-y-0.5",
+        secondary: "bg-secondary text-secondary-foreground shadow-realistic hover:bg-secondary/90 hover:shadow-realistic-lg hover:-translate-y-0.5",
+        ghost: "hover:bg-muted hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
