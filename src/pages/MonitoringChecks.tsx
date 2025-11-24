@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast';
 import { CreateCheckModal } from '@/components/CreateCheckModal';
 import { CreateGroupModal } from '@/components/CreateGroupModal';
 import { CheckInstructionsModal } from '@/components/CheckInstructionsModal';
+import { CheckDetailsModal } from '@/components/CheckDetailsModal';
 import { UpgradeModal } from '@/components/UpgradeModal';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
   const [instructionsModalOpen, setInstructionsModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<Check | null>(null);
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<Date | null>(null);
@@ -117,6 +119,11 @@ export default function Dashboard() {
   const showInstructions = (check: Check) => {
     setSelectedCheck(check);
     setInstructionsModalOpen(true);
+  };
+
+  const showCheckDetails = (check: Check) => {
+    setSelectedCheck(check);
+    setDetailsModalOpen(true);
   };
 
   const sendTestEmail = async (check: Check) => {
@@ -350,7 +357,8 @@ export default function Dashboard() {
                 {filteredChecks.map((check) => (
                   <div 
                     key={check.id} 
-                    className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-5 hover:shadow-card hover:bg-background/50 transition-all duration-200"
+                    className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-5 hover:shadow-card hover:bg-background/50 transition-all duration-200 cursor-pointer"
+                    onClick={() => showCheckDetails(check)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -385,7 +393,10 @@ export default function Dashboard() {
                           size="sm"
                           variant="outline"
                           className="shadow-glow-accent"
-                          onClick={() => sendTestEmail(check)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sendTestEmail(check);
+                          }}
                         >
                           <Mail className="w-4 h-4 mr-2" />
                           Test Email
@@ -393,7 +404,10 @@ export default function Dashboard() {
                         <Button
                           size="sm"
                           className="shadow-glow-secondary"
-                          onClick={() => copyPingUrl(check.heartbeat_uuid)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyPingUrl(check.heartbeat_uuid);
+                          }}
                         >
                           <Copy className="w-4 h-4 mr-2" />
                           Copy URL
@@ -401,7 +415,10 @@ export default function Dashboard() {
                         <Button
                           size="sm"
                           className="shadow-glow-primary"
-                          onClick={() => showInstructions(check)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            showInstructions(check);
+                          }}
                         >
                           <Info className="w-4 h-4 mr-2" />
                           Instructions
@@ -430,13 +447,22 @@ export default function Dashboard() {
       />
 
       {selectedCheck && (
-        <CheckInstructionsModal
-          open={instructionsModalOpen}
-          onClose={() => setInstructionsModalOpen(false)}
-          checkName={selectedCheck.name}
-          heartbeatUuid={selectedCheck.heartbeat_uuid}
-          checkType={selectedCheck.type}
-        />
+        <>
+          <CheckInstructionsModal
+            open={instructionsModalOpen}
+            onClose={() => setInstructionsModalOpen(false)}
+            checkName={selectedCheck.name}
+            heartbeatUuid={selectedCheck.heartbeat_uuid}
+            checkType={selectedCheck.type}
+          />
+          
+          <CheckDetailsModal
+            check={selectedCheck}
+            open={detailsModalOpen}
+            onOpenChange={setDetailsModalOpen}
+            onUpdate={fetchData}
+          />
+        </>
       )}
       
       <UpgradeModal
