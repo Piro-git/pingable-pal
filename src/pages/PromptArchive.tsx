@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Archive, Edit, Search, Play } from 'lucide-react';
+import { Plus, Archive, Edit, Search, Play, Sparkles, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -404,66 +404,89 @@ export default function PromptArchive() {
                         return (
                           <div
                             key={prompt.id}
-                            className="bg-background/30 backdrop-blur-sm border border-border rounded-xl p-5 cursor-pointer hover:shadow-card hover:bg-background/50 transition-all duration-200"
+                            className="group relative bg-gradient-to-br from-card via-card/95 to-card/90 backdrop-blur-lg border border-primary/20 rounded-xl p-6 cursor-pointer hover:shadow-[0_0_30px_rgba(251,146,60,0.2)] hover:border-primary/40 transition-all duration-300 overflow-hidden"
                             onClick={() => handleShowDetails(prompt)}
                           >
-                            <div className="flex items-start justify-between mb-2">
-                              <h4 className="text-foreground font-semibold text-lg leading-tight break-words flex-1 mr-4">
-                                {currentVersion.title}
-                              </h4>
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                <Button 
-                                  size="sm" 
-                                  variant="ghost" 
-                                  className="h-8 w-8 p-0"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUseTemplate(prompt);
-                                  }}
-                                >
-                                  <Play className="w-4 h-4" />
-                                </Button>
-                                {(role === 'admin' || role === 'editor') && (
+                            {/* Gradient overlay on hover */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                            
+                            <div className="relative">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-start gap-3 flex-1 mr-4">
+                                  <div className="mt-1 p-2 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg">
+                                    <Sparkles className="w-5 h-5 text-primary" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <h4 className="text-foreground font-bold text-lg leading-tight break-words group-hover:text-primary transition-colors">
+                                      {currentVersion.title}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+                                        v{currentVersion.version}
+                                      </Badge>
+                                      {currentVersion.variables && currentVersion.variables.length > 0 && (
+                                        <Badge className="bg-accent/20 text-accent border-accent/30 text-xs">
+                                          {currentVersion.variables.length} variables
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0">
                                   <Button 
                                     size="sm" 
                                     variant="ghost" 
-                                    className="h-8 w-8 p-0"
+                                    className="h-9 w-9 p-0 hover:bg-primary/20 hover:text-primary transition-colors"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleEditPrompt(prompt);
+                                      handleUseTemplate(prompt);
                                     }}
                                   >
-                                    <Edit className="w-4 h-4" />
+                                    <Play className="w-4 h-4" />
                                   </Button>
-                                )}
+                                  {(role === 'admin' || role === 'editor') && (
+                                    <Button 
+                                      size="sm" 
+                                      variant="ghost" 
+                                      className="h-9 w-9 p-0 hover:bg-accent/20 hover:text-accent transition-colors"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditPrompt(prompt);
+                                      }}
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                            
-                            {/* Tags */}
-                            {currentVersion.tags && currentVersion.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mb-2">
-                                {currentVersion.tags.map((tag) => (
-                                  <Badge
-                                    key={tag.id}
-                                    variant="secondary"
-                                    className="text-xs border-border"
-                                    style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
-                                  >
-                                    {tag.name}
-                                  </Badge>
-                                ))}
+                              
+                              {/* Tags */}
+                              {currentVersion.tags && currentVersion.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-3 ml-14">
+                                  {currentVersion.tags.map((tag) => (
+                                    <Badge
+                                      key={tag.id}
+                                      variant="secondary"
+                                      className="text-xs bg-background/50 backdrop-blur-sm border-border/50 hover:border-primary/50 transition-colors"
+                                      style={{ backgroundColor: tag.color ? `${tag.color}30` : undefined }}
+                                    >
+                                      {tag.name}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              <div className="text-foreground/70 text-sm mb-4 ml-14 line-clamp-2 leading-relaxed">
+                                {currentVersion.content.length > 200 
+                                  ? `${currentVersion.content.substring(0, 200)}...` 
+                                  : currentVersion.content
+                                }
                               </div>
-                            )}
-                            
-                            <div className="text-foreground/80 text-sm mb-3">
-                              {currentVersion.content.length > 200 
-                                ? `${currentVersion.content.substring(0, 200)}...` 
-                                : currentVersion.content
-                              }
-                            </div>
 
-                            <div className="text-muted-foreground text-xs">
-                              Created {new Date(currentVersion.created_at).toLocaleDateString()}
+                              <div className="flex items-center gap-2 text-muted-foreground text-xs ml-14">
+                                <Clock className="w-3 h-3" />
+                                Created {new Date(currentVersion.created_at).toLocaleDateString()}
+                              </div>
                             </div>
                           </div>
                         );

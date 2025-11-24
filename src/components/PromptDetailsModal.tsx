@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Copy, History as HistoryIcon, Settings, Eye, Star } from 'lucide-react';
+import { Copy, History as HistoryIcon, Settings, Eye, Star, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -69,7 +69,7 @@ export function PromptDetailsModal({
   const [detectedVariables, setDetectedVariables] = useState<string[]>([]);
 
   useEffect(() => {
-    if (open && promptId) {
+    if (open && promptId && currentVersionId) {
       loadPromptData();
       loadVersionHistory();
     }
@@ -81,14 +81,26 @@ export function PromptDetailsModal({
   }, [content]);
 
   const loadPromptData = async () => {
+    if (!currentVersionId) {
+      toast({
+        title: "Error",
+        description: "Invalid prompt version.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: versionData, error: versionError } = await supabase
         .from('prompt_versions')
         .select('*')
         .eq('id', currentVersionId)
-        .single();
+        .maybeSingle();
 
       if (versionError) throw versionError;
+      if (!versionData) {
+        throw new Error("Prompt version not found");
+      }
 
       const { data: tagsData, error: tagsError } = await supabase
         .from('prompt_tags')
@@ -101,7 +113,7 @@ export function PromptDetailsModal({
         .from('prompts')
         .select('folder_id')
         .eq('id', promptId)
-        .single();
+        .maybeSingle();
 
       if (promptError) throw promptError;
 
@@ -114,12 +126,13 @@ export function PromptDetailsModal({
       setCurrentVersion(processedVersion);
       setTitle(processedVersion.title);
       setContent(processedVersion.content);
-      setFolderId(promptData.folder_id || 'none');
+      setFolderId(promptData?.folder_id || 'none');
       setSelectedTags(processedVersion.tags || []);
     } catch (error: any) {
+      console.error('Load prompt data error:', error);
       toast({
         title: "Error",
-        description: "Failed to load prompt data.",
+        description: error.message || "Failed to load prompt data.",
         variant: "destructive",
       });
     }
@@ -306,38 +319,68 @@ export function PromptDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card backdrop-blur-lg border border-accent/20 shadow-2xl max-w-5xl h-[85vh] flex flex-col p-0">
-        <div className="p-6 border-b border-border">
+      <DialogContent className="bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_0_50px_rgba(251,146,60,0.15)] max-w-6xl h-[90vh] flex flex-col p-0 overflow-hidden">
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+        
+        {/* Header */}
+        <div className="relative p-6 border-b border-primary/20 bg-gradient-to-r from-primary/10 via-transparent to-accent/10">
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="text-xl font-semibold text-foreground">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-primary" />
                   {currentVersion.title}
                 </DialogTitle>
-                <p className="text-muted-foreground text-sm mt-1">
-                  Version {currentVersion.version}
+                <p className="text-muted-foreground text-sm mt-1 flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-primary/20 rounded-full text-xs font-medium">
+                    Version {currentVersion.version}
+                  </span>
+                  <span className="text-xs">
+                    {format(new Date(currentVersion.created_at), 'PPp')}
+                  </span>
                 </p>
               </div>
+              <Button
+                onClick={handleCopyPrompt}
+                size="sm"
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-glow-primary"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy
+              </Button>
             </div>
           </DialogHeader>
         </div>
 
         <Tabs defaultValue="overview" className="flex-1 flex flex-col overflow-hidden">
-          <div className="px-6 pt-4 border-b border-border">
-            <TabsList className="bg-background/50">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-accent/20">
+          <div className="px-6 pt-4 border-b border-border/50 bg-background/30">
+            <TabsList className="bg-background/50 backdrop-blur-sm border border-border/50 p-1">
+              <TabsTrigger 
+                value="overview" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
                 <Eye className="w-4 h-4 mr-2" />
                 Overview
               </TabsTrigger>
-              <TabsTrigger value="history" className="data-[state=active]:bg-accent/20">
+              <TabsTrigger 
+                value="history"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
                 <HistoryIcon className="w-4 h-4 mr-2" />
-                History
+                History ({versions.length})
               </TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:bg-accent/20">
+              <TabsTrigger 
+                value="settings"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </TabsTrigger>
-              <TabsTrigger value="feedback" className="data-[state=active]:bg-accent/20">
+              <TabsTrigger 
+                value="feedback"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
                 <Star className="w-4 h-4 mr-2" />
                 Feedback
               </TabsTrigger>
@@ -345,20 +388,18 @@ export function PromptDetailsModal({
           </div>
 
           <ScrollArea className="flex-1 px-6">
-            <TabsContent value="overview" className="space-y-6 py-6">
-              <div className="text-muted-foreground text-sm">
-                Created {format(new Date(currentVersion.created_at), 'PPP')}
-              </div>
-
+            <TabsContent value="overview" className="space-y-6 py-6 mt-0">
               {currentVersion.tags && currentVersion.tags.length > 0 && (
-                <div>
-                  <Label className="text-foreground font-semibold mb-2 block">Tags:</Label>
+                <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
+                  <Label className="text-foreground font-semibold mb-3 block flex items-center gap-2">
+                    <span className="text-primary">●</span> Tags
+                  </Label>
                   <div className="flex flex-wrap gap-2">
                     {currentVersion.tags.map((tag) => (
                       <Badge
                         key={tag.id}
                         variant="secondary"
-                        className="bg-background/50 text-foreground border border-border"
+                        className="bg-background/80 text-foreground border border-primary/30 shadow-sm hover:shadow-glow-primary transition-all px-3 py-1"
                         style={{ backgroundColor: tag.color ? `${tag.color}30` : undefined }}
                       >
                         {tag.name}
@@ -369,68 +410,72 @@ export function PromptDetailsModal({
               )}
 
               {currentVersion.variables.length > 0 && (
-                <div>
-                  <Label className="text-foreground font-semibold mb-2 block">
-                    Variables ({currentVersion.variables.length})
+                <div className="bg-gradient-to-r from-accent/10 to-accent/5 backdrop-blur-sm border border-accent/30 rounded-xl p-4">
+                  <Label className="text-foreground font-semibold mb-3 block flex items-center gap-2">
+                    <span className="text-accent">◆</span> Variables ({currentVersion.variables.length})
                   </Label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-background/50 border border-border rounded-lg">
+                  <div className="flex flex-wrap gap-2">
                     {currentVersion.variables.map((variable) => (
                       <Badge
                         key={variable}
-                        variant="secondary"
-                        className="bg-accent/20 text-foreground border border-accent/30"
+                        className="bg-gradient-to-r from-accent/30 to-accent/20 text-foreground border border-accent/40 font-mono px-3 py-1"
                       >
                         {"{{" + variable + "}}"}
                       </Badge>
                     ))}
                   </div>
+                  <p className="text-muted-foreground text-xs mt-3">
+                    Fill these variables when using this prompt as a template
+                  </p>
                 </div>
               )}
 
-              <div>
-                <Label className="text-foreground font-semibold mb-2 block">Prompt Content:</Label>
+              <div className="bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
+                <Label className="text-foreground font-semibold mb-3 block flex items-center gap-2">
+                  <span className="text-primary">▸</span> Prompt Content
+                </Label>
                 <Textarea
                   value={currentVersion.content}
                   readOnly
-                  className="min-h-[300px] bg-background/50 text-foreground border border-border resize-none"
+                  className="min-h-[400px] bg-background/80 text-foreground border border-border/50 resize-none font-mono text-sm leading-relaxed focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
                 />
-              </div>
-
-              <div className="flex justify-end gap-3">
-                <Button onClick={handleCopyPrompt} className="bg-accent text-white hover:bg-accent/90">
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Prompt
-                </Button>
+                <p className="text-muted-foreground text-xs mt-2">
+                  {currentVersion.content.length} characters
+                </p>
               </div>
             </TabsContent>
 
-            <TabsContent value="history" className="py-6">
-              <div className="grid grid-cols-3 gap-4">
+            <TabsContent value="history" className="py-6 mt-0">
+              <div className="grid grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-foreground font-semibold">Versions</Label>
-                  <ScrollArea className="h-[500px] border border-border rounded-lg">
+                  <Label className="text-foreground font-semibold flex items-center gap-2">
+                    <HistoryIcon className="w-4 h-4 text-primary" />
+                    Version History
+                  </Label>
+                  <ScrollArea className="h-[600px] border border-border/50 rounded-xl bg-background/30 backdrop-blur-sm">
                     <div className="p-2 space-y-1">
                       {versions.map((version) => (
                         <button
                           key={version.id}
                           onClick={() => setSelectedVersion(version)}
-                          className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          className={`w-full text-left p-4 rounded-lg transition-all ${
                             selectedVersion?.id === version.id
-                              ? 'bg-accent/20 border border-accent/50'
-                              : 'hover:bg-background/50 border border-transparent'
+                              ? 'bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/40 shadow-sm'
+                              : 'hover:bg-background/50 border border-transparent hover:border-border/50'
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-foreground">
-                              Version {version.version}
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-semibold text-foreground flex items-center gap-2">
+                              <span className="text-primary text-xs">v</span>
+                              {version.version}
                             </span>
                             {version.id === currentVersionId && (
-                              <Badge variant="secondary" className="bg-accent/30 text-foreground">
+                              <Badge className="bg-gradient-to-r from-primary to-accent text-white text-xs">
                                 Current
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-xs text-muted-foreground">
                             {format(new Date(version.created_at), 'PP')}
                           </p>
                         </button>
@@ -441,30 +486,30 @@ export function PromptDetailsModal({
 
                 <div className="col-span-2 space-y-4">
                   {selectedVersion && (
-                    <>
-                      <div>
+                    <div className="space-y-4">
+                      <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
                         <Label className="text-foreground font-semibold mb-2 block">Title</Label>
                         <Input
                           value={selectedVersion.title}
                           readOnly
-                          className="bg-background/50 text-foreground border-border"
+                          className="bg-background/80 text-foreground border-border/50 font-semibold"
                         />
                       </div>
 
-                      <div>
+                      <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
                         <Label className="text-foreground font-semibold mb-2 block">
                           Created: {format(new Date(selectedVersion.created_at), 'PPpp')}
                         </Label>
                       </div>
 
                       {selectedVersion.variables.length > 0 && (
-                        <div>
-                          <Label className="text-foreground font-semibold mb-2 block">
-                            Variables ({selectedVersion.variables.length})
+                        <div className="bg-gradient-to-r from-accent/10 to-accent/5 backdrop-blur-sm border border-accent/30 rounded-xl p-4">
+                          <Label className="text-foreground font-semibold mb-2 block flex items-center gap-2">
+                            <span className="text-accent">◆</span> Variables ({selectedVersion.variables.length})
                           </Label>
                           <div className="flex flex-wrap gap-2">
                             {selectedVersion.variables.map((variable) => (
-                              <Badge key={variable} variant="secondary" className="bg-accent/20">
+                              <Badge key={variable} className="bg-accent/20 font-mono">
                                 {"{{" + variable + "}}"}
                               </Badge>
                             ))}
@@ -472,12 +517,12 @@ export function PromptDetailsModal({
                         </div>
                       )}
 
-                      <div>
+                      <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-4">
                         <Label className="text-foreground font-semibold mb-2 block">Content</Label>
                         <Textarea
                           value={selectedVersion.content}
                           readOnly
-                          className="min-h-[300px] bg-background/50 text-foreground border border-border resize-none"
+                          className="min-h-[300px] bg-background/80 text-foreground border-border/50 resize-none font-mono text-sm"
                         />
                       </div>
 
@@ -486,40 +531,41 @@ export function PromptDetailsModal({
                           <Button
                             onClick={() => handleRestoreVersion(selectedVersion)}
                             disabled={loading}
-                            className="bg-accent text-white hover:bg-accent/90"
+                            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-glow-primary"
                           >
-                            {loading ? 'Restoring...' : 'Restore This Version'}
+                            {loading ? 'Restoring...' : `Restore to v${selectedVersion.version}`}
                           </Button>
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="settings" className="space-y-6 py-6">
-              <div>
+            <TabsContent value="settings" className="space-y-6 py-6 mt-0">
+              <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <Label className="text-foreground font-semibold mb-2 block">Prompt Title</Label>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-background/50 text-foreground border-border"
+                  className="bg-background/80 text-foreground border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                  placeholder="Enter prompt title..."
                 />
               </div>
 
-              <div>
+              <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <Label className="text-foreground font-semibold mb-2 block">Folder (Optional)</Label>
                 <Select value={folderId} onValueChange={setFolderId}>
-                  <SelectTrigger className="bg-background/50 text-foreground border-border">
+                  <SelectTrigger className="bg-background/80 text-foreground border-border/50 hover:border-primary/50">
                     <SelectValue placeholder="Select a folder" />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="none" className="text-foreground">
+                  <SelectContent className="bg-card border-border/50 backdrop-blur-xl">
+                    <SelectItem value="none" className="text-foreground hover:bg-primary/10">
                       No folder
                     </SelectItem>
                     {folders.map((folder) => (
-                      <SelectItem key={folder.id} value={folder.id} className="text-foreground">
+                      <SelectItem key={folder.id} value={folder.id} className="text-foreground hover:bg-primary/10">
                         {folder.name}
                       </SelectItem>
                     ))}
@@ -527,34 +573,38 @@ export function PromptDetailsModal({
                 </Select>
               </div>
 
-              <div>
+              <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <Label className="text-foreground font-semibold mb-2 block">Tags (Optional)</Label>
                 <TagInput selectedTags={selectedTags} onTagsChange={setSelectedTags} />
               </div>
 
               {detectedVariables.length > 0 && (
-                <div>
-                  <Label className="text-foreground font-semibold mb-2 block">
-                    Detected Variables ({detectedVariables.length})
+                <div className="bg-gradient-to-r from-accent/10 to-accent/5 backdrop-blur-sm border border-accent/30 rounded-xl p-5">
+                  <Label className="text-foreground font-semibold mb-3 block flex items-center gap-2">
+                    <span className="text-accent">◆</span> Detected Variables ({detectedVariables.length})
                   </Label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-background/50 border border-border rounded-lg">
+                  <div className="flex flex-wrap gap-2">
                     {detectedVariables.map((variable) => (
-                      <Badge key={variable} variant="secondary" className="bg-accent/20">
+                      <Badge key={variable} className="bg-accent/20 font-mono px-3 py-1">
                         {"{{" + variable + "}}"}
                       </Badge>
                     ))}
                   </div>
+                  <p className="text-muted-foreground text-xs mt-3">
+                    Auto-detected from your prompt content
+                  </p>
                 </div>
               )}
 
-              <div>
+              <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <Label className="text-foreground font-semibold mb-2 block">Prompt Content</Label>
                 <Textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="min-h-[300px] bg-background/50 text-foreground border-border"
+                  className="min-h-[300px] bg-background/80 text-foreground border-border/50 font-mono text-sm focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                  placeholder="Enter your prompt content..."
                 />
-                <p className="text-muted-foreground text-sm mt-1">
+                <p className="text-muted-foreground text-xs mt-2">
                   {content.length} characters
                 </p>
               </div>
@@ -563,22 +613,24 @@ export function PromptDetailsModal({
                 <Button
                   variant="outline"
                   onClick={onClose}
-                  className="bg-background/50 border-border text-foreground hover:bg-background/80"
+                  className="bg-background/50 border-border/50 text-foreground hover:bg-background/80 hover:border-primary/30"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleSaveChanges}
                   disabled={!title.trim() || !content.trim() || loading}
-                  className="bg-accent text-white hover:bg-accent/90"
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-glow-primary"
                 >
                   {loading ? 'Saving...' : 'Save New Version'}
                 </Button>
               </div>
             </TabsContent>
 
-            <TabsContent value="feedback" className="py-6">
-              <FeedbackSection promptId={promptId} />
+            <TabsContent value="feedback" className="py-6 mt-0">
+              <div className="bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/50 rounded-xl p-5">
+                <FeedbackSection promptId={promptId} />
+              </div>
             </TabsContent>
           </ScrollArea>
         </Tabs>
