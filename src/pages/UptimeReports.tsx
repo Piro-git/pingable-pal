@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Download, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { UptimeHistoryChart } from '@/components/UptimeHistoryChart';
 
 interface Check {
   id: string;
@@ -42,6 +43,8 @@ export default function UptimeReports() {
   const [incidents, setIncidents] = useState<DowntimeIncident[]>([]);
   const [dateRange, setDateRange] = useState(7); // days
   const [loading, setLoading] = useState(true);
+  const [selectedCheck, setSelectedCheck] = useState<CheckUptime | null>(null);
+  const [chartOpen, setChartOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -161,6 +164,11 @@ export default function UptimeReports() {
     return <TrendingDown className="w-4 h-4" />;
   };
 
+  const handleCheckClick = (check: CheckUptime) => {
+    setSelectedCheck(check);
+    setChartOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -239,7 +247,11 @@ export default function UptimeReports() {
               </TableHeader>
               <TableBody>
                 {uptimeData.map((data) => (
-                  <TableRow key={data.check_id}>
+                  <TableRow 
+                    key={data.check_id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleCheckClick(data)}
+                  >
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         <div
@@ -322,6 +334,18 @@ export default function UptimeReports() {
           )}
         </CardContent>
       </Card>
+
+      {/* Uptime History Chart Modal */}
+      {selectedCheck && (
+        <UptimeHistoryChart
+          checkId={selectedCheck.check_id}
+          checkName={selectedCheck.check_name}
+          checkColor={selectedCheck.color}
+          dateRange={dateRange}
+          open={chartOpen}
+          onOpenChange={setChartOpen}
+        />
+      )}
     </div>
   );
 }
