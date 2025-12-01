@@ -145,15 +145,15 @@ export default function Pricing() {
             <div className="mb-6">
               <h3 className="text-2xl font-bold mb-2">{SUBSCRIPTION_TIERS.pro_lifetime.name}</h3>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl font-medium text-muted-foreground line-through">$399</span>
+                <span className="text-2xl font-medium text-muted-foreground line-through">$499</span>
                 <span className="text-5xl font-bold text-amber-500">${SUBSCRIPTION_TIERS.pro_lifetime.price}</span>
                 <span className="text-muted-foreground">one-time</span>
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">
-                  SAVE 50%
+                  SAVE 60%
                 </span>
-                <span className="text-sm text-muted-foreground">$200 off!</span>
+                <span className="text-sm text-muted-foreground">$300 off!</span>
               </div>
               <p className="text-sm text-amber-500/80 font-medium">Pay once, use forever!</p>
             </div>

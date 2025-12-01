@@ -38,9 +38,9 @@ const plans = [
   {
     name: "Lifetime",
     price: "$199",
-    originalPrice: "$399",
+    originalPrice: "$499",
     interval: "one-time",
-    saveBadge: "SAVE 50%",
+    saveBadge: "SAVE 60%",
     badge: "🔥 BLACK FRIDAY",
     features: [
       "Everything in Pro",
@@ -114,7 +114,7 @@ export const PricingSection = () => {
                     <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
                       {plan.saveBadge}
                     </span>
-                    <span className="text-sm text-gray-500">$200 off!</span>
+                    <span className="text-sm text-gray-500">$300 off!</span>
                   </div>
                 )}
               </div>
