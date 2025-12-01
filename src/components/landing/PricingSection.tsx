@@ -7,7 +7,9 @@ const plans = [
   {
     name: "Free Forever",
     price: "$0",
+    originalPrice: null,
     interval: "/month",
+    saveBadge: null,
     features: [
       "3 workflows",
       "Daily checks",
@@ -20,7 +22,9 @@ const plans = [
   {
     name: "Pro",
     price: "$19",
+    originalPrice: null,
     interval: "/month",
+    saveBadge: null,
     features: [
       "Unlimited workflows",
       "Real-time monitoring",
@@ -34,7 +38,9 @@ const plans = [
   {
     name: "Lifetime",
     price: "$199",
+    originalPrice: "$499",
     interval: "one-time",
+    saveBadge: "SAVE 60%",
     badge: "🔥 BLACK FRIDAY",
     features: [
       "Everything in Pro",
@@ -89,12 +95,29 @@ export const PricingSection = () => {
                 </div>
               )}
               <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-              <p className="text-5xl font-black text-gray-900 mb-8">
-                {plan.price}
-                <span className="text-lg font-normal text-gray-500">
-                  {plan.interval === "one-time" ? " one-time" : plan.interval}
-                </span>
-              </p>
+              <div className="mb-2">
+                <div className="flex items-baseline gap-2">
+                  {plan.originalPrice && (
+                    <span className="text-2xl font-normal text-gray-400 line-through">
+                      {plan.originalPrice}
+                    </span>
+                  )}
+                  <span className={`text-5xl font-black ${plan.highlight ? "text-amber-500" : "text-gray-900"}`}>
+                    {plan.price}
+                  </span>
+                  <span className="text-lg font-normal text-gray-500">
+                    {plan.interval === "one-time" ? "one-time" : plan.interval}
+                  </span>
+                </div>
+                {plan.saveBadge && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                      {plan.saveBadge}
+                    </span>
+                    <span className="text-sm text-gray-500">$300 off!</span>
+                  </div>
+                )}
+              </div>
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
