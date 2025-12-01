@@ -399,8 +399,7 @@ export default function Dashboard() {
 
               <Button
                 onClick={() => navigate('/prompts')}
-                variant="secondary"
-                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md hover:shadow-glow-accent text-foreground"
+                className="w-full h-12 font-semibold hover:-translate-y-0.5 transition-all shadow-md bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:shadow-glow-primary"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 New Prompt
