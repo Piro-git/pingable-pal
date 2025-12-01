@@ -180,13 +180,13 @@ export function VersionHistoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="glass border-white/20 max-w-6xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="bg-card border-border max-w-6xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-white flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2">
             <History className="w-5 h-5" />
             Version History
           </DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogDescription className="text-muted-foreground">
             View and manage different versions of this prompt.
           </DialogDescription>
         </DialogHeader>
@@ -194,35 +194,35 @@ export function VersionHistoryModal({
         <div className="flex gap-6 h-[70vh]">
           {/* Version List */}
           <div className="w-1/3 space-y-2 overflow-y-auto">
-            <h3 className="text-white font-medium mb-3">Versions</h3>
+            <h3 className="font-medium mb-3">Versions</h3>
             {loading ? (
-              <div className="text-white/60">Loading versions...</div>
+              <div className="text-muted-foreground">Loading versions...</div>
             ) : (
               versions.map((version) => (
                 <div
                   key={version.id}
                   onClick={() => setSelectedVersion(version)}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                  className={`p-3 rounded-lg cursor-pointer transition-colors border ${
                     selectedVersion?.id === version.id
-                      ? 'bg-white/20 border border-white/30'
-                      : 'glass hover:bg-white/10'
+                      ? 'bg-accent border-border'
+                      : 'bg-muted/30 border-transparent hover:bg-muted/50'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white font-medium">
+                    <span className="font-medium">
                       Version {version.version}
                     </span>
                     {version.id === currentVersionId && (
-                      <Badge variant="secondary" className="text-xs glass">
+                      <Badge variant="secondary" className="text-xs">
                         Current
                       </Badge>
                     )}
                   </div>
-                  <div className="text-white/60 text-sm">
+                  <div className="text-muted-foreground text-sm">
                     {new Date(version.created_at).toLocaleDateString()} at{' '}
                     {new Date(version.created_at).toLocaleTimeString()}
                   </div>
-                  <div className="text-white/80 text-sm mt-1 truncate">
+                  <div className="text-sm mt-1 truncate">
                     {version.title}
                   </div>
                 </div>
@@ -235,14 +235,13 @@ export function VersionHistoryModal({
             {selectedVersion ? (
               <>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-white font-medium">
+                  <h3 className="font-medium">
                     Version {selectedVersion.version} Details
                   </h3>
                   {selectedVersion.id !== currentVersionId && (
                     <Button
                       onClick={() => handleRestoreVersion(selectedVersion)}
                       disabled={restoring}
-                      className="glass-button"
                     >
                       <RotateCcw className="w-4 h-4 mr-2" />
                       {restoring ? 'Restoring...' : 'Restore This Version'}
@@ -252,13 +251,13 @@ export function VersionHistoryModal({
 
                 <div className="space-y-3">
                   <div>
-                    <label className="text-white font-medium text-sm">Title:</label>
-                    <div className="text-white/80 mt-1">{selectedVersion.title}</div>
+                    <label className="font-medium text-sm">Title:</label>
+                    <div className="text-muted-foreground mt-1">{selectedVersion.title}</div>
                   </div>
 
                   <div>
-                    <label className="text-white font-medium text-sm">Created:</label>
-                    <div className="text-white/80 mt-1">
+                    <label className="font-medium text-sm">Created:</label>
+                    <div className="text-muted-foreground mt-1">
                       {new Date(selectedVersion.created_at).toLocaleDateString()} at{' '}
                       {new Date(selectedVersion.created_at).toLocaleTimeString()}
                     </div>
@@ -267,7 +266,7 @@ export function VersionHistoryModal({
                   {/* Variables */}
                   {selectedVersion.variables && selectedVersion.variables.length > 0 && (
                     <div>
-                      <label className="text-white font-medium text-sm">
+                      <label className="font-medium text-sm">
                         Variables ({selectedVersion.variables.length}):
                       </label>
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -275,7 +274,7 @@ export function VersionHistoryModal({
                           <Badge
                             key={variable}
                             variant="secondary"
-                            className="glass-button text-white border-white/30 bg-blue-500/20"
+                            className="bg-primary/20 text-primary border-primary/30"
                           >
                             {"{{" + variable + "}}"}
                           </Badge>
@@ -287,13 +286,12 @@ export function VersionHistoryModal({
                   {/* Tags */}
                   {selectedVersion.tags && selectedVersion.tags.length > 0 && (
                     <div>
-                      <label className="text-white font-medium text-sm">Tags:</label>
+                      <label className="font-medium text-sm">Tags:</label>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {selectedVersion.tags.map((tag) => (
                           <Badge
                             key={tag.id}
                             variant="secondary"
-                            className="glass text-white border-white/20"
                             style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
                           >
                             {tag.name}
@@ -304,17 +302,17 @@ export function VersionHistoryModal({
                   )}
 
                   <div>
-                    <label className="text-white font-medium text-sm">Content:</label>
+                    <label className="font-medium text-sm">Content:</label>
                     <Textarea
                       value={selectedVersion.content}
                       readOnly
-                      className="min-h-[300px] glass text-white resize-none mt-2"
+                      className="min-h-[300px] bg-background border-border resize-none mt-2"
                     />
                   </div>
                 </div>
               </>
             ) : (
-              <div className="text-white/60 text-center py-8">
+              <div className="text-muted-foreground text-center py-8">
                 Select a version to view details
               </div>
             )}
@@ -325,7 +323,6 @@ export function VersionHistoryModal({
           <Button
             variant="outline"
             onClick={onClose}
-            className="glass border-white/20 text-white hover:bg-white/10"
           >
             Close
           </Button>

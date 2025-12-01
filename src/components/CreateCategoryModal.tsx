@@ -81,17 +81,17 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass border-white/20">
+      <DialogContent className="bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-white">Create New Category</DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogTitle>Create New Category</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Create a new category to organize your prompts.
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="category-name" className="text-white/90">
+            <Label htmlFor="category-name">
               Category Name
             </Label>
             <Input
@@ -99,13 +99,13 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Customer Service Bot"
-              className="glass-input mt-1"
+              className="bg-background border-border mt-1"
               required
             />
           </div>
 
           <div>
-            <Label className="text-white/90 mb-3 block">Choose Color</Label>
+            <Label className="mb-3 block">Choose Color</Label>
             <div className="grid grid-cols-8 gap-2">
               {CATEGORY_COLORS.map((color) => (
                 <button
@@ -113,8 +113,8 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
                   type="button"
                   className={`w-8 h-8 rounded-full border-2 transition-all ${
                     selectedColor === color 
-                      ? 'border-white scale-110' 
-                      : 'border-white/30 hover:border-white/60'
+                      ? 'border-primary scale-110' 
+                      : 'border-border hover:border-muted-foreground'
                   }`}
                   style={{ backgroundColor: color }}
                   onClick={() => setSelectedColor(color)}
@@ -128,14 +128,12 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="glass-button-secondary"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading || !name.trim()}
-              className="glass-button"
             >
               {loading ? 'Creating...' : 'Create Category'}
             </Button>

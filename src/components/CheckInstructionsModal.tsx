@@ -66,10 +66,10 @@ curl -X POST "${pingUrl}" \\
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="glass rounded-2xl border border-white/25 max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border rounded-2xl max-w-3xl max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-white">
+            <DialogTitle className="text-xl font-semibold">
               How to Use: {checkName}
             </DialogTitle>
           </DialogHeader>
@@ -77,7 +77,7 @@ curl -X POST "${pingUrl}" \\
             onClick={onClose}
             variant="ghost"
             size="icon"
-            className="text-white/70 hover:text-white hover:bg-white/10"
+            className="text-muted-foreground hover:text-foreground"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -86,9 +86,9 @@ curl -X POST "${pingUrl}" \\
         <div className="space-y-6">
           {/* Endpoint URL */}
           <div>
-            <h3 className="text-white font-medium mb-2">Endpoint URL</h3>
-            <div className="bg-bg-base/50 rounded-lg p-3 flex items-center justify-between gap-3">
-              <code className="text-white/90 text-sm break-all flex-1">{pingUrl}</code>
+            <h3 className="font-medium mb-2">Endpoint URL</h3>
+            <div className="bg-muted/50 rounded-lg p-3 flex items-center justify-between gap-3 border border-border">
+              <code className="text-sm break-all flex-1">{pingUrl}</code>
               <Button
                 size="sm"
                 variant="outline"
@@ -104,12 +104,12 @@ curl -X POST "${pingUrl}" \\
             <>
               {/* Simple Ping Instructions */}
               <div>
-                <h3 className="text-white font-medium mb-2">Instructions</h3>
-                <div className="bg-bg-base/50 rounded-lg p-4 space-y-2">
-                  <p className="text-white/80 text-sm">
+                <h3 className="font-medium mb-2">Instructions</h3>
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+                  <p className="text-muted-foreground text-sm">
                     Make a <span className="font-mono text-primary">GET</span> request to the endpoint URL above to confirm your service is online.
                   </p>
-                  <p className="text-white/80 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     This is a basic heartbeat check. Just ping the URL and the check will be marked as "up".
                   </p>
                 </div>
@@ -117,7 +117,7 @@ curl -X POST "${pingUrl}" \\
 
               {/* Example */}
               <div>
-                <h3 className="text-white font-medium mb-2 flex items-center justify-between">
+                <h3 className="font-medium mb-2 flex items-center justify-between">
                   Example (cURL)
                   <Button
                     size="sm"
@@ -128,8 +128,8 @@ curl -X POST "${pingUrl}" \\
                     Copy
                   </Button>
                 </h3>
-                <div className="bg-bg-base/50 rounded-lg p-4">
-                  <pre className="text-white/90 text-xs font-mono whitespace-pre-wrap">
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <pre className="text-xs font-mono whitespace-pre-wrap">
                     {simplePingExample}
                   </pre>
                 </div>
@@ -139,12 +139,12 @@ curl -X POST "${pingUrl}" \\
             <>
               {/* API Report Instructions */}
               <div>
-                <h3 className="text-white font-medium mb-2">Instructions</h3>
-                <div className="bg-bg-base/50 rounded-lg p-4 space-y-2">
-                  <p className="text-white/80 text-sm">
+                <h3 className="font-medium mb-2">Instructions</h3>
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+                  <p className="text-muted-foreground text-sm">
                     Make a <span className="font-mono text-primary">POST</span> request with a JSON payload to report detailed automation status.
                   </p>
-                  <p className="text-white/80 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     Include status, custom KPIs in the payload, error messages, and execution duration.
                   </p>
                 </div>
@@ -152,9 +152,9 @@ curl -X POST "${pingUrl}" \\
 
               {/* JSON Payload Format */}
               <div>
-                <h3 className="text-white font-medium mb-2">JSON Payload Format</h3>
-                <div className="bg-bg-base/50 rounded-lg p-4">
-                  <pre className="text-white/90 text-xs font-mono">
+                <h3 className="font-medium mb-2">JSON Payload Format</h3>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <pre className="text-xs font-mono">
 {`{
   "status": "success" | "failed",
   "payload": {
@@ -170,7 +170,7 @@ curl -X POST "${pingUrl}" \\
 
               {/* Success Example */}
               <div>
-                <h3 className="text-white font-medium mb-2 flex items-center justify-between">
+                <h3 className="font-medium mb-2 flex items-center justify-between">
                   Example: Success Report
                   <Button
                     size="sm"
@@ -181,8 +181,8 @@ curl -X POST "${pingUrl}" \\
                     Copy
                   </Button>
                 </h3>
-                <div className="bg-bg-base/50 rounded-lg p-4">
-                  <pre className="text-white/90 text-xs font-mono whitespace-pre-wrap">
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <pre className="text-xs font-mono whitespace-pre-wrap">
                     {apiReportExampleSuccess}
                   </pre>
                 </div>
@@ -190,7 +190,7 @@ curl -X POST "${pingUrl}" \\
 
               {/* Failure Example */}
               <div>
-                <h3 className="text-white font-medium mb-2 flex items-center justify-between">
+                <h3 className="font-medium mb-2 flex items-center justify-between">
                   Example: Failure Report
                   <Button
                     size="sm"
@@ -201,8 +201,8 @@ curl -X POST "${pingUrl}" \\
                     Copy
                   </Button>
                 </h3>
-                <div className="bg-bg-base/50 rounded-lg p-4">
-                  <pre className="text-white/90 text-xs font-mono whitespace-pre-wrap">
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <pre className="text-xs font-mono whitespace-pre-wrap">
                     {apiReportExampleFailed}
                   </pre>
                 </div>
@@ -212,7 +212,7 @@ curl -X POST "${pingUrl}" \\
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button onClick={onClose} className="glass-button">
+          <Button onClick={onClose}>
             Got it
           </Button>
         </div>
