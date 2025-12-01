@@ -1,43 +1,50 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, Zap } from "lucide-react";
 
 const plans = [
   {
     name: "Free Forever",
     price: "$0",
+    interval: "/month",
     features: [
       "3 workflows",
       "Daily checks",
       "Email alerts"
     ],
     cta: "Get Started",
-    popular: false
+    popular: false,
+    highlight: false
   },
   {
-    name: "Zen Flow",
-    price: "$29",
+    name: "Pro",
+    price: "$19",
+    interval: "/month",
     features: [
-      "25 workflows",
+      "Unlimited workflows",
       "Real-time monitoring",
       "Slack + webhooks",
-      "ZenScore"
+      "Priority support"
     ],
-    cta: "Try Free",
-    popular: true
+    cta: "Start Free Trial",
+    popular: true,
+    highlight: false
   },
   {
-    name: "Zen Master",
-    price: "$99",
+    name: "Lifetime",
+    price: "$199",
+    interval: "one-time",
+    badge: "🔥 BLACK FRIDAY",
     features: [
-      "100 workflows",
-      "API access",
-      "Priority support",
-      "White-label"
+      "Everything in Pro",
+      "Pay once, use forever",
+      "All future updates",
+      "Priority support"
     ],
-    cta: "Contact Sales",
-    popular: false
+    cta: "Get Lifetime Access",
+    popular: false,
+    highlight: true
   }
 ];
 
@@ -65,6 +72,8 @@ export const PricingSection = () => {
               className={`relative bg-white/70 backdrop-blur-sm rounded-2xl p-8 transition-all duration-500 ${
                 plan.popular 
                   ? "border-2 border-[#14B8A6] shadow-xl hover:shadow-2xl scale-105" 
+                  : plan.highlight
+                  ? "border-2 border-amber-500/50 shadow-xl hover:shadow-2xl bg-gradient-to-br from-amber-50/50 to-orange-50/30"
                   : "border border-gray-200/50 shadow-lg hover:shadow-xl"
               }`}
             >
@@ -73,15 +82,23 @@ export const PricingSection = () => {
                   POPULAR
                 </div>
               )}
+              {plan.badge && (
+                <div className="absolute -top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                  <Zap className="w-3 h-3" />
+                  BLACK FRIDAY
+                </div>
+              )}
               <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
               <p className="text-5xl font-black text-gray-900 mb-8">
                 {plan.price}
-                <span className="text-lg font-normal text-gray-500">/month</span>
+                <span className="text-lg font-normal text-gray-500">
+                  {plan.interval === "one-time" ? " one-time" : plan.interval}
+                </span>
               </p>
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-[#14B8A6] flex-shrink-0 mt-0.5" />
+                    <Check className={`h-5 w-5 flex-shrink-0 mt-0.5 ${plan.highlight ? "text-amber-500" : "text-[#14B8A6]"}`} />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
@@ -89,6 +106,10 @@ export const PricingSection = () => {
               <Link to="/register">
                 {plan.popular ? (
                   <Button className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-lg hover:shadow-xl transition-all">
+                    {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                ) : plan.highlight ? (
+                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all border-0">
                     {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (

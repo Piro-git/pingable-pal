@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -133,43 +133,43 @@ export default function Pricing() {
             </Button>
           </Card>
 
-          {/* Pro Yearly */}
-          <Card className={`glass p-8 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-glow-primary ${
-            isCurrentPlan(SUBSCRIPTION_TIERS.pro_yearly.productId) ? 'ring-2 ring-primary' : ''
+          {/* Pro Lifetime - Black Friday */}
+          <Card className={`glass p-8 border-amber-500/50 relative hover:shadow-glow-accent transition-all duration-300 bg-gradient-to-br from-amber-500/10 to-orange-500/5 ${
+            isCurrentPlan(SUBSCRIPTION_TIERS.pro_lifetime.productId) ? 'ring-2 ring-amber-500' : ''
           }`}>
-            <div className="absolute -top-4 right-4 bg-success text-success-foreground px-3 py-1 rounded-full text-xs font-medium">
-              Save 17%
+            <div className="absolute -top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+              <Zap className="w-3 h-3" />
+              BLACK FRIDAY
             </div>
             
             <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-2">{SUBSCRIPTION_TIERS.pro_yearly.name}</h3>
+              <h3 className="text-2xl font-bold mb-2">{SUBSCRIPTION_TIERS.pro_lifetime.name}</h3>
               <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-5xl font-bold">${SUBSCRIPTION_TIERS.pro_yearly.price}</span>
-                <span className="text-muted-foreground">/year</span>
+                <span className="text-5xl font-bold">${SUBSCRIPTION_TIERS.pro_lifetime.price}</span>
+                <span className="text-muted-foreground">one-time</span>
               </div>
-              <p className="text-sm text-muted-foreground">Best value for committed teams</p>
+              <p className="text-sm text-amber-500/80 font-medium">Pay once, use forever!</p>
             </div>
 
             <ul className="space-y-4 mb-8">
-              {SUBSCRIPTION_TIERS.pro_yearly.features.map((feature, i) => (
+              {SUBSCRIPTION_TIERS.pro_lifetime.features.map((feature, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                  <Check className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <span className="text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <Button 
-              className="w-full shadow-glow-accent" 
-              variant="secondary"
-              onClick={() => handleSubscribe(SUBSCRIPTION_TIERS.pro_yearly.priceId, SUBSCRIPTION_TIERS.pro_yearly.name)}
-              disabled={loading === SUBSCRIPTION_TIERS.pro_yearly.priceId || isCurrentPlan(SUBSCRIPTION_TIERS.pro_yearly.productId)}
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0" 
+              onClick={() => handleSubscribe(SUBSCRIPTION_TIERS.pro_lifetime.priceId, SUBSCRIPTION_TIERS.pro_lifetime.name)}
+              disabled={loading === SUBSCRIPTION_TIERS.pro_lifetime.priceId || isCurrentPlan(SUBSCRIPTION_TIERS.pro_lifetime.productId)}
             >
-              {loading === SUBSCRIPTION_TIERS.pro_yearly.priceId 
+              {loading === SUBSCRIPTION_TIERS.pro_lifetime.priceId 
                 ? 'Processing...' 
-                : isCurrentPlan(SUBSCRIPTION_TIERS.pro_yearly.productId)
+                : isCurrentPlan(SUBSCRIPTION_TIERS.pro_lifetime.productId)
                 ? 'Current Plan'
-                : 'Subscribe Yearly'}
+                : 'Get Lifetime Access'}
             </Button>
           </Card>
         </div>
