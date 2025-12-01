@@ -76,12 +76,12 @@ const handler = async (req: Request): Promise<Response> => {
       `;
 
     const emailResponse = await resend.emails.send({
-      from: "Health Check Alerts <onboarding@resend.dev>",
+      from: "FlowZen Alerts <hello@getflowzen.com>",
       to: [user_email],
       subject: `⚠️ Alert: Your check '${check_name}' is down!`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 8px;">🚨 Health Check Alert</h2>
+          <h2 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 8px;">🚨 FlowZen Alert</h2>
           
           <p>Hello,</p>
           
@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <p style="color: #6b7280; font-size: 14px;">
             Best regards,<br>
-            Your Health Check Monitoring System
+            FlowZen Monitoring
           </p>
         </div>
       `,
