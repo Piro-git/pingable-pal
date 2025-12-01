@@ -13,10 +13,10 @@ export const SUBSCRIPTION_TIERS = {
   },
   pro_monthly: {
     name: 'Pro Monthly',
-    price: 29,
+    price: 19,
     interval: 'month',
-    priceId: 'price_1SM6WoALvN2BffHNnrguAlYZ',
-    productId: 'prod_TIhwCbsgDaIUPN',
+    priceId: 'price_1SZdSZALvN2BffHNPgplq6o2',
+    productId: 'prod_TWgqyFQSCQO9mu',
     checkLimit: null, // unlimited
     features: [
       'Unlimited monitoring checks',
@@ -26,20 +26,21 @@ export const SUBSCRIPTION_TIERS = {
       'Custom check intervals'
     ]
   },
-  pro_yearly: {
-    name: 'Pro Yearly',
-    price: 290,
-    interval: 'year',
-    priceId: 'price_1SM6X3ALvN2BffHNE3pVHqB5',
-    productId: 'prod_TIhwVeB2JzxIKk',
+  pro_lifetime: {
+    name: 'Pro Lifetime',
+    price: 199,
+    interval: 'lifetime',
+    priceId: 'price_1SZdSkALvN2BffHNiqGQptNe',
+    productId: 'prod_TWgqQeDsWNKWSl',
     checkLimit: null, // unlimited
+    isOneTime: true,
     features: [
       'Unlimited monitoring checks',
       'Email + Slack notifications',
       'Advanced uptime monitoring',
       'Priority support',
       'Custom check intervals',
-      'Save 17% vs monthly'
+      '🔥 Black Friday Special - Pay once, use forever!'
     ]
   }
 } as const;
@@ -52,8 +53,8 @@ export const getSubscriptionTierFromProductId = (productId: string | null): Subs
   if (productId === SUBSCRIPTION_TIERS.pro_monthly.productId) {
     return 'pro_monthly';
   }
-  if (productId === SUBSCRIPTION_TIERS.pro_yearly.productId) {
-    return 'pro_yearly';
+  if (productId === SUBSCRIPTION_TIERS.pro_lifetime.productId) {
+    return 'pro_lifetime';
   }
   
   return 'free';

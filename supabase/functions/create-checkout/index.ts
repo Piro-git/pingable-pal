@@ -7,6 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Lifetime price ID for one-time payment
+const LIFETIME_PRICE_ID = "price_1SZdSkALvN2BffHNiqGQptNe";
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
@@ -52,6 +55,10 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://mrtovhqequmhdgccwffs.supabase.co";
     
+    // Determine if this is a one-time payment (lifetime) or subscription
+    const isLifetimePurchase = priceId === LIFETIME_PRICE_ID;
+    logStep("Payment mode determined", { isLifetimePurchase, mode: isLifetimePurchase ? "payment" : "subscription" });
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -61,7 +68,7 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: isLifetimePurchase ? "payment" : "subscription",
       success_url: `${origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing`,
       metadata: {
@@ -69,7 +76,7 @@ serve(async (req) => {
       }
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    logStep("Checkout session created", { sessionId: session.id, url: session.url, mode: isLifetimePurchase ? "payment" : "subscription" });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
