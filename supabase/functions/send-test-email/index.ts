@@ -73,7 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "FlowZen <onboarding@resend.dev>",
+      from: "FlowZen <hello@getflowzen.com>",
       to: [user_email],
       subject: `✓ Test Email: ${check_name}`,
       html: emailHtml,

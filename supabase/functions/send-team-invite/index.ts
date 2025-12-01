@@ -93,13 +93,13 @@ const handler = async (req: Request): Promise<Response> => {
     const inviteUrl = `${supabaseUrl.replace('supabase.co', 'lovableproject.com')}/register?invite_token=${invitation.token}`;
     
     const emailResponse = await resend.emails.send({
-      from: "StatusPing <noreply@resend.dev>",
+      from: "FlowZen <hello@getflowzen.com>",
       to: [email],
-      subject: "You're invited to join StatusPing",
+      subject: "You're invited to join FlowZen",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">You're invited to join StatusPing!</h1>
-          <p>You've been invited to join a StatusPing team with the role: <strong>${role}</strong></p>
+          <h1 style="color: #333;">You're invited to join FlowZen!</h1>
+          <p>You've been invited to join a FlowZen team with the role: <strong>${role}</strong></p>
           <p>Click the link below to create your account and join the team:</p>
           <a href="${inviteUrl}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Accept Invitation</a>
           <p>If you can't click the button, copy and paste this URL into your browser:</p>
