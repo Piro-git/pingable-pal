@@ -34,10 +34,10 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Find the check with the matching heartbeat_uuid (include last_pinged_at for rate limiting)
+    // Find the check with the matching heartbeat_uuid (include all needed fields for notifications)
     const { data: check, error: selectError } = await supabase
       .from('checks')
-      .select('id, name, last_pinged_at')
+      .select('id, name, last_pinged_at, user_id, interval_minutes, grace_period_minutes, slack_webhook_url')
       .eq('heartbeat_uuid', uuid)
       .single();
 
@@ -216,12 +216,90 @@ Deno.serve(async (req) => {
 
     console.log('Successfully created check_run:', checkRun.id);
 
+    // Send notifications if check went down due to failed status
+    if (checkStatus === 'down') {
+      console.log('Check is down, sending notifications...');
+      
+      // Get user email from profiles
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', check.user_id)
+        .single();
+      
+      if (profileError) {
+        console.error('Failed to fetch user profile:', profileError);
+      }
+      
+      const userEmail = profile?.email;
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      
+      // Send email notification
+      if (userEmail) {
+        try {
+          console.log('Sending failure email to:', userEmail);
+          const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-failure-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              check_id: check.id,
+              check_name: check.name,
+              user_email: userEmail,
+              last_pinged_at: new Date().toISOString(),
+              interval_minutes: check.interval_minutes,
+              grace_period_minutes: check.grace_period_minutes,
+              error_message: errorMessage,
+              payload: payload,
+              duration_ms: durationMs
+            })
+          });
+          
+          if (emailResponse.ok) {
+            console.log('Failure email sent successfully');
+          } else {
+            console.error('Failed to send failure email:', await emailResponse.text());
+          }
+        } catch (emailError) {
+          console.error('Error sending failure email:', emailError);
+        }
+      }
+      
+      // Send Slack notification if configured
+      if (check.slack_webhook_url) {
+        try {
+          console.log('Sending Slack notification');
+          const slackResponse = await fetch(`${supabaseUrl}/functions/v1/send-slack-notification`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              check_id: check.id,
+              check_name: check.name,
+              slack_webhook_url: check.slack_webhook_url,
+              status: 'down',
+              last_pinged_at: new Date().toISOString(),
+              interval_minutes: check.interval_minutes,
+              grace_period_minutes: check.grace_period_minutes
+            })
+          });
+          
+          if (slackResponse.ok) {
+            console.log('Slack notification sent successfully');
+          } else {
+            console.error('Failed to send Slack notification:', await slackResponse.text());
+          }
+        } catch (slackError) {
+          console.error('Error sending Slack notification:', slackError);
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         status: 'ok', 
         message: 'Report received successfully',
         check_id: check.id,
-        run_id: checkRun.id
+        run_id: checkRun.id,
+        notifications_sent: checkStatus === 'down'
       }), 
       { 
         status: 200, 
