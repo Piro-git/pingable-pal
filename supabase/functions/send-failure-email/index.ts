@@ -14,6 +14,10 @@ interface FailureEmailRequest {
   last_pinged_at?: string;
   interval_minutes?: number;
   grace_period_minutes?: number;
+  // API Report specific fields
+  error_message?: string;
+  payload?: Record<string, any>;
+  duration_ms?: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,7 +27,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { check_id, check_name, user_email, last_pinged_at, interval_minutes, grace_period_minutes }: FailureEmailRequest = await req.json();
+    const { check_id, check_name, user_email, last_pinged_at, interval_minutes, grace_period_minutes, error_message, payload, duration_ms }: FailureEmailRequest = await req.json();
     
     // DIAGNOSTIC: Log function invocation
     console.log(`DIAGNOSTIC: 'send-failure-email' invoked for user ${user_email} and check ${check_name}`);
@@ -55,6 +59,22 @@ const handler = async (req: Request): Promise<Response> => {
     const expectedInterval = interval_minutes || 0;
     const gracePeriod = grace_period_minutes || 60;
     
+    // Check if this is an API report (has error_message, payload, or duration_ms)
+    const isApiReport = error_message || payload || duration_ms;
+    
+    // API Report Details section (only shown for API-based failure reports)
+    const apiReportDetails = isApiReport ? `
+        <div style="background-color: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <h3 style="color: #92400e; margin: 0 0 12px 0;">📋 API Report Details:</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #374151;">
+            ${error_message ? `<li><strong>Error Message:</strong> <span style="color: #dc2626;">${error_message}</span></li>` : ''}
+            ${duration_ms !== undefined ? `<li><strong>Duration:</strong> ${duration_ms}ms</li>` : ''}
+            ${payload && Object.keys(payload).length > 0 ? `<li><strong>Custom Payload:</strong> <pre style="background: #f3f4f6; padding: 8px; border-radius: 4px; margin-top: 4px; overflow-x: auto; font-size: 12px;">${JSON.stringify(payload, null, 2)}</pre></li>` : ''}
+          </ul>
+          <p style="margin: 12px 0 0 0; font-size: 12px; color: #6b7280;">This failure was reported via your automation's API call.</p>
+        </div>
+      ` : '';
+
     const problemDetails = lastPinged 
       ? `
         <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 16px 0;">
@@ -87,6 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <p>This is an automated alert to inform you that your health check named '<strong>${check_name}</strong>' has been marked as <span style="color: #dc2626; font-weight: bold;">DOWN</span>.</p>
           
+          ${apiReportDetails}
           ${problemDetails}
           
           <div style="background-color: #f3f4f6; border-left: 4px solid #3b82f6; padding: 16px; margin: 16px 0;">
