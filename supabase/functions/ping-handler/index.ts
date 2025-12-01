@@ -5,6 +5,34 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Type definitions for rich automation failure data
+interface AutomationDetails {
+  platform?: string;        // n8n, make, zapier, etc.
+  workflow_name?: string;   // Name of the workflow
+  workflow_id?: string;     // Platform's workflow ID
+  execution_id?: string;    // Platform's execution ID
+  execution_url?: string;   // Link to view execution
+}
+
+interface FailedStepDetails {
+  name?: string;            // Which step/node failed
+  type?: string;            // Node type
+  position?: number;        // Step number in workflow
+  total_steps?: number;     // Total steps in workflow
+}
+
+interface ErrorDetails {
+  type?: string;            // timeout, auth, rate_limit, validation, etc.
+  code?: string;            // Error code if available
+  details?: string;         // Technical details
+}
+
+interface ContextDetails {
+  input_data?: Record<string, any>;  // What triggered the failure
+  retry_count?: number;              // How many times it retried
+  started_at?: string;               // When execution started
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -132,6 +160,12 @@ Deno.serve(async (req) => {
     const payload = requestBody.payload || {};
     const errorMessage = requestBody.error_message || null;
     
+    // Extract rich automation failure data
+    const automation: AutomationDetails = requestBody.automation || {};
+    const failedStep: FailedStepDetails = requestBody.failed_step || {};
+    const errorDetails: ErrorDetails = requestBody.error || {};
+    const context: ContextDetails = requestBody.context || {};
+    
     // Validate error message length
     if (errorMessage && typeof errorMessage === 'string' && errorMessage.length > 1000) {
       return new Response(
@@ -185,13 +219,22 @@ Deno.serve(async (req) => {
 
     console.log('Successfully updated check:', check.name, 'to status:', checkStatus);
 
+    // Merge all automation data into payload for storage
+    const enrichedPayload = {
+      ...payload,
+      ...(Object.keys(automation).length > 0 && { automation }),
+      ...(Object.keys(failedStep).length > 0 && { failed_step: failedStep }),
+      ...(Object.keys(errorDetails).length > 0 && { error: errorDetails }),
+      ...(Object.keys(context).length > 0 && { context }),
+    };
+
     // Create a check_run entry
     const { data: checkRun, error: insertError } = await supabase
       .from('check_runs')
       .insert({
         check_id: check.id,
         status: runStatus,
-        payload: payload,
+        payload: enrichedPayload,
         error_message: errorMessage,
         duration_ms: durationMs
       })
@@ -234,7 +277,7 @@ Deno.serve(async (req) => {
       const userEmail = profile?.email;
       const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
       
-      // Send email notification
+      // Send email notification with rich automation data
       if (userEmail) {
         try {
           console.log('Sending failure email to:', userEmail);
@@ -250,7 +293,12 @@ Deno.serve(async (req) => {
               grace_period_minutes: check.grace_period_minutes,
               error_message: errorMessage,
               payload: payload,
-              duration_ms: durationMs
+              duration_ms: durationMs,
+              // Rich automation data
+              automation,
+              failed_step: failedStep,
+              error: errorDetails,
+              context
             })
           });
           
@@ -264,7 +312,7 @@ Deno.serve(async (req) => {
         }
       }
       
-      // Send Slack notification if configured
+      // Send Slack notification if configured with rich automation data
       if (check.slack_webhook_url) {
         try {
           console.log('Sending Slack notification');
@@ -278,7 +326,14 @@ Deno.serve(async (req) => {
               status: 'down',
               last_pinged_at: new Date().toISOString(),
               interval_minutes: check.interval_minutes,
-              grace_period_minutes: check.grace_period_minutes
+              grace_period_minutes: check.grace_period_minutes,
+              error_message: errorMessage,
+              duration_ms: durationMs,
+              // Rich automation data
+              automation,
+              failed_step: failedStep,
+              error: errorDetails,
+              context
             })
           });
           
