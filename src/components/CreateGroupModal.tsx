@@ -58,16 +58,16 @@ export function CreateGroupModal({ open, onClose, onSuccess }: CreateGroupModalP
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass border-white/20">
+      <DialogContent className="bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-white">Create New Group</DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogTitle>Create New Group</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Create a new group to organize your health checks.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="group-name" className="text-white">
+            <Label htmlFor="group-name">
               Group Name
             </Label>
             <Input
@@ -75,7 +75,7 @@ export function CreateGroupModal({ open, onClose, onSuccess }: CreateGroupModalP
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter group name..."
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+              className="bg-background border-border"
               required
             />
           </div>
@@ -84,14 +84,12 @@ export function CreateGroupModal({ open, onClose, onSuccess }: CreateGroupModalP
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="glass border-white/20 text-white hover:bg-white/10"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!name.trim() || loading}
-              className="glass-button"
             >
               {loading ? 'Creating...' : 'Create Group'}
             </Button>

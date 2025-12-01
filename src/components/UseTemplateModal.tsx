@@ -97,26 +97,26 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-xl font-semibold text-white">
+              <DialogTitle className="text-xl font-semibold">
                 Use Template: {prompt.title}
               </DialogTitle>
-              <DialogDescription className="text-white/70">
+              <DialogDescription className="text-muted-foreground">
                 Fill in the variables to use this prompt template.
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-white/60 text-sm">v{prompt.version}</span>
+              <span className="text-muted-foreground text-sm">v{prompt.version}</span>
               {prompt.tags && prompt.tags.length > 0 && (
                 <div className="flex gap-1">
                   {prompt.tags.map((tag) => (
                     <Badge
                       key={tag.id}
                       variant="secondary"
-                      className="glass text-white border-white/20 text-xs"
+                      className="text-xs"
                       style={{ backgroundColor: tag.color ? `${tag.color}40` : undefined }}
                     >
                       {tag.name}
@@ -131,8 +131,8 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
         <div className="space-y-6">
           {/* Original Template Preview */}
           <div className="space-y-2">
-            <Label className="text-white font-medium">Original Template:</Label>
-            <div className="glass rounded-lg p-3 text-white/80 text-sm max-h-32 overflow-y-auto">
+            <Label className="font-medium">Original Template:</Label>
+            <div className="bg-muted/50 rounded-lg p-3 text-muted-foreground text-sm max-h-32 overflow-y-auto border border-border">
               {prompt.content}
             </div>
           </div>
@@ -140,20 +140,20 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
           {/* Variable Inputs */}
           {variables.length > 0 ? (
             <div className="space-y-4">
-              <Label className="text-white font-medium">
+              <Label className="font-medium">
                 Fill in Variables ({variables.length} detected):
               </Label>
               <div className="grid gap-4 max-h-60 overflow-y-auto">
                 {variables.map((variable) => (
                   <div key={variable} className="space-y-2">
-                    <Label className="text-white/80 text-sm">
+                    <Label className="text-muted-foreground text-sm">
                       {variable}
                     </Label>
                     <Input
                       value={variableValues[variable] || ''}
                       onChange={(e) => handleVariableChange(variable, e.target.value)}
                       placeholder={`Enter value for {{${variable}}}`}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+                      className="bg-background border-border"
                     />
                   </div>
                 ))}
@@ -162,7 +162,6 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
               <div className="flex justify-center">
                 <Button
                   onClick={handleGeneratePreview}
-                  className="glass-button"
                   disabled={variables.length === 0}
                 >
                   <Play className="w-4 h-4 mr-2" />
@@ -172,10 +171,10 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-white/70">
+              <p className="text-muted-foreground">
                 This prompt doesn't contain any variables.
               </p>
-              <p className="text-white/50 text-sm mt-1">
+              <p className="text-muted-foreground/70 text-sm mt-1">
                 Add variables like {"{{variable_name}}"} to make it a template.
               </p>
             </div>
@@ -184,24 +183,22 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
           {/* Generated Prompt Preview */}
           {showPreview && generatedPrompt && (
             <div className="space-y-4">
-              <Label className="text-white font-medium">Generated Prompt:</Label>
+              <Label className="font-medium">Generated Prompt:</Label>
               <Textarea
                 value={generatedPrompt}
                 readOnly
-                className="min-h-[200px] glass text-white resize-none"
+                className="min-h-[200px] bg-background border-border resize-none"
               />
               
               <div className="flex justify-end gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setShowPreview(false)}
-                  className="glass border-white/20 text-white hover:bg-white/10"
                 >
                   Edit Variables
                 </Button>
                 <Button
                   onClick={handleCopyToClipboard}
-                  className="glass-button"
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copy to Clipboard
@@ -216,7 +213,6 @@ export function UseTemplateModal({ open, onClose, prompt }: UseTemplateModalProp
               <Button
                 variant="outline"
                 onClick={handleClose}
-                className="glass border-white/20 text-white hover:bg-white/10"
               >
                 Close
               </Button>

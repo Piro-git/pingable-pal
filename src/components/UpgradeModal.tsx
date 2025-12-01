@@ -21,7 +21,7 @@ export function UpgradeModal({ open, onOpenChange, currentUsage, limit }: Upgrad
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass border-primary/20 max-w-md">
+      <DialogContent className="bg-card border-border max-w-md">
         <DialogHeader>
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10">
             <Zap className="w-8 h-8 text-primary" />

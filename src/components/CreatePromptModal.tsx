@@ -146,17 +146,17 @@ export function CreatePromptModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass border-white/20 max-w-2xl">
+      <DialogContent className="bg-card border-border max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-white">Create New Prompt</DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogTitle>Create New Prompt</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Create a new AI prompt template to organize your workflow.
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="prompt-title" className="text-white">
+            <Label htmlFor="prompt-title">
               Prompt Title
             </Label>
             <Input
@@ -164,32 +164,25 @@ export function CreatePromptModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Email Response Template"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30"
+              className="bg-background border-border"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="folder" className="text-white">
+            <Label htmlFor="folder">
               Folder (Optional)
             </Label>
             <Select value={folderId} onValueChange={setFolderId}>
-              <SelectTrigger className="bg-white/10 border-white/20 text-white focus:bg-white/15 focus:border-white/30">
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Select a folder (optional)" />
               </SelectTrigger>
-              <SelectContent className="glass border-white/20">
-                <SelectItem 
-                  value="none"
-                  className="text-white hover:bg-white/10 focus:bg-white/10"
-                >
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="none">
                   No folder
                 </SelectItem>
                 {folders.map((folder) => (
-                  <SelectItem 
-                    key={folder.id} 
-                    value={folder.id}
-                    className="text-white hover:bg-white/10 focus:bg-white/10"
-                  >
+                  <SelectItem key={folder.id} value={folder.id}>
                     {folder.name}
                   </SelectItem>
                 ))}
@@ -198,7 +191,7 @@ export function CreatePromptModal({
           </div>
 
           <div>
-            <Label className="text-white">
+            <Label>
               Tags (Optional)
             </Label>
             <TagInput 
@@ -210,28 +203,28 @@ export function CreatePromptModal({
           {/* Detected Variables Section */}
           {detectedVariables.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-white">
+              <Label>
                 Detected Variables ({detectedVariables.length})
               </Label>
-              <div className="flex flex-wrap gap-2 p-3 glass rounded-lg">
+              <div className="flex flex-wrap gap-2 p-3 bg-muted/50 rounded-lg border border-border">
                 {detectedVariables.map((variable) => (
                   <Badge
                     key={variable}
                     variant="secondary"
-                    className="glass-button text-white border-white/30 bg-blue-500/20"
+                    className="bg-primary/20 text-primary border-primary/30"
                   >
                     {"{{" + variable + "}}"}
                   </Badge>
                 ))}
               </div>
-              <p className="text-white/60 text-xs">
+              <p className="text-muted-foreground text-xs">
                 These variables can be filled in when using this template.
               </p>
             </div>
           )}
 
           <div>
-            <Label htmlFor="prompt-content" className="text-white">
+            <Label htmlFor="prompt-content">
               Prompt Content
             </Label>
             <Textarea
@@ -239,10 +232,10 @@ export function CreatePromptModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Enter your AI prompt here..."
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/30 min-h-[200px]"
+              className="bg-background border-border min-h-[200px]"
               required
             />
-            <p className="text-white/60 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {content.length} characters
             </p>
           </div>
@@ -252,14 +245,12 @@ export function CreatePromptModal({
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="glass border-white/20 text-white hover:bg-white/10"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!title.trim() || !content.trim() || loading}
-              className="glass-button"
             >
               {loading ? 'Creating...' : 'Create Prompt'}
             </Button>
