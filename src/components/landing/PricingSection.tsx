@@ -56,18 +56,18 @@ const plans = [
 
 export const PricingSection = () => {
   return (
-    <section id="pricing" className="relative py-24 overflow-hidden">
+    <section id="pricing" className="relative py-16 md:py-24 overflow-hidden">
       {/* Elegant Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
-      <div className="absolute -top-20 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-gray-200/35 to-transparent blur-3xl" />
-      <div className="absolute -bottom-20 right-0 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-100/25 to-gray-200/15 blur-3xl" />
+      <div className="absolute -top-20 left-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full bg-gradient-to-br from-gray-200/35 to-transparent blur-3xl" />
+      <div className="absolute -bottom-20 right-0 w-[250px] md:w-[500px] h-[250px] md:h-[500px] rounded-full bg-gradient-to-br from-gray-100/25 to-gray-200/15 blur-3xl" />
       
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <h2 className="text-6xl font-black text-gray-900 text-center mb-24 tracking-tight">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 text-center mb-10 md:mb-24 tracking-tight">
           Simple, honest pricing
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-md md:max-w-6xl mx-auto mb-8">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -75,68 +75,68 @@ export const PricingSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.8 }}
-              className={`relative bg-white/70 backdrop-blur-sm rounded-2xl p-8 transition-all duration-500 ${
+              className={`relative bg-white/70 backdrop-blur-sm rounded-2xl p-6 md:p-8 transition-all duration-500 ${
                 plan.popular 
-                  ? "border-2 border-[#14B8A6] shadow-xl hover:shadow-2xl scale-105" 
+                  ? "border-2 border-[#14B8A6] shadow-xl hover:shadow-2xl md:scale-105 order-first md:order-none" 
                   : plan.highlight
                   ? "border-2 border-amber-500/50 shadow-xl hover:shadow-2xl bg-gradient-to-br from-amber-50/50 to-orange-50/30"
                   : "border border-gray-200/50 shadow-lg hover:shadow-xl"
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white px-6 py-1 rounded-full text-sm font-bold shadow-lg">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white px-4 md:px-6 py-1 rounded-full text-xs md:text-sm font-bold shadow-lg">
                   POPULAR
                 </div>
               )}
               {plan.badge && (
-                <div className="absolute -top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                <div className="absolute -top-3 right-2 md:right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 md:px-4 py-1 rounded-full text-[10px] md:text-xs font-bold shadow-lg flex items-center gap-1">
                   <Zap className="w-3 h-3" />
                   BLACK FRIDAY
                 </div>
               )}
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
               <div className="mb-2">
-                <div className="flex items-baseline gap-2">
+                <div className="flex items-baseline gap-2 flex-wrap">
                   {plan.originalPrice && (
-                    <span className="text-2xl font-normal text-gray-400 line-through">
+                    <span className="text-xl md:text-2xl font-normal text-gray-400 line-through">
                       {plan.originalPrice}
                     </span>
                   )}
-                  <span className={`text-5xl font-black ${plan.highlight ? "text-amber-500" : "text-gray-900"}`}>
+                  <span className={`text-4xl md:text-5xl font-black ${plan.highlight ? "text-amber-500" : "text-gray-900"}`}>
                     {plan.price}
                   </span>
-                  <span className="text-lg font-normal text-gray-500">
+                  <span className="text-base md:text-lg font-normal text-gray-500">
                     {plan.interval === "one-time" ? "one-time" : plan.interval}
                   </span>
                 </div>
                 {plan.saveBadge && (
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                    <span className="bg-green-100 text-green-700 px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-bold">
                       {plan.saveBadge}
                     </span>
-                    <span className="text-sm text-gray-500">$300 off!</span>
+                    <span className="text-xs md:text-sm text-gray-500">$300 off!</span>
                   </div>
                 )}
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check className={`h-5 w-5 flex-shrink-0 mt-0.5 ${plan.highlight ? "text-amber-500" : "text-[#14B8A6]"}`} />
-                    <span className="text-gray-700">{feature}</span>
+                  <li key={i} className="flex items-start gap-2 md:gap-3">
+                    <Check className={`h-4 w-4 md:h-5 md:w-5 flex-shrink-0 mt-0.5 ${plan.highlight ? "text-amber-500" : "text-[#14B8A6]"}`} />
+                    <span className="text-sm md:text-base text-gray-700">{feature}</span>
                   </li>
                 ))}
               </ul>
               <Link to="/register">
                 {plan.popular ? (
-                  <Button className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-lg hover:shadow-xl transition-all">
+                  <Button className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-lg hover:shadow-xl transition-all text-sm md:text-base">
                     {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : plan.highlight ? (
-                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all border-0">
+                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all border-0 text-sm md:text-base">
                     {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button variant="outline" className="w-full border-2 border-gray-200 hover:border-[#14B8A6] hover:bg-gray-50 transition-all">
+                  <Button variant="outline" className="w-full border-2 border-gray-200 hover:border-[#14B8A6] hover:bg-gray-50 transition-all text-sm md:text-base">
                     {plan.cta}
                   </Button>
                 )}
@@ -145,7 +145,7 @@ export const PricingSection = () => {
           ))}
         </div>
 
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-xs md:text-sm text-gray-500 text-center px-4">
           All plans include: 14-day trial · No credit card required
         </p>
       </div>
